@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from interface.mainWindow import Ui_MainWindow
 
-from algorithims import DES, AES
+from algorithims.DES import DES
 from solider import Solider
 from battalion import Battalion
 
@@ -11,7 +11,7 @@ import string
 
 class mainWindow(QtWidgets.QMainWindow):
     des = DES()
-    aes = AES()
+    # aes = AES()
     key = ''
 
     def __init__(self, *args, **kwargs):
