@@ -270,9 +270,9 @@ class MainWindow(QMainWindow):
         #     get_app()
         #     ref = db.reference("/storage/")
         #     json_dict = ref.get()
-        stat = 1
+        # stat = 1
         # except:
-        # stat = 0   
+        stat = 0   
 
         self.dataFetched = []
         # self.dataFetched = ['{\n    "Modulus": "3842753039",\n    "Cipher": 10012\n}', '{\n    "Modulus": "2978427307",\n    "Cipher": 10012\n}'
