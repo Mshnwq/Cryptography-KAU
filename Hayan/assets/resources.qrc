@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="background">images/background.jpg</file>
+		<file alias="seal">icons/seal.png</file>
+    </qresource>
+</RCC>
