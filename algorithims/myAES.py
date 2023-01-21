@@ -472,11 +472,11 @@ class AES:
 # print("cipher:\t", cipher)
 # hexe = "faisaljabushanab".encode().hex()
 # print("hexText:\t", hexe)
-plain = AES().decrypt(
-    "2d96cd1d5f88861546821024df27b3bc", 'abc1234567890123')
-print("cipher:\t\t", "2d96cd1d5f88861546821024df27b3bc")
-print("plainText:\t", plain)
-hexe = "faisaljabushanab".encode().hex()
-print("hexText:\t", hexe)
-print(hexe == plain)
+# plain = AES().decrypt(
+#     "2d96cd1d5f88861546821024df27b3bc", 'abc1234567890123')
+# print("cipher:\t\t", "2d96cd1d5f88861546821024df27b3bc")
+# print("plainText:\t", plain)
+# hexe = "faisaljabushanab".encode().hex()
+# print("hexText:\t", hexe)
+# print(hexe == plain)
 # # 580fd9329040973a395b9a5e17939f187f97c96c0f00ef42339add712f5b360b
