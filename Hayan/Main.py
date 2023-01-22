@@ -73,9 +73,17 @@ class MainWindow(QMainWindow):
         self.ui.clearLogs_btn.clicked.connect(lambda: self.ui.logs_box.setPlainText(""))
         
         # disable buttons
-        self.ui.encryptMsg_btn.setEnabled(False)
-        self.ui.writeKey_btn.setEnabled(False)
-        self.ui.uploadData_btn.setEnabled(False)
+        # self.ui.encryptMsg_btn.setEnabled(False)
+        # self.ui.writeKey_btn.setEnabled(False)
+        # self.ui.uploadData_btn.setEnabled(False)
+
+        # self.ui.exitAction.triggered.connect(self.logout) # TODO
+    def logout(self):
+        # self.ui = None
+        print("sssssssss")
+        self.__init__()
+        # window = MainWindow()
+        # window.show()
 
     def receiveMode(self):
         # construct the window
@@ -102,6 +110,35 @@ class MainWindow(QMainWindow):
     def logsAppend(self, data):
         '''Append a text to the logs box'''
         self.ui.logs_box.append(data)
+
+    def generateKeys(self):
+        # Sorry for no comments
+        bitSize = self.checkBtns()
+        # self.publicKey, self.privateKey = self.rsa.generateKey(
+            # bitSize, window=self.ui)
+        n = self.rsa.getN()
+        e = self.rsa.getE()
+        d = self.rsa.getD()
+        self.ui.N_label_box.setText(n)
+        self.ui.E_label_box.setText(e)
+        self.ui.D_label_box.setText(d)
+    
+        privateKey = self.fitNumber(e, 20)
+        privateKey += ",\n"
+        publicKey = self.fitNumber(d, 20)
+        publicKey += ",\n"
+        modKey = self.fitNumber(n, 20)
+        privateKey += modKey
+        publicKey += modKey
+
+        self.ui.Private_box.setText(privateKey)
+        self.ui.Public_box.setText(publicKey)
+        self.ui.writeKey_btn.setEnabled(True)
+        self.ui.encryptMsg_btn.setEnabled(True)
+        self.ui.logs_box.append("Key Generation Success")
+        self.ui.genKeys_statusText.setText("Keys Generated")
+        self.ui.genKeys_statusText.setStyleSheet(
+            "color: rgb(0,200,0);\nfont: bold 10px;")
 
     # helper method for fitting number into a box
     def fitNumber(self, num, width):
@@ -270,9 +307,9 @@ class MainWindow(QMainWindow):
         #     get_app()
         #     ref = db.reference("/storage/")
         #     json_dict = ref.get()
-        # stat = 1
+        stat = 1
         # except:
-        stat = 0   
+        # stat = 0   
 
         self.dataFetched = []
         # self.dataFetched = ['{\n    "Modulus": "3842753039",\n    "Cipher": 10012\n}', '{\n    "Modulus": "2978427307",\n    "Cipher": 10012\n}'

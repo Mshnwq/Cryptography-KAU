@@ -6,6 +6,7 @@ import os
 import importlib
 import sys
 
+# import all Algorithms
 package = 'Algorithms'
 fileDirectory = os.path.dirname(__file__)
 __modules__ = dict()
@@ -13,6 +14,9 @@ for file_name in os.listdir(f"{fileDirectory}\\{package}"):
     if file_name.endswith('.py') and file_name != '__init__.py':
         module_name = file_name[:-3]
         __modules__[module_name] = importlib.import_module(f"{package}.{module_name}", '.')
+
+def getModules():
+    return __modules__
 
 class Cloud_Worker(QThread):
     def __init__(self):
