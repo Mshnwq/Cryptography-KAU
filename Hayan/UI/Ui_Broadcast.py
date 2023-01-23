@@ -66,12 +66,12 @@ class Ui_Broadcast(object):
         self.bit64_btn.setGeometry(QRect(0, 0, 18, 18))
         self.bit64_btn.setChecked(True)
         self.horizontalLayout.addWidget(self.bit64_btn)
-        # self.bit32_btn = QRadioButton("32 bit", self.bitSize_groupBox)
-        # self.bit32_btn.setGeometry(QRect(0, 0, 18, 18))
-        # self.horizontalLayout.addWidget(self.bit32_btn)
-        # self.bit16_btn = QRadioButton("16 bit", self.bitSize_groupBox)
-        # self.bit16_btn.setGeometry(QRect(0, 0, 18, 18))
-        # self.horizontalLayout.addWidget(self.bit16_btn)
+        self.bit32_btn = QRadioButton("32 bit", self.bitSize_groupBox)
+        self.bit32_btn.setGeometry(QRect(0, 0, 18, 18))
+        self.horizontalLayout.addWidget(self.bit32_btn)
+        self.bit16_btn = QRadioButton("16 bit", self.bitSize_groupBox)
+        self.bit16_btn.setGeometry(QRect(0, 0, 18, 18))
+        self.horizontalLayout.addWidget(self.bit16_btn)
 
 
         self.genKeys_btn = QPushButton("Generate Key", self.keyGen_groupBox)

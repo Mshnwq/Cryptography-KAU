@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from Workers import *
+from RFID_Driver import RFID
 import assets.qrc
 import importlib
 import ctypes
@@ -30,7 +31,9 @@ class MainWindow(QMainWindow):
         # Window Setup
         self.setWindowIcon(QIcon(":seal"))
 
+        self.rfid = RFID()
         self._threads = []
+        self.dialogType = 0
 
         if platform.system() == 'Windows':
         #     # connect to cloud
@@ -128,9 +131,9 @@ class MainWindow(QMainWindow):
         self.ui.logs_box.append(data)
 
     def generateKeys(self):
-        # Sorry for no comments
-        bitSize = self.checkBtns()
         
+        # Create a worker thread
+        bitSize = self.checkBtns()
         key_worker = KeyGen_Worker(bit_size=bitSize)
 
         # Connect signals & slots
@@ -141,7 +144,6 @@ class MainWindow(QMainWindow):
         
         # Start the worker
         key_worker.start()
-
         self._threads.append(key_worker)
         self.update_threads()
 
@@ -151,6 +153,7 @@ class MainWindow(QMainWindow):
         self.ui.statusbar.showMessage(f"Active Threads: {active_threads}")
 
     def storeKey(self, __key__):
+        # print(f"STORING {__key__}")
         self.__key__ = __key__
 
     def finishedKeyGen(self, key_worker):
@@ -166,8 +169,8 @@ class MainWindow(QMainWindow):
         self.ui.genKeys_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 10px;")
 
-    # helper method for fitting number into a box
     def fitNumber(self, num, width):
+    # helper method for fitting number into a box
         fit = ''
         leng = len(num)
         for i in range(leng):
@@ -187,20 +190,38 @@ class MainWindow(QMainWindow):
             return 64
 
     def readKey(self):
+
+        self.ui.readKey_btn.setEnabled(False)
         self.dialogType = 1
 
-        stat = self.rfid.readKey( window=self.ui)
+        # Create a worker thread
+        rfid_worker = RFID_Worker(self.rfid, op='Read')
+
+        # Connect signals & slots
+        rfid_worker.resultSignal.connect(self.storeKey)
+        rfid_worker.logsAppendSignal.connect(self.logsAppend)
+        rfid_worker.finishedSignal.connect(partial(self.readKeyStatus))
+        
+        # Start the worker
+        rfid_worker.start()
+        self._threads.append(rfid_worker)
+        self.update_threads()
+    
+    def readKeyStatus(self, stat, rfid_worker):
+        rfid_worker.terminate()
+        self.update_threads()
+        self.ui.readKey_btn.setEnabled(True)
         if (stat == 1):
             self.ui.logs_box.append("Read Key Success")
             self.ui.readKey_statusText.setText("   Success")
             self.ui.readKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.key = self.rfid.getKey()
-            self.ui.logs_box.append(f'(int) read: {self.key}')
-            self.ui.logs_box.append(f'(hex) read: {hex(self.key)}')
-            self.ui.logs_box.append(f'(bin) read: {bin(self.key)}')
-            stringKey = self.fitNumber(str(self.key), 20)
-            self.ui.Public_box.setText(stringKey)
+            # self.key = self.rfid.getKey()
+            self.ui.logs_box.append(f'(int) read: {int(self.__key__)}')
+            self.ui.logs_box.append(f'(hex) read: {hex(int(self.__key__))}')
+            self.ui.logs_box.append(f'(bin) read: {bin(int(self.__key__))}')
+            stringKey = self.fitNumber(str(self.__key__), 20)
+            self.ui.scanned_box.setText(stringKey)
             self.readStatus = True
             self.ui.decryptMsg_btn.setEnabled(
                 self.readStatus and self.fetchStatus)
@@ -223,28 +244,43 @@ class MainWindow(QMainWindow):
             dialog.exec_()
 
     def writeKey(self):
+
+        self.ui.writeKey_btn.setEnabled(False)
         self.dialogType = 2
 
+        #TODO FAISAL initialize data
         tagData = bytearray(16)
-        keyToWriteInt = self.publicKey[0]
-        keyToWrite = keyToWriteInt.to_bytes(16, byteorder = 'big')
+        # keyToWriteInt = self.__key__
+        self.keyToWriteInt = 1945954
+        keyToWrite = self.keyToWriteInt.to_bytes(16, byteorder = 'big')
 
         for i in range(0, len(keyToWrite)):  
             tagData[i] = keyToWrite[i]  
 
-        # print(keyToWriteInt)
-        # print(keyToWrite)
-        # print(tagData)
-        stat = self.rfid.writeKey(
-            desiredDataToWrite = tagData, window=self.ui)
+        # Create a worker thread
+        rfid_worker = RFID_Worker(self.rfid, tagData, op='Write')
+
+        # Connect signals & slots
+        rfid_worker.logsAppendSignal.connect(self.logsAppend)
+        rfid_worker.finishedSignal.connect(partial(self.writeKeyStatus))
+        
+        # Start the worker
+        rfid_worker.start()
+        self._threads.append(rfid_worker)
+        self.update_threads()
+
+    def writeKeyStatus(self, stat, rfid_worker):
+        rfid_worker.terminate()
+        self.update_threads()
+        self.ui.writeKey_btn.setEnabled(True)
         if (stat == 1):
             self.ui.logs_box.append("Write Key Success")
             self.ui.writeKey_statusText.setText("Key Issued")
             self.ui.writeKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.ui.logs_box.append(f'(int) written: {keyToWriteInt}')
-            self.ui.logs_box.append(f'(hex) written: {hex(keyToWriteInt)}')
-            self.ui.logs_box.append(f'(bin) written: {bin(keyToWriteInt)}')
+            self.ui.logs_box.append(f'(int) written: {self.keyToWriteInt}')
+            self.ui.logs_box.append(f'(hex) written: {hex(self.keyToWriteInt)}')
+            self.ui.logs_box.append(f'(bin) written: {bin(self.keyToWriteInt)}')
         elif stat == 0: 
             self.ui.logs_box.append("Write Key Failed")
             self.ui.writeKey_statusText.setText("Issueing Failed")

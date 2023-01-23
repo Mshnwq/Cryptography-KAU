@@ -34,64 +34,38 @@ class Upload_Worker(QThread):
     def run(self):
         ...
 
-class RFID_Write_Worker(QThread):
+class RFID_Worker(QThread):
     '''RFID Working Thread Class'''
     ##### Signal for GUI Slots #####
-    insertSignal = pyqtSignal(object)
-    sendingRequestSignal = pyqtSignal(int)
-    gateStatusSignal = pyqtSignal(int)
     logsAppendSignal = pyqtSignal(str)
-    clearSignal = pyqtSignal()
+    finishedSignal = pyqtSignal(int, QThread)
+    resultSignal   = pyqtSignal(str)
     
-    def __init__(self):
+    def __init__(self, rfid, tagData=None, op='Read'):
         super().__init__()
         
-        # create instance of checkpoint gate
-        # self.checkPointGate = CheckPoint(GATE_ID, BUFFER_SIZE, TIMEOUT, TIME_WINDOW, POLLING_CONTROL_TIME)
+        self.rfid = rfid
+        self.tagData = tagData
+        self.op = op
         # set the signals for GUI communication
-        self.checkPointGate.setSignals (self.insertSignal,
-                                        self.sendingRequestSignal,
-                                        self.gateStatusSignal,
-                                        self.logsAppendSignal,
-                                        self.clearSignal)
+        self.rfid.setSignals(self.logsAppendSignal)
 
     @pyqtSlot()
     def run(self):
         '''The Main Process for the Thread'''
-        while self.checkPointGate.getGateStatus() != 0:
-            time.sleep(0.2)
-            self.checkPointGate.process_RFID_batch()
-            
-class RFID_Read_Worker(QThread):
-    '''RFID Working Thread Class'''
-    ##### Signal for GUI Slots #####
-    insertSignal = pyqtSignal(object)
-    sendingRequestSignal = pyqtSignal(int)
-    gateStatusSignal = pyqtSignal(int)
-    logsAppendSignal = pyqtSignal(str)
-    clearSignal = pyqtSignal()
-    
-    def __init__(self):
-        super().__init__()
-        
-        # create instance of checkpoint gate
-        # self.checkPointGate = CheckPoint(GATE_ID, BUFFER_SIZE, TIMEOUT, TIME_WINDOW, POLLING_CONTROL_TIME)
-        # set the signals for GUI communication
-        self.checkPointGate.setSignals (self.insertSignal,
-                                        self.sendingRequestSignal,
-                                        self.gateStatusSignal,
-                                        self.logsAppendSignal,
-                                        self.clearSignal)
-
-    @pyqtSlot()
-    def run(self):
-        '''The Main Process for the Thread'''
-        while self.checkPointGate.getGateStatus() != 0:
-            time.sleep(0.2)
-            self.checkPointGate.process_RFID_batch()
-
+        if self.op == 'Read':
+            stat = self.rfid.readKey()
+            key = str(self.rfid.getKey())
+            # print(f"THE KEY #{key}")
+            # print(type(key))
+            self.resultSignal.emit(key)
+            self.finishedSignal.emit(stat, self)
+        else:
+            stat = self.rfid.writeKey(self.tagData)
+            self.finishedSignal.emit(stat, self)
 
 class KeyGen_Worker(QThread):
+    '''Key Generator Worker Thread Class'''
     progressSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
     resultSignal   = pyqtSignal(str)
@@ -118,7 +92,7 @@ class Cryptor_Worker(QThread):
     progressSignal = pyqtSignal(int)
     finishedSignal = pyqtSignal()
     resultSignal = pyqtSignal(str)
-
+    '''BLOCK MODE should be'''
     def __init__(self, block, algo, key):
         super().__init__()
         self.key = key
