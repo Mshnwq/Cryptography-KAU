@@ -34,14 +34,12 @@ class Key_Gen:
         while True:
             e = random.randrange(2 ** (self.bit_size - 1), 2 ** (self.bit_size))
             if self.gcd(e, (p - 1) * (q - 1)) == 1:
-                # e = str(e)
                 break
         
         # Step 3: Calculate d, the mod inverse of e.
         # window.logs_box.append('Calculating d that is mod inverse of e...')
         print('Calculating d that is mod inverse of e...')
         d = self.findModInverse(e, (p - 1) * (q - 1))
-        # d = str(d)
         privateKey = (e, n)
         publicKey = (d, n)
         # window.logs_box.append(f'Private key: {privateKey}')

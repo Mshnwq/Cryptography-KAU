@@ -1,10 +1,12 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from Key_Gen import *
 import time
 import os
 import importlib
 import sys
+
 
 # import all Algorithms
 package = 'Algorithms'
@@ -90,24 +92,25 @@ class RFID_Read_Worker(QThread):
 
 
 class KeyGen_Worker(QThread):
-    progressSignal = pyqtSignal(int)
+    progressSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
-    resultSignal = pyqtSignal(str)
+    resultSignal   = pyqtSignal(str)
 
-    def __init__(self, algo, size):
+    def __init__(self, bit_size):
         super().__init__()
-        self.size = size
-        self.constructCrypto(algo)
-
-    def constructCrypto(self, algo):
-        self.crypto = __modules__[algo].construct()
+        self.keygen = Key_Gen(bit_size)
 
     def run(self):
-        print("ssssss")
-        result = self.crypto.generateKey(self.size)
-        print(result)
-        self.finishedSignal.emit()
+        # TODO some kind of progress indicator, 
+        # and key gen type assymetric handling
+        # i = 0
+        # while (i != 3):
+            # self.progressSignal.emit(str(i))
+            # time.sleep(1)
+            # i += 1
+        result = self.keygen.mix_key()
         self.resultSignal.emit(result)
+        self.finishedSignal.emit()
 
 
 class Cryptor_Worker(QThread):
@@ -156,7 +159,7 @@ class Cryptor_Worker(QThread):
 
 
 if __name__ == "__main__":
-    cryptor = Key_Worker("RSA", 32)
+    cryptor = KeyGen_Worker("RSA", 32)
     cryptor.start()
     # rsa = __modules__['RSA'].RSA()
     # rsa.makeKeyFiles('RSA_demo', 32)

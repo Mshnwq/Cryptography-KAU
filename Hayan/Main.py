@@ -3,11 +3,13 @@ import platform
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from Workers import *
 import assets.qrc
 import importlib
 import ctypes
 import sys
 import os
+from functools import partial
 
 # import all UI
 package = 'UI'
@@ -27,6 +29,8 @@ class MainWindow(QMainWindow):
         
         # Window Setup
         self.setWindowIcon(QIcon(":seal"))
+
+        self._threads = []
 
         if platform.system() == 'Windows':
         #     # connect to cloud
@@ -52,6 +56,10 @@ class MainWindow(QMainWindow):
 
         # show() choice window
         self.choiceWindow()
+
+    def logout(self):
+        self.choiceWindow()
+        # self.clear() # TODO clear any data
 
     def choiceWindow(self):
         self.ui = __ui__['Choice'].construct()
@@ -90,10 +98,6 @@ class MainWindow(QMainWindow):
         # logout action
         self.ui.logoutAction.triggered.connect(self.logout)
 
-    def logout(self):
-        self.choiceWindow()
-        # self.clear() # TODO clear any data
-
     def receiveMode(self):
         # construct the window
         self.ui = __ui__['Receive'].construct()
@@ -126,28 +130,38 @@ class MainWindow(QMainWindow):
     def generateKeys(self):
         # Sorry for no comments
         bitSize = self.checkBtns()
-        # self.publicKey, self.privateKey = self.rsa.generateKey(
-            # bitSize, window=self.ui)
-        n = self.rsa.getN()
-        e = self.rsa.getE()
-        d = self.rsa.getD()
-        self.ui.N_label_box.setText(n)
-        self.ui.E_label_box.setText(e)
-        self.ui.D_label_box.setText(d)
-    
-        privateKey = self.fitNumber(e, 20)
-        privateKey += ",\n"
-        publicKey = self.fitNumber(d, 20)
-        publicKey += ",\n"
-        modKey = self.fitNumber(n, 20)
-        privateKey += modKey
-        publicKey += modKey
+        
+        key_worker = KeyGen_Worker(bit_size=bitSize)
 
-        self.ui.Private_box.setText(privateKey)
-        self.ui.Public_box.setText(publicKey)
+        # Connect signals & slots
+        key_worker.resultSignal.connect(self.storeKey)
+        key_worker.progressSignal.connect(self.logsAppend)
+        key_worker.finishedSignal.connect(lambda: 
+                                self.finishedKeyGen(key_worker))
+        
+        # Start the worker
+        key_worker.start()
+
+        self._threads.append(key_worker)
+        self.update_threads()
+
+    def update_threads(self):
+        # self.logsAppend(f"threads now {self._threads}")
+        active_threads = len([thread for thread in self._threads if thread.isRunning()])
+        self.ui.statusbar.showMessage(f"Active Threads: {active_threads}")
+
+    def storeKey(self, __key__):
+        self.__key__ = __key__
+
+    def finishedKeyGen(self, key_worker):
+        key_worker.terminate()
+        self.update_threads()
+        self.logsAppend("Key Generated: " +str(self.__key__))
+        self.ui.key_box.setText(self.fitNumber(
+                                    str(self.__key__), 20))
         self.ui.writeKey_btn.setEnabled(True)
         self.ui.encryptMsg_btn.setEnabled(True)
-        self.ui.logs_box.append("Key Generation Success")
+        self.logsAppend("Key Generation Success")
         self.ui.genKeys_statusText.setText("Keys Generated")
         self.ui.genKeys_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 10px;")
@@ -161,6 +175,16 @@ class MainWindow(QMainWindow):
             if ((i+1)%width == 0):
                 fit += "\n"
         return fit
+
+    def checkBtns(self):
+        if (self.ui.bit128_btn.isChecked()):
+            return 128
+        elif (self.ui.bit64_btn.isChecked()):
+            return 64
+        # elif (self.ui.bit32_btn.isChecked()):
+            # return 32
+        else:
+            return 64
 
     def readKey(self):
         self.dialogType = 1
@@ -433,6 +457,27 @@ class MainWindow(QMainWindow):
                 self.readStatus and self.fetchStatus)
 
         self.fetchedWindow.close()
+
+    def establishUART(self):
+        #TODO ABDULLAH HELP
+        print("kaka")
+        
+        # self.fpga = FPGA() # create instance of RFID
+
+        # stat = 1
+
+        # if stat == 1:
+        #     # self.ui.logs_box.append("FPGA UART Success")
+        #     self.ui.FPGA_statusText.setText("  Success")
+        #     self.ui.FPGA_statusText.setStyleSheet(
+        #         "color: rgb(0,200,0);\nfont: bold 16px;")
+        #     self.ui.GenMode_btn.setEnabled(True)
+        #     self.ui.AttMode_btn.setEnabled(True)
+        # else: 
+        #     # self.ui.logs_box.append("FPGA UART Failed")
+        #     self.ui.FPGA_statusText.setText("Failed")
+        #     self.ui.FPGA_statusText.setStyleSheet(
+        #         "color: rgb(250,0,0);\nfont: bold 16px;;")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
