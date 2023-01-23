@@ -42,7 +42,7 @@ class Ui_Choice(object):
                                         )
         self.title_txt.setAlignment(Qt.AlignCenter)
 
-        self.BrdMode_btn = QPushButton("Broadcast Mode", self.centralwidget)
+        self.BrdMode_btn = QPushButton(self.centralwidget)
         self.BrdMode_btn.setGeometry(QRect(int(3*WINDOW_WIDTH/24), int(6*WINDOW_HEIGHT/24), 
                                 BUTTON_WIDTH*4, BUTTON_HEIGHT*10))
         self.BrdMode_btn.setStyleSheet("QPushButton" 
@@ -54,8 +54,6 @@ class Ui_Choice(object):
                                             "border-width: 2px;"
                                             "border-radius: 10px;"
                                             "border-color: black;"
-                                            "font: bold 24px;"
-                                            "color: white;"
                                             "padding: 1px;"
                                         "}"
                                         "QPushButton::pressed" 
@@ -64,8 +62,27 @@ class Ui_Choice(object):
                                             "border-style: inset;"
                                         "}"
                                         )
+        self.BrdMode_txt = ClickableLabel("Broadcast Mode", self.centralwidget)
+        self.BrdMode_txt.setGeometry(QRect(int((3*WINDOW_WIDTH/24)+BUTTON_WIDTH/2), 
+                                            int(6*WINDOW_HEIGHT/24)+BUTTON_HEIGHT*5-30, 
+                                            BUTTON_WIDTH*3, 60))
+        self.BrdMode_txt.setStyleSheet("QFrame" 
+                                        "{"
+                                            "background-color: rgb(100,20,200);"
+                                            "border-style: outset;"
+                                            "border-width: 3px;"
+                                            "border-radius: 4px;"
+                                            "border-color: black;"
+                                            "font-size: 32px;"
+                                            "font-family: Times New Roman;"    
+                                            "font-weight: bold;"
+                                            "color: white;"
+                                            "padding: 1px;"
+                                        "}"
+                                        )
+        self.BrdMode_txt.setAlignment(Qt.AlignCenter)
 
-        self.RcvMode_btn = QPushButton("Receive Mode", self.centralwidget)
+        self.RcvMode_btn = QPushButton(self.centralwidget)
         self.RcvMode_btn.setGeometry(QRect(int(21*WINDOW_WIDTH/24)-BUTTON_WIDTH*4, int(6*WINDOW_HEIGHT/24), 
                                         BUTTON_WIDTH*4, BUTTON_HEIGHT*10))
         self.RcvMode_btn.setStyleSheet("QPushButton" 
@@ -77,8 +94,7 @@ class Ui_Choice(object):
                                             "border-width: 2px;"
                                             "border-radius: 10px;"
                                             "border-color: black;"
-                                            "font: bold 24px;"
-                                            "color: white;"
+                                            "color: black;"
                                             "padding: 1px;"
                                         "}"
                                         "QPushButton::pressed" 
@@ -87,10 +103,36 @@ class Ui_Choice(object):
                                             "border-style: inset;"
                                         "}"
                                         )
+        self.RcvMode_txt = ClickableLabel("Receive Mode", self.centralwidget)
+        self.RcvMode_txt.setGeometry(QRect(int((21*WINDOW_WIDTH/24)-(BUTTON_WIDTH*3.5)), 
+                                            int(6*WINDOW_HEIGHT/24)+BUTTON_HEIGHT*5-30, 
+                                            BUTTON_WIDTH*3, 60))
+        self.RcvMode_txt.setStyleSheet("QFrame" 
+                                        "{"
+                                            "background-color: rgb(100,20,200);"
+                                            "border-style: outset;"
+                                            "border-width: 3px;"
+                                            "border-radius: 4px;"
+                                            "border-color: black;"
+                                            "font-size: 32px;"
+                                            "font-family: Times New Roman;"    
+                                            "font-weight: bold;"
+                                            "color: white;"
+                                            "padding: 1px;"
+                                        "}"
+                                        )
+        self.RcvMode_txt.setAlignment(Qt.AlignCenter)
 
         choiceWindow.setCentralWidget(self.centralwidget)
 
         QMetaObject.connectSlotsByName(choiceWindow)
+
+class ClickableLabel(QLabel):
+    clicked = pyqtSignal()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
 
 def construct():
     return Ui_Choice()

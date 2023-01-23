@@ -297,7 +297,7 @@ class Ui_Receive(object):
         configMenu.addAction(self.appConfigAction)
         configMenu.addAction(self.FPGAConfigAction)
         settingsMenu.addSeparator()
-        settingsMenu.addAction(self.exitAction)
+        settingsMenu.addAction(self.logoutAction)
         # Help menu
         helpMenu = self.menuBar.addMenu(QIcon(":info"), "&Help")
         helpMenu.addAction(self.helpContentAction)
@@ -309,8 +309,7 @@ class Ui_Receive(object):
         self.appConfigAction = QAction("&App Configurations", MainWindow)
         self.appConfigAction.triggered.connect(self.appConfigActionButtonClick)
         self.FPGAConfigAction = QAction("&FPGA Configurations", MainWindow)
-        self.exitAction = QAction("&Exit", MainWindow)
-        self.exitAction.triggered.connect(qApp.quit) # TODO logout handle
+        self.logoutAction = QAction("&Logout", MainWindow)
         self.helpContentAction = QAction("&Help Content", MainWindow)
         self.helpContentAction.triggered.connect(lambda: self.logs_box.append("Help Later"))
         self.aboutAction = QAction("&About", MainWindow)

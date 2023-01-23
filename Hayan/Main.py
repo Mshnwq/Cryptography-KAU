@@ -27,11 +27,6 @@ class MainWindow(QMainWindow):
         
         # Window Setup
         self.setWindowIcon(QIcon(":seal"))
-        self.ui = __ui__['Choice'].construct()
-        self.ui.setupUi(self)
-
-        self.ui.BrdMode_btn.clicked.connect(self.broadcastMode)
-        self.ui.RcvMode_btn.clicked.connect(self.receiveMode)
 
         # if platform.system() == 'Windows':
         #     # connect to cloud
@@ -51,6 +46,17 @@ class MainWindow(QMainWindow):
         #     )
         # else:
         #     exit(f"{platform.system()} OS is not supported")
+
+        self.choiceWindow()
+
+    def choiceWindow(self):
+        self.ui = __ui__['Choice'].construct()
+        self.ui.setupUi(self)
+
+        self.ui.BrdMode_btn.clicked.connect(self.broadcastMode)
+        self.ui.BrdMode_txt.clicked.connect(self.broadcastMode)
+        self.ui.RcvMode_btn.clicked.connect(self.receiveMode)
+        self.ui.RcvMode_txt.clicked.connect(self.receiveMode)
 
     def broadcastMode(self):
         # construct the window
@@ -73,17 +79,16 @@ class MainWindow(QMainWindow):
         self.ui.clearLogs_btn.clicked.connect(lambda: self.ui.logs_box.setPlainText(""))
         
         # disable buttons
-        # self.ui.encryptMsg_btn.setEnabled(False)
-        # self.ui.writeKey_btn.setEnabled(False)
-        # self.ui.uploadData_btn.setEnabled(False)
+        self.ui.encryptMsg_btn.setEnabled(False)
+        self.ui.writeKey_btn.setEnabled(False)
+        self.ui.uploadData_btn.setEnabled(False)
 
-        # self.ui.exitAction.triggered.connect(self.logout) # TODO
+        # logout action
+        self.ui.logoutAction.triggered.connect(self.logout)
+
     def logout(self):
-        # self.ui = None
-        print("sssssssss")
-        self.__init__()
-        # window = MainWindow()
-        # window.show()
+        self.choiceWindow()
+        # self.clear() # TODO clear any data
 
     def receiveMode(self):
         # construct the window
@@ -106,6 +111,9 @@ class MainWindow(QMainWindow):
         
         # disable buttons
         self.ui.decryptMsg_btn.setEnabled(False)
+
+        # logout action
+        self.ui.logoutAction.triggered.connect(self.logout)
 
     def logsAppend(self, data):
         '''Append a text to the logs box'''
