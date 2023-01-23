@@ -18,15 +18,49 @@ for file_name in os.listdir(f"{fileDirectory}\\{package}"):
 def getModules():
     return __modules__
 
-class Cloud_Worker(QThread):
+class Fetch_Worker(QThread):
     def __init__(self):
         super().__init__()
 
     def run(self):
         ...
 
+class Upload_Worker(QThread):
+    def __init__(self):
+        super().__init__()
 
-class RFID_Worker(QThread):
+    def run(self):
+        ...
+
+class RFID_Write_Worker(QThread):
+    '''RFID Working Thread Class'''
+    ##### Signal for GUI Slots #####
+    insertSignal = pyqtSignal(object)
+    sendingRequestSignal = pyqtSignal(int)
+    gateStatusSignal = pyqtSignal(int)
+    logsAppendSignal = pyqtSignal(str)
+    clearSignal = pyqtSignal()
+    
+    def __init__(self):
+        super().__init__()
+        
+        # create instance of checkpoint gate
+        # self.checkPointGate = CheckPoint(GATE_ID, BUFFER_SIZE, TIMEOUT, TIME_WINDOW, POLLING_CONTROL_TIME)
+        # set the signals for GUI communication
+        self.checkPointGate.setSignals (self.insertSignal,
+                                        self.sendingRequestSignal,
+                                        self.gateStatusSignal,
+                                        self.logsAppendSignal,
+                                        self.clearSignal)
+
+    @pyqtSlot()
+    def run(self):
+        '''The Main Process for the Thread'''
+        while self.checkPointGate.getGateStatus() != 0:
+            time.sleep(0.2)
+            self.checkPointGate.process_RFID_batch()
+            
+class RFID_Read_Worker(QThread):
     '''RFID Working Thread Class'''
     ##### Signal for GUI Slots #####
     insertSignal = pyqtSignal(object)
@@ -55,7 +89,7 @@ class RFID_Worker(QThread):
             self.checkPointGate.process_RFID_batch()
 
 
-class Key_Worker(QThread):
+class KeyGen_Worker(QThread):
     progressSignal = pyqtSignal(int)
     finishedSignal = pyqtSignal()
     resultSignal = pyqtSignal(str)

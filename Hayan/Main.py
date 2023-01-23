@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         # Window Setup
         self.setWindowIcon(QIcon(":seal"))
 
-        # if platform.system() == 'Windows':
+        if platform.system() == 'Windows':
         #     # connect to cloud
         #     cred = credentials.Certificate(fileDirectory + '\\fpga-rfid-rsa-firebase-adminsdk-w7ve4-66256d1a41.json')
         #     defualt_app = initialize_app(cred, 
@@ -36,7 +36,8 @@ class MainWindow(QMainWindow):
         #         "databaseURL" : "https://fpga-rfid-rsa-default-rtdb.firebaseio.com/"
         #         }
         #     )
-        # elif platform.system() == 'Linux':
+            ...
+        elif platform.system() == 'Linux':
         #         # connect to cloud
         #     cred = credentials.Certificate(fileDirectory + '/fpga-rfid-rsa-firebase-adminsdk-w7ve4-66256d1a41.json')
         #     defualt_app = initialize_app(cred, 
@@ -44,9 +45,12 @@ class MainWindow(QMainWindow):
         #         "databaseURL" : "https://fpga-rfid-rsa-default-rtdb.firebaseio.com/"
         #         }
         #     )
-        # else:
-        #     exit(f"{platform.system()} OS is not supported")
+            ...
+        else:
+            exit(f"{platform.system()} OS is not supported")
+            sys.exit()
 
+        # show() choice window
         self.choiceWindow()
 
     def choiceWindow(self):
