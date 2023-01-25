@@ -77,11 +77,11 @@ class KeyGen_Worker(QThread):
     def run(self):
         # TODO some kind of progress indicator, 
         # and key gen type assymetric handling
-        # i = 0
-        # while (i != 3):
-            # self.progressSignal.emit(str(i))
-            # time.sleep(1)
-            # i += 1
+        i = 0
+        while (i != 2):
+            self.progressSignal.emit(str(i))
+            time.sleep(0.5)
+            i += 1
         result = self.keygen.mix_key()
         self.resultSignal.emit(result)
         self.finishedSignal.emit()

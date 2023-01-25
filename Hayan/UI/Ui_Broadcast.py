@@ -42,37 +42,27 @@ class Ui_Broadcast(object):
         self.keyGen_groupBox.setFont(font)
         
         # TODO depend on what algos
-        # self.algoType_groupBox = QGroupBox(self.keyGen_groupBox)
-        # self.algoType_groupBox.setGeometry(QRect(10, 40,
-        #                         int(WINDOW_WIDTH/4)-20, 10+int(WINDOW_HEIGHT/12)))
-        # self.gridLayout = QGridLayout(self.algoType_groupBox)
+        self.algoType_groupBox = QGroupBox(self.keyGen_groupBox)
+        self.algoType_groupBox.setGeometry(QRect(10, 40,
+                                int(WINDOW_WIDTH/4)-20, 10+int(WINDOW_HEIGHT/12)))
+        self.gridLayout = QGridLayout(self.algoType_groupBox)
 
-        # self.bitSize_label = QLabel("Bit Size")
-        # self.gridLayout.addWidget(self.bitSize_label, 0, 1, 1, 1)
-        # self.bitSize_combo = QComboBox(self.algoType_groupBox)
-        # self.bitSize_combo.setGeometry(QRect(0, 0, 18, 18))
-        # self.updateBitCombo()
-        # self.gridLayout.addWidget(self.bitSize_combo, 1, 1, 1, 1)
+        self.algoType_label = QLabel(" Algorithm")
+        self.gridLayout.addWidget(self.algoType_label, 0, 0, 1, 1)
+        self.algoType_combo = QComboBox(self.algoType_groupBox)
+        self.algoType_combo.setGeometry(QRect(0, 0, 18, 18))
+        # populate with current available algorithms
+        for algo in Workers.getModules().keys():
+            self.algoType_combo.addItem(algo)
+        self.algoType_combo.activated[str].connect(self.onChangedAlgo)
+        self.gridLayout.addWidget(self.algoType_combo, 1, 0, 1, 1)
 
-        self.bitSize_groupBox = QGroupBox(self.keyGen_groupBox)
-        self.bitSize_groupBox.setGeometry(QRect(10, 30,
-                                int(WINDOW_WIDTH/4)-20, 10+int(WINDOW_HEIGHT/24)))
-        self.horizontalLayout = QHBoxLayout(self.bitSize_groupBox)
-
-        self.bit128_btn = QRadioButton("128 bit", self.bitSize_groupBox)
-        self.bit128_btn.setGeometry(QRect(0, 0, 18, 18))
-        self.horizontalLayout.addWidget(self.bit128_btn)
-        self.bit64_btn = QRadioButton("64 bit", self.bitSize_groupBox)
-        self.bit64_btn.setGeometry(QRect(0, 0, 18, 18))
-        self.bit64_btn.setChecked(True)
-        self.horizontalLayout.addWidget(self.bit64_btn)
-        self.bit32_btn = QRadioButton("32 bit", self.bitSize_groupBox)
-        self.bit32_btn.setGeometry(QRect(0, 0, 18, 18))
-        self.horizontalLayout.addWidget(self.bit32_btn)
-        self.bit16_btn = QRadioButton("16 bit", self.bitSize_groupBox)
-        self.bit16_btn.setGeometry(QRect(0, 0, 18, 18))
-        self.horizontalLayout.addWidget(self.bit16_btn)
-
+        self.bitSize_label = QLabel("Bit Size")
+        self.gridLayout.addWidget(self.bitSize_label, 0, 1, 1, 1)
+        self.bitSize_combo = QComboBox(self.algoType_groupBox)
+        self.bitSize_combo.setGeometry(QRect(0, 0, 18, 18))
+        self.updateBitCombo()
+        self.gridLayout.addWidget(self.bitSize_combo, 1, 1, 1, 1)
 
         self.genKeys_btn = QPushButton("Generate Key", self.keyGen_groupBox)
         self.genKeys_btn.setIcon(QIcon(":key"))
@@ -183,14 +173,14 @@ class Ui_Broadcast(object):
         self.blockMode_combo.addItems(["ECB", "CBC"]) # TODO
         self.gridLayout.addWidget(self.blockMode_combo, 1, 0, 1, 1)
 
-        self.algoType_label = QLabel(" Algorithm")
-        self.gridLayout.addWidget(self.algoType_label, 0, 1, 1, 1)
-        self.algoType_combo = QComboBox(self.encrypt_groupBox)
-        self.algoType_combo.setGeometry(QRect(0, 0, 18, 18))
-        # populate with current available algorithms
-        for algo in Workers.getModules().keys():
-            self.algoType_combo.addItem(algo)
-        self.gridLayout.addWidget(self.algoType_combo, 1, 1, 1, 1)
+        # self.algoType_label = QLabel(" Algorithm")
+        # self.gridLayout.addWidget(self.algoType_label, 0, 1, 1, 1)
+        # self.algoType_combo = QComboBox(self.encrypt_groupBox)
+        # self.algoType_combo.setGeometry(QRect(0, 0, 18, 18))
+        # # populate with current available algorithms
+        # for algo in Workers.getModules().keys():
+        #     self.algoType_combo.addItem(algo)
+        # self.gridLayout.addWidget(self.algoType_combo, 1, 1, 1, 1)
 
         self.encryptMsg_btn = QPushButton("Encrypt Message", self.encrypt_groupBox)
         self.encryptMsg_btn.setIcon(QIcon(":key_lock"))
@@ -214,7 +204,7 @@ class Ui_Broadcast(object):
                                     "}"
                                     )
         self.encryptMsg_btn.setGeometry(QRect(0, 0, BUTTON_WIDTH+40, BUTTON_HEIGHT+10))
-        self.gridLayout.addWidget(self.encryptMsg_btn, 0, 2, 3, 1)
+        self.gridLayout.addWidget(self.encryptMsg_btn, 0, 1, 3, 1)
         self.encryptMsg_statusBox = QGroupBox("Status", self.encrypt_groupBox)
         self.encryptMsg_statusBox.setStyleSheet("font-weight: bold")
         self.encryptMsg_statusBox.setGeometry(QRect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT))
@@ -224,7 +214,7 @@ class Ui_Broadcast(object):
         self.encryptMsg_statusBox.setFont(font)
         self.encryptMsg_statusText = QLabel("   -------------", self.encryptMsg_statusBox)
         self.encryptMsg_statusText.setGeometry(QRect(12, 5, BUTTON_WIDTH, BUTTON_HEIGHT))
-        self.gridLayout.addWidget(self.encryptMsg_statusBox, 0, 3, 2, 1)
+        self.gridLayout.addWidget(self.encryptMsg_statusBox, 0, 2, 2, 1)
 
         self.plaintext_label = QLabel("Plaintext", self.message_groupBox)
         self.plaintext_label.setGeometry(QRect(40*3, 40, 
@@ -385,6 +375,12 @@ class Ui_Broadcast(object):
     def aboutActionButtonClick(self):
         dlg = AboutDialog()
         dlg.exec_()
+
+    def onChangedAlgo(self, algo):
+        # TODO
+        __modules__ = Workers.getModules()
+        # self.updateBitCombo(sizes = __module__[algo].getKeySizes())
+        self.updateBitCombo(sizes = ["111", "223"])
 
     def updateBitCombo(self, sizes = ["16", "32", "64", "128"]):
         self.bitSize_combo.clear()
