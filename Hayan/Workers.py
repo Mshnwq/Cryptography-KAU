@@ -81,7 +81,7 @@ class KeyGen_Worker(QThread):
         i = 0
         while (i != 2):
             self.progressSignal.emit(str(i))
-            time.sleep(0.5)
+            time.sleep(0.25)
             i += 1
         result = __modules__[self.algo].generateKey(self.bit_size)
         if __modules__[self.algo].isAsymmetric():

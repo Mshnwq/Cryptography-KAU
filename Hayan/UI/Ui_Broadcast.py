@@ -1,3 +1,4 @@
+import json
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -7,7 +8,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import Workers
 class Ui_Broadcast(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, config):
         
         WINDOW_WIDTH = 1200
         WINDOW_HEIGHT = 800
@@ -41,7 +42,6 @@ class Ui_Broadcast(object):
         font.setWeight(40)
         self.keyGen_groupBox.setFont(font)
         
-        # TODO depend on what algos
         self.algoType_groupBox = QGroupBox(self.keyGen_groupBox)
         self.algoType_groupBox.setGeometry(QRect(10, 40,
                                 int(WINDOW_WIDTH/4)-20, 10+int(WINDOW_HEIGHT/12)))
@@ -322,7 +322,7 @@ class Ui_Broadcast(object):
                                             BUTTON_WIDTH, BUTTON_HEIGHT))
 
         # Create actions to attach to menu bar
-        self._createActions(MainWindow)
+        self._createActions(MainWindow, config)
         # Create menu bar and populate with actions
         self._createMenuBar(MainWindow)
         
@@ -343,11 +343,21 @@ class Ui_Broadcast(object):
 
     def _createMenuBar(self, MainWindow):
         self.menuBar = QMenuBar(MainWindow)
-        # File menu
+        # Settings menu
         settingsMenu = self.menuBar.addMenu(QIcon(":settings"), "&Settings")
         configMenu = settingsMenu.addMenu("&Configurations")
-        configMenu.addAction(self.appConfigAction)
-        configMenu.addAction(self.FPGAConfigAction)
+        configMenu.setTearOffEnabled(True)
+        keyGenMenu = configMenu.addMenu("&Key Generation Source")
+        keyGenMenu.addAction(self.keyGenAction)
+        keyWrMenu = configMenu.addMenu("&Key Write Destination")
+        keyWrMenu.addAction(self.keyWrAction)
+        encrypSrcMenu = configMenu.addMenu("&Encryption Source")
+        encrypSrcMenu.addAction(self.encrypSrcAction)
+        broadcastSrcMenu = configMenu.addMenu("&Broadcast Destination")
+        broadcastSrcMenu.addAction(self.broadcastSrcAction)
+        configMenu.addSeparator()
+        configMenu.addAction(self.saveConfigAction)
+
         settingsMenu.addSeparator()
         settingsMenu.addAction(self.logoutAction)
         # Help menu
@@ -357,20 +367,30 @@ class Ui_Broadcast(object):
 
         MainWindow.setMenuBar(self.menuBar)
 
-    def _createActions(self, MainWindow):
-        self.appConfigAction = QAction("&App Configurations", MainWindow)
-        self.appConfigAction.triggered.connect(self.appConfigActionButtonClick)
+    def _createActions(self, MainWindow, config):
+        self.keyGenAction = QAction('&FPGA', MainWindow, checkable=True)
+        self.keyGenAction.setChecked(config['FPGA_gen'])
+        self.keyGenAction.toggled.connect(lambda: self.logs_box.append("Key Gen on FPGA Later"))
+
+        self.keyWrAction = QAction('&RFID', MainWindow, checkable=True)
+        self.keyWrAction.setChecked(config['RFID_wr'])
+
+        self.encrypSrcAction = QAction('&FPGA', MainWindow, checkable=True)
+        self.encrypSrcAction.setChecked(config['FPGA_crypt'])
+        self.encrypSrcAction.toggled.connect(lambda: self.logs_box.append("Encryption on FPGA Later"))
+
+        self.broadcastSrcAction = QAction('&Cloud', MainWindow, checkable=True)
+        self.broadcastSrcAction.setChecked(config['Cloud'])
+
+        self.saveConfigAction = QAction("&Save Config", MainWindow)
+        # TODO for FPGA
         self.FPGAConfigAction = QAction("&FPGA Configurations", MainWindow)
+        
         self.logoutAction = QAction("&Logout", MainWindow)
         self.helpContentAction = QAction("&Help Content", MainWindow)
         self.helpContentAction.triggered.connect(lambda: self.logs_box.append("Help Later"))
         self.aboutAction = QAction("&About", MainWindow)
         self.aboutAction.triggered.connect(self.aboutActionButtonClick)
-
-    def appConfigActionButtonClick(self):
-        # self.settingWindow = Ui_SettingsWindow(self.isAdmin)
-        # self.settingWindow.show()
-        ...
 
     def aboutActionButtonClick(self):
         dlg = AboutDialog()
@@ -410,7 +430,9 @@ def testWindow():
     app = QApplication(sys.argv)
     window = QMainWindow()
     ui = Ui_Broadcast()
-    ui.setupUi(window)
+    with open('broadcast_config.json', 'r') as file:
+        config = json.load(file)
+    ui.setupUi(window, config)
     window.show()
     sys.exit(app.exec_())
 

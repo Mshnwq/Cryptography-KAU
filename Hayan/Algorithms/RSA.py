@@ -81,6 +81,7 @@ def getKeyBitSizes():
    return ["16", "32", "64", "128"]
 
 def generateKey(keySize = 64):
+   keySize = keySize/2
    # Step 1: Create two prime numbers, p and q. Calculate n = p * q.
    print('Generating p prime...')
    p = generateLargePrime(keySize)
