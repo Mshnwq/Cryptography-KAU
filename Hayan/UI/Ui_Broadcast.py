@@ -379,8 +379,7 @@ class Ui_Broadcast(object):
     def onChangedAlgo(self, algo):
         # TODO
         __modules__ = Workers.getModules()
-        # self.updateBitCombo(sizes = __module__[algo].getKeySizes())
-        self.updateBitCombo(sizes = ["111", "223"])
+        self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
 
     def updateBitCombo(self, sizes = ["16", "32", "64", "128"]):
         self.bitSize_combo.clear()

@@ -70,21 +70,26 @@ class KeyGen_Worker(QThread):
     finishedSignal = pyqtSignal()
     resultSignal   = pyqtSignal(str)
 
-    def __init__(self, bit_size):
+    def __init__(self, algo, bit_size):
         super().__init__()
-        self.keygen = Key_Gen(bit_size)
+        self.algo = algo
+        self.bit_size = bit_size
 
     def run(self):
         # TODO some kind of progress indicator, 
-        # and key gen type assymetric handling
+        # and key gen type asymmetric handling
         i = 0
         while (i != 2):
             self.progressSignal.emit(str(i))
             time.sleep(0.5)
             i += 1
-        result = self.keygen.mix_key()
-        self.resultSignal.emit(result)
-        self.finishedSignal.emit()
+        result = __modules__[self.algo].generateKey(self.bit_size)
+        if __modules__[self.algo].isAsymmetric():
+            self.resultSignal.emit(str(result[0][0]))
+            self.finishedSignal.emit()
+        else:
+            self.resultSignal.emit(result)
+            self.finishedSignal.emit()
 
 
 class Cryptor_Worker(QThread):
@@ -96,7 +101,7 @@ class Cryptor_Worker(QThread):
     def __init__(self, block, algo, key):
         super().__init__()
         self.key = key
-        self.block = block
+        # self.block = block(ECB, DES, Text)
         # self.package = 'Algorithms'
         # self.fileDirectory = os.path.dirname(__file__)
         # if algo == None:

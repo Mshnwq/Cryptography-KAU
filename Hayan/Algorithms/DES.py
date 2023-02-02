@@ -319,7 +319,7 @@ class DES:
         return text
         
 def construct():
-   return DES()
+    return DES()
 
 # print("Encryption")
 # cipher_text = bin2hex(encrypt(pt, rkb, rk))

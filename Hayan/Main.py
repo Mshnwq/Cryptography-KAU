@@ -13,7 +13,7 @@ import ctypes
 import sys
 import os
 from functools import partial
- 
+
 # import all UI
 package = 'UI'
 fileDirectory = os.path.dirname(__file__)
@@ -127,7 +127,7 @@ class MainWindow(QMainWindow):
         
         # Create a worker thread
         bitSize = self.getBitSizeChosen()
-        key_worker = KeyGen_Worker(bit_size=bitSize)
+        key_worker = KeyGen_Worker(self.getAlgoChosen(), bit_size=bitSize)
 
         # Connect signals & slots
         key_worker.resultSignal.connect(self.storeKey)
