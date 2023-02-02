@@ -61,7 +61,8 @@ class Ui_Broadcast(object):
         self.gridLayout.addWidget(self.bitSize_label, 0, 1, 1, 1)
         self.bitSize_combo = QComboBox(self.algoType_groupBox)
         self.bitSize_combo.setGeometry(QRect(0, 0, 18, 18))
-        self.updateBitCombo()
+        self.updateBitCombo(
+            sizes = Workers.getModules()[list(Workers.getModules().keys())[0]].getKeyBitSizes()) # sorry
         self.gridLayout.addWidget(self.bitSize_combo, 1, 1, 1, 1)
 
         self.genKeys_btn = QPushButton("Generate Key", self.keyGen_groupBox)
@@ -172,15 +173,6 @@ class Ui_Broadcast(object):
         # populate with current available block modes
         self.blockMode_combo.addItems(["ECB", "CBC"]) # TODO
         self.gridLayout.addWidget(self.blockMode_combo, 1, 0, 1, 1)
-
-        # self.algoType_label = QLabel(" Algorithm")
-        # self.gridLayout.addWidget(self.algoType_label, 0, 1, 1, 1)
-        # self.algoType_combo = QComboBox(self.encrypt_groupBox)
-        # self.algoType_combo.setGeometry(QRect(0, 0, 18, 18))
-        # # populate with current available algorithms
-        # for algo in Workers.getModules().keys():
-        #     self.algoType_combo.addItem(algo)
-        # self.gridLayout.addWidget(self.algoType_combo, 1, 1, 1, 1)
 
         self.encryptMsg_btn = QPushButton("Encrypt Message", self.encrypt_groupBox)
         self.encryptMsg_btn.setIcon(QIcon(":key_lock"))
@@ -360,6 +352,7 @@ class Ui_Broadcast(object):
 
         settingsMenu.addSeparator()
         settingsMenu.addAction(self.logoutAction)
+
         # Help menu
         helpMenu = self.menuBar.addMenu(QIcon(":info"), "&Help")
         helpMenu.addAction(self.helpContentAction)
@@ -368,16 +361,15 @@ class Ui_Broadcast(object):
         MainWindow.setMenuBar(self.menuBar)
 
     def _createActions(self, MainWindow, config):
+        
         self.keyGenAction = QAction('&FPGA', MainWindow, checkable=True)
         self.keyGenAction.setChecked(config['FPGA_gen'])
-        self.keyGenAction.toggled.connect(lambda: self.logs_box.append("Key Gen on FPGA Later"))
 
         self.keyWrAction = QAction('&RFID', MainWindow, checkable=True)
         self.keyWrAction.setChecked(config['RFID_wr'])
 
         self.encrypSrcAction = QAction('&FPGA', MainWindow, checkable=True)
         self.encrypSrcAction.setChecked(config['FPGA_crypt'])
-        self.encrypSrcAction.toggled.connect(lambda: self.logs_box.append("Encryption on FPGA Later"))
 
         self.broadcastSrcAction = QAction('&Cloud', MainWindow, checkable=True)
         self.broadcastSrcAction.setChecked(config['Cloud'])
@@ -397,7 +389,6 @@ class Ui_Broadcast(object):
         dlg.exec_()
 
     def onChangedAlgo(self, algo):
-        # TODO
         __modules__ = Workers.getModules()
         self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
 

@@ -76,8 +76,7 @@ class KeyGen_Worker(QThread):
         self.bit_size = bit_size
 
     def run(self):
-        # TODO some kind of progress indicator, 
-        # and key gen type asymmetric handling
+        # TODO some kind of progress indicator for long
         i = 0
         while (i != 2):
             self.progressSignal.emit(str(i))

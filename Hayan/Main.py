@@ -94,11 +94,11 @@ class MainWindow(QMainWindow):
         # Key Generation Source action
         self.ui.keyGenAction.triggered.connect(lambda: self.logs_box.append("Key Gen on FPGA Later"))
         # Key Write action
-        self.ui.keyWrAction.triggered.connect(self.toggle_rfid)
+        self.ui.keyWrAction.triggered.connect(lambda: self.toggle_rfid('Wr'))
         # Encryption Source action
         self.ui.encrypSrcAction.triggered.connect(lambda: self.logs_box.append("Encryption on FPGA Later"))
         # Broadcast Source action
-        self.ui.broadcastSrcAction.triggered.connect(self.toggle_Cloud)
+        self.ui.broadcastSrcAction.triggered.connect(lambda: self.toggle_Cloud('Up'))
         # Save Broadcast Configuration action
         self.ui.saveConfigAction.triggered.connect(self.saveBroadcastConfig)
         # logout action
@@ -112,12 +112,18 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self, config)
 
         # Fetch keys
-        self.ui.fetch_btn.clicked.connect(self.fetchData)
         self.fetchStatus = False
+        if (self.ui.fetchSrcAction.isChecked() and self.checkCloud()): # from Cloud
+            self.ui.fetch_btn.clicked.connect(self.fetchData)
+        else: # from .txt
+            self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
 
         # Read Key
-        self.ui.readKey_btn.clicked.connect(self.readKey)
         self.readStatus = False
+        if (self.ui.keyRdAction.isChecked() and self.checkRFID()): # from RFID
+            self.ui.readKey_btn.clicked.connect(self.readKey)
+        else: # from.txt
+            self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
 
         # Decrpyt the plaintext
         self.ui.decryptMsg_btn.clicked.connect(self.decrypt)
@@ -128,6 +134,14 @@ class MainWindow(QMainWindow):
         # disable buttons
         self.ui.decryptMsg_btn.setEnabled(False)
 
+        # Fetch Source action
+        self.ui.fetchSrcAction.triggered.connect(lambda: self.toggle_Cloud('Ft'))
+        # Key Read action
+        self.ui.keyRdAction.triggered.connect(lambda: self.toggle_rfid('Rd'))
+        # Decryption Source action
+        self.ui.decrypSrcAction.triggered.connect(lambda: self.logs_box.append("Decryption on FPGA Later"))
+        # Save Broadcast Configuration action
+        self.ui.saveConfigAction.triggered.connect(self.saveReceiveConfig)
         # logout action
         self.ui.logoutAction.triggered.connect(self.logout)
 
@@ -135,7 +149,7 @@ class MainWindow(QMainWindow):
         '''Append a text to the logs box'''
         self.ui.logs_box.append(data)
 
-    def checkRFID(self):
+    def checkRFID(self, mode):
         try: # connect RFID
             self.rfid = RFID()
             return True
@@ -148,10 +162,13 @@ class MainWindow(QMainWindow):
             dialog.setInformativeText(f"Make sure RFID is connected")
             dialog.setStandardButtons(QMessageBox.Ok)
             dialog.exec_()
-            self.ui.keyWrAction.setChecked(False)
+            if mode == 'Wr':
+                self.ui.keyWrAction.setChecked(False)
+            else: 
+                self.ui.keyRdAction.setChecked(False)
             return False
 
-    def checkCloud(self):
+    def checkCloud(self, mode):
         try: # connect to cloud
             cred = credentials.Certificate(fileDirectory + '\\ee495-military-cryptology-firebase-adminsdk-b4q79-7de77dd092.json')
             self.default_app = initialize_app(cred, 
@@ -172,27 +189,47 @@ class MainWindow(QMainWindow):
             dialog.setInformativeText(f"Make sure Internet is connected")
             dialog.setStandardButtons(QMessageBox.Ok)
             dialog.exec_()
-            self.ui.broadcastSrcAction.setChecked(False)
+            if mode == 'Up':
+                self.ui.broadcastSrcAction.setChecked(False)
+            else: 
+                self.ui.fetchSrcAction.setChecked(False)
             return False
 
-    def toggle_rfid(self):
+    def toggle_rfid(self, mode):
         # Connect the button to the appropriate function based on the toggle state
-        if self.ui.keyWrAction.isChecked() and self.checkRFID():
-            self.ui.writeKey_btn.clicked.disconnect()
-            self.ui.writeKey_btn.clicked.connect(self.writeKey)
+        if mode == 'Wr':
+            if self.ui.keyWrAction.isChecked() and self.checkRFID(mode):
+                self.ui.writeKey_btn.clicked.disconnect()
+                self.ui.writeKey_btn.clicked.connect(self.writeKey)
+            else:
+                self.ui.writeKey_btn.clicked.disconnect()
+                self.ui.writeKey_btn.clicked.connect(self.saveKey)
         else:
-            self.ui.writeKey_btn.clicked.disconnect()
-            self.ui.writeKey_btn.clicked.connect(self.saveKey)
+            if self.ui.keyRdAction.isChecked() and self.checkRFID(mode):
+                self.ui.readKey_btn.clicked.disconnect()
+                self.ui.readKey_btn.clicked.connect(self.readKey)
+            else:
+                self.ui.readKey_btn.clicked.disconnect()
+                self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
 
-    def toggle_Cloud(self):
+    def toggle_Cloud(self, mode):
         # Connect the button to the appropriate function based on the toggle state
-        if self.ui.broadcastSrcAction.isChecked() and self.checkCloud():
-            self.ui.uploadData_btn.clicked.disconnect()
-            self.ui.uploadData_btn.clicked.connect(self.sendData)
+        if mode  == 'Up':
+            if self.ui.broadcastSrcAction.isChecked() and self.checkCloud(mode):
+                self.ui.uploadData_btn.clicked.disconnect()
+                self.ui.uploadData_btn.clicked.connect(self.sendData)
+            else:
+                delete_app(self.default_app)
+                self.ui.uploadData_btn.clicked.disconnect()
+                self.ui.uploadData_btn.clicked.connect(self.saveData)
         else:
-            delete_app(self.default_app)
-            self.ui.uploadData_btn.clicked.disconnect()
-            self.ui.uploadData_btn.clicked.connect(self.saveData)
+            if self.ui.fetchSrcAction.isChecked() and self.checkCloud(mode):
+                self.ui.fetch_btn.clicked.disconnect()
+                self.ui.fetch_btn.clicked.connect(self.fetchData)
+            else:
+                delete_app(self.default_app)
+                self.ui.fetch_btn.clicked.disconnect()
+                self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
 
     def saveData(self):
         name = 'Data/'+str(self.__key__)+"_cipher.txt"
@@ -232,9 +269,9 @@ class MainWindow(QMainWindow):
 
     def saveReceiveConfig(self):
         data = {
-            # "RFID_rd": false,
-            # "FPGA_crypt": false,
-            # "Cloud": false
+            "Cloud": self.ui.fetchSrcAction.isChecked(),
+            "RFID_rd": self.ui.keyRdAction.isChecked(),
+            "FPGA_crypt": self.ui.decrypSrcAction.isChecked()
         }
         try:
             with open('Receive_config.json', 'w') as file:
@@ -630,11 +667,19 @@ class MainWindow(QMainWindow):
             print(f"An error occurred while writing to the file: {e}")
 
     def txtRdHelper(self):
+        # TODO
+        print("FILLLL")
+        ...
+
+    def readKeyTxt(self):
+        # TODO
+        print("TODODOODO")
         ...
 
     def establishUART(self):
         #TODO ABDULLAH HELP
         print("kaka")
+        ...
         
         # self.fpga = FPGA() # create instance of RFID
 
