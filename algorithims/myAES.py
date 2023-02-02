@@ -1,8 +1,18 @@
 from copy import copy
+import string
+import random
+
+
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
 
 
 class AES:
     # substitution table
+    keySizes = [128, 192, 256]
     sbox0 = [
         ["63", "7c", "77", "7b", "f2", "6b", "6f", "c5",
             "30", "01", "67", "2b", "fe", "d7", "ab", "76"],
@@ -467,7 +477,21 @@ class AES:
         hexOut = string.hex()
         return hexOut
 
+    def getKeySizes(self):
+        return self.keySizes
 
+    def generateKey(self, size):
+        if int(size) in self.keySizes:
+            # generate random key
+            numOfChar = int(int(size)/8)
+            key = get_random_string(numOfChar)
+            return key
+        else:
+            return "key size is not valid"
+
+
+trd = AES().generateKey(256)
+print(trd)
 # cipher = AES().encrypt("faisaljabushanab", "abc1234567890123", None)
 # print("cipher:\t", cipher)
 # hexe = "faisaljabushanab".encode().hex()
