@@ -4,6 +4,7 @@ import ctypes
 import random
 from ctypes import *
 import os
+import time
 from time import time, sleep
 
 DEFAULT_SETTINGS =     [0x01,0x01,0x00,0x00,0x15,0x00,0x04]
@@ -24,11 +25,11 @@ class RFID:
     def __init__(self):
 
         ################################################################ Uncomment when you use the writer
-        # self.__setup_dll()
-        # self.openPort()
-        # print("opened COM ", self.fOpenComIndex.value)
+        #self.__setup_dll()
+        #self.openPort()
+        #print("opened COM ", self.fOpenComIndex.value)
         ################################################################ Uncomment when you use the writer
-        # self.setDeviceSettings() # use when needed
+        #self.setDeviceSettings() # use when needed
         # self.getDeviceInfo() # use when needed
         # self.closePort() # use when needed
         print("constructed RFID")
@@ -187,14 +188,14 @@ class RFID:
             if tagRead == None:
                 continue
             if tagRead not in uniqueTags:
-                print("adding:")
-                print(tagRead)
+                # print("adding:")
+                # print(tagRead)
                 uniqueTags.append(tagRead)
             else:
                 continue
             if (len(uniqueTags) > num):
                 print(f'{num} tag only')
-                time.sleep(1)
+                # time.sleep(1)
                 return 2
         if (len(uniqueTags) != num):
             return 0
@@ -361,11 +362,15 @@ class RFID:
                 case _:
                     return "Some Other ERROR"
 
+##### GUI Setup ######
+    def setSignals(self, logsAppendSignal):
+        self.logsAppendSignal = logsAppendSignal
+
 ##### GUI METHODS #####
-    def writeKey(self, desiredDataToWrite, window):
+    def writeKey(self, desiredDataToWrite):
         # return 1
         dataToWrite = bytes(desiredDataToWrite) # convert to bytes
-        window.logs_box.append("writing key...")
+        self.logsAppendSignal.emit("writing key...")
         writtenComplete = False
         numOfTags = 1
         attempt = 1
@@ -376,14 +381,14 @@ class RFID:
             if stat == 2: # tags surpassed numOfTags
                 return 2 # window pop
             if stat == 0: # tags != numOfTags
-                # window.logs_box.append("incorrect amount of tags in front of reader")
-                window.logs_box.append(f"Place {numOfTags} tag infront of reader")
+                # self.logsAppendSignal.emit("incorrect amount of tags in front of reader")
+                self.logsAppendSignal.emit(f"Place {numOfTags} tag infront of reader")
                 attemptFilter -= 1
                 if attemptFilter == 0:
                     return 0 # fail once attemptFilter 0 is reached
                 continue
             else:
-                window.logs_box.append("attempt #" + str(attempt))
+                self.logsAppendSignal.emit("attempt #" + str(attempt))
                 # attempt to write on tag
                 self.writeEPC(dataToWrite)
                 # check wheather data has been written correctly or not
@@ -394,20 +399,20 @@ class RFID:
                     if attempt == 6:
                         return 0 # fail once attempt 5 is reached
                     continue
-        window.logs_box.append("*******************")
-        window.logs_box.append("*******************")
-        window.logs_box.append("    Key Written    ")
-        window.logs_box.append("*******************")
-        window.logs_box.append("*******************")
+        self.logsAppendSignal.emit("*******************")
+        self.logsAppendSignal.emit("*******************")
+        self.logsAppendSignal.emit("    Key Written    ")
+        self.logsAppendSignal.emit("*******************")
+        self.logsAppendSignal.emit("*******************")
         return 1
 
-    def readKey(self, window):
+    def readKey(self):
     # When Read Tag Button is pressed in the GUI
     # return 0 when failed to read the tag
     # return 1 when successfully read tag
     # return 2 when surpassed amount of tags {to pop a window}
         # return 1
-        window.logs_box.append("Reading tag...")
+        self.logsAppendSignal.emit("Reading tag...")
         readComplete = False
         numOfTags = 1
         attempt = 1
@@ -419,13 +424,13 @@ class RFID:
             if stat == 2: # tags surpassed numOfTags
                 return 2 # window pop
             if stat == 0: # tags != numOfTags
-                window.logs_box.append(f"Place {numOfTags} tag infront of reader")
+                self.logsAppendSignal.emit(f"Place {numOfTags} tag infront of reader")
                 attemptFilter -= 1
                 if attemptFilter == 0:
                     return 0 # fail once attemptFilter 0 is reached
                 continue
             else:
-                window.logs_box.append("attempt #" + str(attempt))
+                self.logsAppendSignal.emit("attempt #" + str(attempt))
                 # attempt to read on tag
                 tagRead = self.readInvetory()
                 # check wheather data has been read correctly or not
@@ -437,16 +442,16 @@ class RFID:
                         return 0 # fail once attempt 5 is reached
                     continue
 
-        window.logs_box.append("******************")
-        window.logs_box.append("******************")
-        window.logs_box.append("     Tag Read     ")
-        window.logs_box.append("******************")
-        window.logs_box.append("******************")
+        self.logsAppendSignal.emit("******************")
+        self.logsAppendSignal.emit("******************")
+        self.logsAppendSignal.emit("     Tag Read     ")
+        self.logsAppendSignal.emit("******************")
+        self.logsAppendSignal.emit("******************")
     
         # Decode tag info
         print(tagRead)
         self.__key__  = int.from_bytes(tagRead[0:len(tagRead)], 'big')
-        print(self.__key__)
+        print(f"decode: {self.__key__}")
         
         return 1
 

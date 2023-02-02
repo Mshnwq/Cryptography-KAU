@@ -50,27 +50,27 @@ class Ui_Fetch(object):
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
 
-        self.N_label = QLabel(self.frame)
-        self.N_label.setGeometry(QRect(75, 3, 50, 40))
-        self.N_label.setStyleSheet("QFrame" 
-                                    "{"
-                                        "background-color: rgb(235,235,235);"
-                                        "border-style: outset;"
-                                        "border-width: 0.5;"
-                                        "border-radius: 2;"
-                                        "border-color: rgb(200,200,200);"
-                                        "font-size: 24px;"
-                                        "font-family: Times New Roman;"    
-                                        "font-weight: bold;"
-                                        "color: black;"
-                                        "padding: 1px;"
-                                    "}"
-                                    )
-        self.N_label.setAlignment(Qt.AlignCenter)
-        self.N_label.setFont(font)
+        # self.N_label = QLabel(self.frame)
+        # self.N_label.setGeometry(QRect(75, 3, 50, 40))
+        # self.N_label.setStyleSheet("QFrame" 
+        #                             "{"
+        #                                 "background-color: rgb(235,235,235);"
+        #                                 "border-style: outset;"
+        #                                 "border-width: 0.5;"
+        #                                 "border-radius: 2;"
+        #                                 "border-color: rgb(200,200,200);"
+        #                                 "font-size: 24px;"
+        #                                 "font-family: Times New Roman;"    
+        #                                 "font-weight: bold;"
+        #                                 "color: black;"
+        #                                 "padding: 1px;"
+        #                             "}"
+        #                             )
+        # self.N_label.setAlignment(Qt.AlignCenter)
+        # self.N_label.setFont(font)
         
         self.Cipher_label = QLabel(self.frame)
-        self.Cipher_label.setGeometry(QRect(275, 3, int(FETCH_WINDOW_WIDTH/2)-20, 40))
+        self.Cipher_label.setGeometry(QRect(172, 3, int(FETCH_WINDOW_WIDTH/2)-20, 40))
         self.Cipher_label.setStyleSheet("QFrame" 
                                         "{"
                                             "background-color: rgb(235,235,235);"
@@ -128,7 +128,7 @@ class Ui_Fetch(object):
                                             "color: black;"
                                             "padding: 1px;"
                                         "}"
-                                      "QPushButton::pressed" 
+                                    "QPushButton::pressed" 
                                         "{"
                                             "background-color: rgb(150, 150, 150);"
                                             "border-style: inset;"
@@ -150,32 +150,32 @@ class Ui_Fetch(object):
         _translate = QCoreApplication.translate
         Window.setWindowTitle(_translate("Window", "Fetched Data"))
         self.Window_label.setText(_translate("Window", "Choose from Fetched"))
-        self.N_label.setText(_translate("Window", "N"))
+        # self.N_label.setText(_translate("Window", "N"))
         self.Cipher_label.setText(_translate("Window", "Cipher"))
         self.OK_btn.setText(_translate("Window", "OK"))
         self.Cancel_btn.setText(_translate("Window", "Cancel"))
         
     def addRow(self, data):
             
-        self.fetched_N = QLabel(data["N"])
-        self.fetched_N.setGeometry(QRect(0, 0, 80, 40))
-        self.fetched_N.setStyleSheet("QFrame" 
-                                        "{"
-                                            "background-color: rgb(235,235,235);"
-                                            "border-style: outset;"
-                                            "border-width: 0.5px;"
-                                            "border-radius: 4px;"
-                                            "border-color: rgb(200,200,200);"
-                                            "font-size: 24px;"
-                                            "font-family: Times New Roman;"    
-                                            "font-weight: bold;"
-                                            "color: black;"
-                                            "padding: 1px;"
-                                        "}"
-                                        )
-        self.fetched_N.setAlignment(Qt.AlignCenter)
-        self.fetched_N.setObjectName("fetched_N#" + str(1+self.row))
-        self.gridLayout.addWidget(self.fetched_N, self.row, 1, 1, 1)
+        # self.fetched_N = QLabel(data["N"])
+        # self.fetched_N.setGeometry(QRect(0, 0, 80, 40))
+        # self.fetched_N.setStyleSheet("QFrame" 
+        #                                 "{"
+        #                                     "background-color: rgb(235,235,235);"
+        #                                     "border-style: outset;"
+        #                                     "border-width: 0.5px;"
+        #                                     "border-radius: 4px;"
+        #                                     "border-color: rgb(200,200,200);"
+        #                                     "font-size: 24px;"
+        #                                     "font-family: Times New Roman;"    
+        #                                     "font-weight: bold;"
+        #                                     "color: black;"
+        #                                     "padding: 1px;"
+        #                                 "}"
+        #                                 )
+        # self.fetched_N.setAlignment(Qt.AlignCenter)
+        # self.fetched_N.setObjectName("fetched_N#" + str(1+self.row))
+        # self.gridLayout.addWidget(self.fetched_N, self.row, 1, 1, 1)
 
         self.fetched_Cipher = QLabel(str(data["Cipher"]))
         self.fetched_Cipher.setGeometry(QRect(0, 0, 80, 40))
@@ -195,12 +195,12 @@ class Ui_Fetch(object):
                                             )
         self.fetched_Cipher.setAlignment(Qt.AlignCenter)
         self.fetched_Cipher.setObjectName("fetched_Cipher#" + str(1+self.row))
-        self.gridLayout.addWidget(self.fetched_Cipher, self.row, 2, 1, 3)
+        self.gridLayout.addWidget(self.fetched_Cipher, self.row, 1, 1, 3)
 
         self.choiceButton = QRadioButton("")
         self.choiceButton.setGeometry(QRect(50, 50, 30, 30))
         self.choiceButton.setObjectName("chosen#" + str(1+self.row))
-        self.gridLayout.addWidget(self.choiceButton, self.row, 4, Qt.AlignRight)
+        self.gridLayout.addWidget(self.choiceButton, self.row, 3, Qt.AlignRight)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.row += 1

@@ -490,8 +490,12 @@ class AES:
             return "key size is not valid"
 
 
-trd = AES().generateKey(256)
-print(trd)
+def construct():
+    return AES()
+
+
+# trd = AES().generateKey(256)
+# print(trd)
 # cipher = AES().encrypt("faisaljabushanab", "abc1234567890123", None)
 # print("cipher:\t", cipher)
 # hexe = "faisaljabushanab".encode().hex()

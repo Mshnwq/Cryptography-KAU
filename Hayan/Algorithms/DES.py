@@ -318,6 +318,8 @@ class DES:
         text = self.bin2hex(self.encrypt(cipher_text, key, "decrypt" ))
         return text
         
+def construct():
+    return DES()
 
 # print("Encryption")
 # cipher_text = bin2hex(encrypt(pt, rkb, rk))

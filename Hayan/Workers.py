@@ -1,11 +1,14 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from Key_Gen import *
 import time
 import os
 import importlib
 import sys
 
+
+# import all Algorithms
 package = 'Algorithms'
 fileDirectory = os.path.dirname(__file__)
 __modules__ = dict()
@@ -14,62 +17,79 @@ for file_name in os.listdir(f"{fileDirectory}\\{package}"):
         module_name = file_name[:-3]
         __modules__[module_name] = importlib.import_module(f"{package}.{module_name}", '.')
 
-class Cloud_Worker(QThread):
+def getModules():
+    return __modules__
+
+class Fetch_Worker(QThread):
     def __init__(self):
         super().__init__()
 
     def run(self):
         ...
 
+class Upload_Worker(QThread):
+    def __init__(self):
+        super().__init__()
+
+    def run(self):
+        ...
 
 class RFID_Worker(QThread):
     '''RFID Working Thread Class'''
     ##### Signal for GUI Slots #####
-    insertSignal = pyqtSignal(object)
-    sendingRequestSignal = pyqtSignal(int)
-    gateStatusSignal = pyqtSignal(int)
     logsAppendSignal = pyqtSignal(str)
-    clearSignal = pyqtSignal()
+    finishedSignal = pyqtSignal(int, QThread)
+    resultSignal   = pyqtSignal(str)
     
-    def __init__(self):
+    def __init__(self, rfid, tagData=None, op='Read'):
         super().__init__()
         
-        # create instance of checkpoint gate
-        # self.checkPointGate = CheckPoint(GATE_ID, BUFFER_SIZE, TIMEOUT, TIME_WINDOW, POLLING_CONTROL_TIME)
+        self.rfid = rfid
+        self.tagData = tagData
+        self.op = op
         # set the signals for GUI communication
-        self.checkPointGate.setSignals (self.insertSignal,
-                                        self.sendingRequestSignal,
-                                        self.gateStatusSignal,
-                                        self.logsAppendSignal,
-                                        self.clearSignal)
+        self.rfid.setSignals(self.logsAppendSignal)
 
     @pyqtSlot()
     def run(self):
         '''The Main Process for the Thread'''
-        while self.checkPointGate.getGateStatus() != 0:
-            time.sleep(0.2)
-            self.checkPointGate.process_RFID_batch()
+        if self.op == 'Read':
+            stat = self.rfid.readKey()
+            key = str(self.rfid.getKey())
+            # print(f"THE KEY #{key}")
+            # print(type(key))
+            self.resultSignal.emit(key)
+            self.finishedSignal.emit(stat, self)
+        else:
+            stat = self.rfid.writeKey(self.tagData)
+            self.finishedSignal.emit(stat, self)
 
-
-class Key_Worker(QThread):
-    progressSignal = pyqtSignal(int)
+class KeyGen_Worker(QThread):
+    '''Key Generator Worker Thread Class'''
+    progressSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
-    resultSignal = pyqtSignal(str)
+    resultSignal   = pyqtSignal(str)
 
-    def __init__(self, algo, size):
+    def __init__(self, algo, bit_size):
         super().__init__()
-        self.size = size
-        self.constructCrypto(algo)
-
-    def constructCrypto(self, algo):
-        self.crypto = __modules__[algo].construct()
+        self.algo = algo
+        self.bit_size = bit_size
 
     def run(self):
-        print("ssssss")
-        result = self.crypto.generateKey(self.size)
-        print(result)
-        self.finishedSignal.emit()
-        self.resultSignal.emit(result)
+        # TODO some kind of progress indicator, 
+        # and key gen type asymmetric handling
+        i = 0
+        while (i != 2):
+            self.progressSignal.emit(str(i))
+            time.sleep(0.5)
+            i += 1
+        result = __modules__[self.algo].generateKey(self.bit_size)
+        if __modules__[self.algo].isAsymmetric():
+            self.resultSignal.emit(str(result[0][0]))
+            self.finishedSignal.emit()
+        else:
+            self.resultSignal.emit(result)
+            self.finishedSignal.emit()
 
 
 class Cryptor_Worker(QThread):
@@ -77,11 +97,11 @@ class Cryptor_Worker(QThread):
     progressSignal = pyqtSignal(int)
     finishedSignal = pyqtSignal()
     resultSignal = pyqtSignal(str)
-
+    '''BLOCK MODE should be'''
     def __init__(self, block, algo, key):
         super().__init__()
         self.key = key
-        self.block = block
+        # self.block = block(ECB, DES, Text)
         # self.package = 'Algorithms'
         # self.fileDirectory = os.path.dirname(__file__)
         # if algo == None:
@@ -118,7 +138,7 @@ class Cryptor_Worker(QThread):
 
 
 if __name__ == "__main__":
-    cryptor = Key_Worker("RSA", 32)
+    cryptor = KeyGen_Worker("RSA", 32)
     cryptor.start()
     # rsa = __modules__['RSA'].RSA()
     # rsa.makeKeyFiles('RSA_demo', 32)
