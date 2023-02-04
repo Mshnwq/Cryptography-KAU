@@ -178,7 +178,7 @@ class MainWindow(QMainWindow):
             )
             get_app()
             self.ref = db.reference("/storage/")
-            print("Cloud Connected")
+            print("Cloud Connected ")
             return True
         except Exception as e:
             self.ref = None
