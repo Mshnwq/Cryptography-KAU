@@ -33,24 +33,11 @@ class MainWindow(QMainWindow):
         # Window Setup
         self.setWindowIcon(QIcon(":seal"))
 
-        self.rfid = RFID()
+        self.rfid = None
         self._threads = []
         self.dialogType = 0
 
-        if platform.system() == 'Windows':
-            # connect to cloud
-            cred = credentials.Certificate(fileDirectory + '\\ee495-military-cryptology-firebase-adminsdk-b4q79-7de77dd092.json')
-            defualt_app = initialize_app(cred, 
-                {
-                "databaseURL" : "https://ee495-military-cryptology-default-rtdb.firebaseio.com/"
-                }
-            )
-            ...
-        else:
-            exit(f"{platform.system()} OS is not supported")
-            sys.exit()
-
-        # show() choice window
+        # show choice window
         self.choiceWindow()
 
     def logout(self):
@@ -69,19 +56,32 @@ class MainWindow(QMainWindow):
     def broadcastMode(self):
         # construct the window
         self.ui = __ui__['Broadcast'].construct()
-        self.ui.setupUi(self)
+        with open('Broadcast'+'_config.json', 'r') as file:
+            config = json.load(file)
+        self.ui.setupUi(self, config)
 
         # Generate keys
         self.ui.genKeys_btn.clicked.connect(self.generateKeys)
 
         # Write Key
-        self.ui.writeKey_btn.clicked.connect(self.writeKey)
+        if (self.ui.keyWrAction.isChecked() and self.checkRFID()): # onto RFID
+            self.ui.writeKey_btn.clicked.connect(self.writeKey)
+        else: # onto .txt
+            self.ui.writeKey_btn.clicked.connect(self.saveKey)
 
         # Encrpyt the plaintext
-        self.ui.encryptMsg_btn.clicked.connect(self.encrypt)
+        # if self.ui.encrypSrcAction.isChecked():
+        if False: # Hardware Encrypt
+            # TODO an fpga encrypt
+            ...
+        else: # Software Encrypt
+            self.ui.encryptMsg_btn.clicked.connect(self.encrypt)
 
         # Upload data to backend
-        self.ui.uploadData_btn.clicked.connect(self.sendData)
+        if self.ui.broadcastSrcAction.isChecked() and self.checkCloud(): # use cloud
+            self.ui.uploadData_btn.clicked.connect(self.sendData)
+        else: # use .txt
+            self.ui.uploadData_btn.clicked.connect(self.saveData)
 
         # Clear logs
         self.ui.clearLogs_btn.clicked.connect(lambda: self.ui.logs_box.setPlainText(""))
@@ -91,21 +91,39 @@ class MainWindow(QMainWindow):
         self.ui.writeKey_btn.setEnabled(False)
         self.ui.uploadData_btn.setEnabled(False)
 
+        # Key Generation Source action
+        self.ui.keyGenAction.triggered.connect(lambda: self.logs_box.append("Key Gen on FPGA Later"))
+        # Key Write action
+        self.ui.keyWrAction.triggered.connect(lambda: self.toggle_rfid('Wr'))
+        # Encryption Source action
+        self.ui.encrypSrcAction.triggered.connect(lambda: self.logs_box.append("Encryption on FPGA Later"))
+        # Broadcast Source action
+        self.ui.broadcastSrcAction.triggered.connect(lambda: self.toggle_Cloud('Up'))
+        # Save Broadcast Configuration action
+        self.ui.saveConfigAction.triggered.connect(self.saveBroadcastConfig)
         # logout action
         self.ui.logoutAction.triggered.connect(self.logout)
 
     def receiveMode(self):
         # construct the window
         self.ui = __ui__['Receive'].construct()
-        self.ui.setupUi(self)
+        with open('Receive'+'_config.json', 'r') as file:
+            config = json.load(file)
+        self.ui.setupUi(self, config)
 
         # Fetch keys
-        self.ui.fetch_btn.clicked.connect(self.fetchData)
         self.fetchStatus = False
+        if (self.ui.fetchSrcAction.isChecked() and self.checkCloud()): # from Cloud
+            self.ui.fetch_btn.clicked.connect(self.fetchData)
+        else: # from .txt
+            self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
 
         # Read Key
-        self.ui.readKey_btn.clicked.connect(self.readKey)
         self.readStatus = False
+        if (self.ui.keyRdAction.isChecked() and self.checkRFID()): # from RFID
+            self.ui.readKey_btn.clicked.connect(self.readKey)
+        else: # from.txt
+            self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
 
         # Decrpyt the plaintext
         self.ui.decryptMsg_btn.clicked.connect(self.decrypt)
@@ -116,12 +134,150 @@ class MainWindow(QMainWindow):
         # disable buttons
         self.ui.decryptMsg_btn.setEnabled(False)
 
+        # Fetch Source action
+        self.ui.fetchSrcAction.triggered.connect(lambda: self.toggle_Cloud('Ft'))
+        # Key Read action
+        self.ui.keyRdAction.triggered.connect(lambda: self.toggle_rfid('Rd'))
+        # Decryption Source action
+        self.ui.decrypSrcAction.triggered.connect(lambda: self.logs_box.append("Decryption on FPGA Later"))
+        # Save Broadcast Configuration action
+        self.ui.saveConfigAction.triggered.connect(self.saveReceiveConfig)
         # logout action
         self.ui.logoutAction.triggered.connect(self.logout)
 
     def logsAppend(self, data):
         '''Append a text to the logs box'''
         self.ui.logs_box.append(data)
+
+    def checkRFID(self, mode):
+        try: # connect RFID
+            self.rfid = RFID()
+            return True
+        except Exception as e:
+            self.rfid = None
+            dialog = QMessageBox()
+            dialog.setWindowTitle(f"Error Occured with RFID")
+            dialog.setText(f"Details: {e}")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Make sure RFID is connected")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            if mode == 'Wr':
+                self.ui.keyWrAction.setChecked(False)
+            else: 
+                self.ui.keyRdAction.setChecked(False)
+            return False
+
+    def checkCloud(self, mode):
+        try: # connect to cloud
+            cred = credentials.Certificate(fileDirectory + '\\ee495-military-cryptology-firebase-adminsdk-b4q79-7de77dd092.json')
+            self.default_app = initialize_app(cred, 
+                {
+                "databaseURL" : "https://ee495-military-cryptology-default-rtdb.firebaseio.com/"
+                }
+            )
+            get_app()
+            self.ref = db.reference("/storage/")
+            print("Cloud Connected")
+            return True
+        except Exception as e:
+            self.ref = None
+            dialog = QMessageBox()
+            dialog.setWindowTitle(f"Error Occured with Cloud")
+            dialog.setText(f"Details: {e}")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Make sure Internet is connected")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            if mode == 'Up':
+                self.ui.broadcastSrcAction.setChecked(False)
+            else: 
+                self.ui.fetchSrcAction.setChecked(False)
+            return False
+
+    def toggle_rfid(self, mode):
+        # Connect the button to the appropriate function based on the toggle state
+        if mode == 'Wr':
+            if self.ui.keyWrAction.isChecked() and self.checkRFID(mode):
+                self.ui.writeKey_btn.clicked.disconnect()
+                self.ui.writeKey_btn.clicked.connect(self.writeKey)
+            else:
+                self.ui.writeKey_btn.clicked.disconnect()
+                self.ui.writeKey_btn.clicked.connect(self.saveKey)
+        else:
+            if self.ui.keyRdAction.isChecked() and self.checkRFID(mode):
+                self.ui.readKey_btn.clicked.disconnect()
+                self.ui.readKey_btn.clicked.connect(self.readKey)
+            else:
+                self.ui.readKey_btn.clicked.disconnect()
+                self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
+
+    def toggle_Cloud(self, mode):
+        # Connect the button to the appropriate function based on the toggle state
+        if mode  == 'Up':
+            if self.ui.broadcastSrcAction.isChecked() and self.checkCloud(mode):
+                self.ui.uploadData_btn.clicked.disconnect()
+                self.ui.uploadData_btn.clicked.connect(self.sendData)
+            else:
+                delete_app(self.default_app)
+                self.ui.uploadData_btn.clicked.disconnect()
+                self.ui.uploadData_btn.clicked.connect(self.saveData)
+        else:
+            if self.ui.fetchSrcAction.isChecked() and self.checkCloud(mode):
+                self.ui.fetch_btn.clicked.disconnect()
+                self.ui.fetch_btn.clicked.connect(self.fetchData)
+            else:
+                delete_app(self.default_app)
+                self.ui.fetch_btn.clicked.disconnect()
+                self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
+
+    def saveData(self):
+        name = 'Data/'+str(self.__key__)+"_cipher.txt"
+        content = self.ui.plaintext_box.toPlainText()
+        self.txtWrHelper(name, content)
+
+        self.ui.logs_box.append("Save Success")
+        self.ui.uploadData_statusText.setText("Success")
+        self.ui.uploadData_statusText.setStyleSheet(
+            "color: rgb(0,200,0);\nfont: bold 16px;")
+
+    def saveKey(self):
+        name = 'Key/'+str(self.__key__)+'.txt'
+        content = str(self.__key__)
+        self.txtWrHelper(name, content)
+
+        self.ui.logs_box.append("Save Key Success")
+        self.ui.writeKey_statusText.setText("Key Saved")
+        self.ui.writeKey_statusText.setStyleSheet(
+            "color: rgb(0,200,0);\nfont: bold 14px;")
+        self.ui.logs_box.append(f'(int) saved: {int(self.__key__)}')
+        self.ui.logs_box.append(f'(hex) saved: {hex(int(self.__key__))}')
+        self.ui.logs_box.append(f'(bin) saved: {bin(int(self.__key__))}')
+
+    def saveBroadcastConfig(self):
+        data = {
+            "FPGA_gen": self.ui.keyGenAction.isChecked(),
+            "RFID_wr": self.ui.keyWrAction.isChecked(),
+            "FPGA_crypt": self.ui.encrypSrcAction.isChecked(),
+            "Cloud": self.ui.broadcastSrcAction.isChecked()
+        }
+        try:
+            with open('Broadcast_config.json', 'w') as file:
+                json.dump(data, file, indent=4)
+        except Exception as e:
+            print(f"An error occurred while saving config file: {e}")
+
+    def saveReceiveConfig(self):
+        data = {
+            "Cloud": self.ui.fetchSrcAction.isChecked(),
+            "RFID_rd": self.ui.keyRdAction.isChecked(),
+            "FPGA_crypt": self.ui.decrypSrcAction.isChecked()
+        }
+        try:
+            with open('Receive_config.json', 'w') as file:
+                json.dump(data, file, indent=4)
+        except Exception as e:
+            print(f"An error occurred while saving config file: {e}")
 
     def generateKeys(self):
         
@@ -181,6 +337,16 @@ class MainWindow(QMainWindow):
 
     def readKey(self):
 
+        # if self.getBitSizeChosen() > 64:
+        #     dialog = QMessageBox()
+        #     dialog.setText(f"Cannot Read {self.getBitSizeChosen()} bit key on tag")
+        #     dialog.setWindowTitle("Invalid Key Bit Size!")
+        #     dialog.setIcon(QMessageBox.Critical)
+        #     dialog.setInformativeText(f"Choose a Key Bit Size of 128 or lower")
+        #     dialog.setStandardButtons(QMessageBox.Ok)
+        #     dialog.exec_()
+        #     return None
+
         self.ui.readKey_btn.setEnabled(False)
         self.dialogType = 1
 
@@ -236,13 +402,23 @@ class MainWindow(QMainWindow):
 
     def writeKey(self):
 
+        if self.getBitSizeChosen() > 128:
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Invalid Key Bit Size!")
+            dialog.setText(f"Cannot Write {self.getBitSizeChosen()} bit key on tag")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Choose 128 bit or lower")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            return None
+        
         self.ui.writeKey_btn.setEnabled(False)
         self.dialogType = 2
-
+        
         #TODO FAISAL initialize data
         tagData = bytearray(16)
-        # keyToWriteInt = self.__key__
-        self.keyToWriteInt = 1945954
+        self.keyToWriteInt = int(self.__key__)
+        # self.keyToWriteInt = 1945954
         keyToWrite = self.keyToWriteInt.to_bytes(16, byteorder = 'big')
 
         for i in range(0, len(keyToWrite)):  
@@ -270,9 +446,9 @@ class MainWindow(QMainWindow):
             self.ui.writeKey_statusText.setText("Key Issued")
             self.ui.writeKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.ui.logs_box.append(f'(int) written: {self.keyToWriteInt}')
-            self.ui.logs_box.append(f'(hex) written: {hex(self.keyToWriteInt)}')
-            self.ui.logs_box.append(f'(bin) written: {bin(self.keyToWriteInt)}')
+            self.ui.logs_box.append(f'(int) written: {self.__key__}')
+            self.ui.logs_box.append(f'(hex) written: {hex(self.__key__)}')
+            self.ui.logs_box.append(f'(bin) written: {bin(self.__key__)}')
         elif stat == 0: 
             self.ui.logs_box.append("Write Key Failed")
             self.ui.writeKey_statusText.setText("Issueing Failed")
@@ -292,7 +468,6 @@ class MainWindow(QMainWindow):
             dialog.exec_()
 
     def dialogClicked(self, btn):
-        # print(btn.text())
         if(self.dialogType == 2 and btn.text() == 'Retry'):
             self.writeKey()
         if(self.dialogType == 1 and btn.text() == 'Retry'):
@@ -404,13 +579,10 @@ class MainWindow(QMainWindow):
         json_object = json.dumps(pair, indent = 4) 
 
         try:
-            get_app()
-            ref = db.reference("/storage/")
-            ref.push(json_object)
+            self.ref.push(json_object)
             stat = 1
         except:
             stat = 0
-
 
         if stat == 1:
             self.ui.logs_box.append("Upload Success")
@@ -486,9 +658,28 @@ class MainWindow(QMainWindow):
 
         self.fetchedWindow.close()
 
+    def txtWrHelper(self, file_name, text):
+        try:
+            with open(file_name, "w") as file:
+                file.write(text)
+            print(f"Successfully wrote {file_name}")
+        except Exception as e:
+            print(f"An error occurred while writing to the file: {e}")
+
+    def txtRdHelper(self):
+        # TODO
+        print("FILLLL")
+        ...
+
+    def readKeyTxt(self):
+        # TODO
+        print("TODODOODO")
+        ...
+
     def establishUART(self):
         #TODO ABDULLAH HELP
         print("kaka")
+        ...
         
         # self.fpga = FPGA() # create instance of RFID
 

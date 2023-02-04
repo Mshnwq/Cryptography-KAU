@@ -76,12 +76,11 @@ class KeyGen_Worker(QThread):
         self.bit_size = bit_size
 
     def run(self):
-        # TODO some kind of progress indicator, 
-        # and key gen type asymmetric handling
+        # TODO some kind of progress indicator for long
         i = 0
         while (i != 2):
             self.progressSignal.emit(str(i))
-            time.sleep(0.5)
+            time.sleep(0.25)
             i += 1
         result = __modules__[self.algo].generateKey(self.bit_size)
         if __modules__[self.algo].isAsymmetric():

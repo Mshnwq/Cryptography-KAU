@@ -1,3 +1,4 @@
+import json
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -7,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import Workers
 
 class Ui_Receive(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, config):
         
         WINDOW_WIDTH = 1200
         WINDOW_HEIGHT = 800
@@ -269,7 +270,7 @@ class Ui_Receive(object):
                                             BUTTON_WIDTH, BUTTON_HEIGHT))
 
         # Create actions to attach to menu bar
-        self._createActions(MainWindow)
+        self._createActions(MainWindow, config)
         # Create menu bar and populate with actions
         self._createMenuBar(MainWindow)
         
@@ -291,13 +292,22 @@ class Ui_Receive(object):
 
     def _createMenuBar(self, MainWindow):
         self.menuBar = QMenuBar(MainWindow)
-        # File menu
+        # Settings menu
         settingsMenu = self.menuBar.addMenu(QIcon(":settings"), "&Settings")
         configMenu = settingsMenu.addMenu("&Configurations")
-        configMenu.addAction(self.appConfigAction)
-        configMenu.addAction(self.FPGAConfigAction)
+        configMenu.setTearOffEnabled(True)
+        fetchSrcMenu = configMenu.addMenu("&Fetch Source")
+        fetchSrcMenu.addAction(self.fetchSrcAction)
+        keyRdMenu = configMenu.addMenu("&Key Read Source")
+        keyRdMenu.addAction(self.keyRdAction)
+        decrypSrcMenu = configMenu.addMenu("&Decryption Source")
+        decrypSrcMenu.addAction(self.decrypSrcAction)
+        configMenu.addSeparator()
+        configMenu.addAction(self.saveConfigAction)
+
         settingsMenu.addSeparator()
         settingsMenu.addAction(self.logoutAction)
+
         # Help menu
         helpMenu = self.menuBar.addMenu(QIcon(":info"), "&Help")
         helpMenu.addAction(self.helpContentAction)
@@ -305,20 +315,26 @@ class Ui_Receive(object):
 
         MainWindow.setMenuBar(self.menuBar)
 
-    def _createActions(self, MainWindow):
-        self.appConfigAction = QAction("&App Configurations", MainWindow)
-        self.appConfigAction.triggered.connect(self.appConfigActionButtonClick)
+    def _createActions(self, MainWindow, config):
+
+        self.fetchSrcAction = QAction('&Cloud', MainWindow, checkable=True)
+        self.fetchSrcAction.setChecked(config['Cloud'])
+
+        self.keyRdAction = QAction('&RFID', MainWindow, checkable=True)
+        self.keyRdAction.setChecked(config['RFID_rd'])
+
+        self.decrypSrcAction = QAction('&FPGA', MainWindow, checkable=True)
+        self.decrypSrcAction.setChecked(config['FPGA_crypt'])
+
+        self.saveConfigAction = QAction("&Save Config", MainWindow)
+        # TODO for FPGA
         self.FPGAConfigAction = QAction("&FPGA Configurations", MainWindow)
+
         self.logoutAction = QAction("&Logout", MainWindow)
         self.helpContentAction = QAction("&Help Content", MainWindow)
         self.helpContentAction.triggered.connect(lambda: self.logs_box.append("Help Later"))
         self.aboutAction = QAction("&About", MainWindow)
         self.aboutAction.triggered.connect(self.aboutActionButtonClick)
-
-    def appConfigActionButtonClick(self):
-        # self.settingWindow = Ui_SettingsWindow(self.isAdmin)
-        # self.settingWindow.show()
-        ...
 
     def aboutActionButtonClick(self):
         dlg = AboutDialog()
@@ -350,7 +366,9 @@ def testWindow():
     app = QApplication(sys.argv)
     window = QMainWindow()
     ui = Ui_Receive()
-    ui.setupUi(window)
+    with open('receive_config.json', 'r') as file:
+        config = json.load(file)
+    ui.setupUi(window, config)
     window.show()
     sys.exit(app.exec_())
 

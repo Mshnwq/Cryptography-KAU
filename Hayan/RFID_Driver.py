@@ -24,12 +24,12 @@ class RFID:
     # init method or constructor
     def __init__(self):
 
-        ################################################################ Uncomment when you use the writer
-        #self.__setup_dll()
-        #self.openPort()
-        #print("opened COM ", self.fOpenComIndex.value)
-        ################################################################ Uncomment when you use the writer
-        #self.setDeviceSettings() # use when needed
+        ############################################################### Uncomment when you use the writer
+        self.__setup_dll()
+        self.openPort()
+        print("opened COM ", self.fOpenComIndex.value)
+        ############################################################### Uncomment when you use the writer
+        # self.setDeviceSettings() # use when needed
         # self.getDeviceInfo() # use when needed
         # self.closePort() # use when needed
         print("constructed RFID")
