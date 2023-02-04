@@ -183,10 +183,10 @@ class MainWindow(QMainWindow):
             cred = credentials.Certificate(
                 fileDirectory + '\\ee495-military-cryptology-firebase-adminsdk-b4q79-7de77dd092.json')
             self.default_app = initialize_app(cred,
-                                              {
-                                                  "databaseURL": "https://ee495-military-cryptology-default-rtdb.firebaseio.com/"
-                                              }
-                                              )
+                                                {
+                                                "databaseURL": "https://ee495-military-cryptology-default-rtdb.firebaseio.com/"
+                                                }
+                                                )
             get_app()
             self.ref = db.reference("/storage/")
             print("Cloud Connected ")

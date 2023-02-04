@@ -398,7 +398,7 @@ class AES:
             # transform key
         return state
 
-    def encrypt(self, plainText, key, rounds):
+    def encrypt(self, plainText, key):
         cipher_text = ""
         hexString = self.prepareText(plainText)
         print("plain: ", hexString)
