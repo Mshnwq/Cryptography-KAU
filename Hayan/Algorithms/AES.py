@@ -467,7 +467,9 @@ class AES:
         hexOut = string.hex()
         return hexOut
 
+
 def construct():
+    print("hello")
     return AES()
 
 # cipher = AES().encrypt("faisaljabushanab", "abc1234567890123", None)

@@ -1,8 +1,17 @@
-# Python3 code for the above approach
+import string
+import random
+import binascii
 
-# Hexadecimal to binary conversion
+
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
+
 
 class DES:
+    keySizes = [64]
     # Table of Position of 64 bits at initial level: Initial Permutation Table
     initial_perm = [58, 50, 42, 34, 26, 18, 10, 2,
                     60, 52, 44, 36, 28, 20, 12, 4,
@@ -15,21 +24,21 @@ class DES:
 
     # Expansion D-box Table
     exp_d = [32, 1, 2, 3, 4, 5, 4, 5,
-            6, 7, 8, 9, 8, 9, 10, 11,
-            12, 13, 12, 13, 14, 15, 16, 17,
-            16, 17, 18, 19, 20, 21, 20, 21,
-            22, 23, 24, 25, 24, 25, 26, 27,
-            28, 29, 28, 29, 30, 31, 32, 1]
+             6, 7, 8, 9, 8, 9, 10, 11,
+             12, 13, 12, 13, 14, 15, 16, 17,
+             16, 17, 18, 19, 20, 21, 20, 21,
+             22, 23, 24, 25, 24, 25, 26, 27,
+             28, 29, 28, 29, 30, 31, 32, 1]
 
     # Straight Permutation Table
     per = [16, 7, 20, 21,
-        29, 12, 28, 17,
-        1, 15, 23, 26,
-        5, 18, 31, 10,
-        2, 8, 24, 14,
-        32, 27, 3, 9,
-        19, 13, 30, 6,
-        22, 11, 4, 25]
+           29, 12, 28, 17,
+           1, 15, 23, 26,
+           5, 18, 31, 10,
+           2, 8, 24, 14,
+           32, 27, 3, 9,
+           19, 13, 30, 6,
+           22, 11, 4, 25]
 
     # S-box Table
     sbox = [[[14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
@@ -74,31 +83,31 @@ class DES:
 
     # Final Permutation Table
     final_perm = [40, 8, 48, 16, 56, 24, 64, 32,
-                39, 7, 47, 15, 55, 23, 63, 31,
-                38, 6, 46, 14, 54, 22, 62, 30,
-                37, 5, 45, 13, 53, 21, 61, 29,
-                36, 4, 44, 12, 52, 20, 60, 28,
-                35, 3, 43, 11, 51, 19, 59, 27,
-                34, 2, 42, 10, 50, 18, 58, 26,
-                33, 1, 41, 9, 49, 17, 57, 25]
+                  39, 7, 47, 15, 55, 23, 63, 31,
+                  38, 6, 46, 14, 54, 22, 62, 30,
+                  37, 5, 45, 13, 53, 21, 61, 29,
+                  36, 4, 44, 12, 52, 20, 60, 28,
+                  35, 3, 43, 11, 51, 19, 59, 27,
+                  34, 2, 42, 10, 50, 18, 58, 26,
+                  33, 1, 41, 9, 49, 17, 57, 25]
 
     def hex2bin(self, s):
         mp = {'0': "0000",
-            '1': "0001",
-            '2': "0010",
-            '3': "0011",
-            '4': "0100",
-            '5': "0101",
-            '6': "0110",
-            '7': "0111",
-            '8': "1000",
-            '9': "1001",
-            'A': "1010",
-            'B': "1011",
-            'C': "1100",
-            'D': "1101",
-            'E': "1110",
-            'F': "1111"}
+              '1': "0001",
+              '2': "0010",
+              '3': "0011",
+              '4': "0100",
+              '5': "0101",
+              '6': "0110",
+              '7': "0111",
+              '8': "1000",
+              '9': "1001",
+              'A': "1010",
+              'B': "1011",
+              'C': "1100",
+              'D': "1101",
+              'E': "1110",
+              'F': "1111"}
         bin = ""
         for i in range(len(s)):
             bin = bin + mp[s[i]]
@@ -106,24 +115,23 @@ class DES:
 
     # Binary to hexadecimal conversion
 
-
     def bin2hex(self, s):
         mp = {"0000": '0',
-            "0001": '1',
-            "0010": '2',
-            "0011": '3',
-            "0100": '4',
-            "0101": '5',
-            "0110": '6',
-            "0111": '7',
-            "1000": '8',
-            "1001": '9',
-            "1010": 'A',
-            "1011": 'B',
-            "1100": 'C',
-            "1101": 'D',
-            "1110": 'E',
-            "1111": 'F'}
+              "0001": '1',
+              "0010": '2',
+              "0011": '3',
+              "0100": '4',
+              "0101": '5',
+              "0110": '6',
+              "0111": '7',
+              "1000": '8',
+              "1001": '9',
+              "1010": 'A',
+              "1011": 'B',
+              "1100": 'C',
+              "1101": 'D',
+              "1110": 'E',
+              "1111": 'F'}
         hex = ""
         for i in range(0, len(s), 4):
             ch = ""
@@ -136,7 +144,6 @@ class DES:
         return hex
 
     # Binary to decimal conversion
-
 
     def bin2dec(self, binary):
 
@@ -188,9 +195,14 @@ class DES:
                 ans = ans + "1"
         return ans
 
-
     def encrypt(self, plainText, key, cryptType):
-        #prepare the key
+        # prepare plain text
+        if cryptType != "decrypt":
+            plainText = plainText.encode("utf-8")
+            plainText = plainText.hex().upper()
+        # prepare the key
+        key = key.encode("utf-8")
+        key = key.hex().upper()
         print("Before padding: ", plainText)
         rkb, rk = self.prepare(key)
         if cryptType == "decrypt":
@@ -204,8 +216,8 @@ class DES:
         if textSize < 16:
             for i in range(textSize, 16):
                 plainText += "0"
-        elif textSize > 16 and textSize%16 != 0:
-            for i in range(textSize, (textSize + (16 - textSize%16))):
+        elif textSize > 16 and textSize % 16 != 0:
+            for i in range(textSize, (textSize + (16 - textSize % 16))):
                 plainText += "0"
         print("After pdding: ", plainText)
         textSize = len(plainText)
@@ -213,7 +225,7 @@ class DES:
         for i in range(int(textSize/16)):
             pt = self.hex2bin(plainText[i*16: i*16+16])
             print(plainText[i*16: i*16+16])
-            print("Len bit: ",len(pt))
+            print("Len bit: ", len(pt))
             # Initial Permutation
             pt = self.permute(pt, self.initial_perm, 64)
             # Looping through the plain text
@@ -247,7 +259,7 @@ class DES:
                 if(i != 15):
                     left, right = right, left
                 print("Round ", i + 1, " ", self.bin2hex(left),
-                    " ", self.bin2hex(right), " ", rk[i])
+                      " ", self.bin2hex(right), " ", rk[i])
 
             # Combination
             combine = left + right
@@ -255,9 +267,8 @@ class DES:
             # Final permutation: final rearranging of bits to get cipher text
             cipher_text = self.permute(combine, self.final_perm, 64)
             final_sipher += cipher_text
-            
-        return final_sipher
-    
+        return self.bin2hex(final_sipher)
+
     def prepare(self, key):
         # Key generation
         # --hex to binary
@@ -278,9 +289,9 @@ class DES:
 
         # Number of bit shifts
         shift_table = [1, 1, 2, 2,
-                    2, 2, 2, 2,
-                    1, 2, 2, 2,
-                    2, 2, 2, 1]
+                       2, 2, 2, 2,
+                       1, 2, 2, 2,
+                       2, 2, 2, 1]
 
         # Key- Compression Table : Compression of key from 56 bits to 48 bits
         key_comp = [14, 17, 11, 24, 1, 5,
@@ -293,8 +304,8 @@ class DES:
                     46, 42, 50, 36, 29, 32]
 
         # Splitting
-        left = key[0:28] # rkb for RoundKeys in binary
-        right = key[28:56] # rk for RoundKeys in hexadecimal
+        left = key[0:28]  # rkb for RoundKeys in binary
+        right = key[28:56]  # rk for RoundKeys in hexadecimal
 
         rkb = []
         rk = []
@@ -314,20 +325,36 @@ class DES:
         return rkb, rk
 
     def decrypt(self, cipher_text, key):
-        cipher_text = self.bin2hex(cipher_text)
-        text = self.bin2hex(self.encrypt(cipher_text, key, "decrypt" ))
+        text = self.encrypt(cipher_text, key, "decrypt")
+        print("decreptedJ: ")
         return text
-        
-def construct():
-    return DES()
 
-# print("Encryption")
-# cipher_text = bin2hex(encrypt(pt, rkb, rk))
-# print("Cipher Text : ", cipher_text)
+    def getKeySizes(self):
+        return self.keySizes
 
-# print("Decryption")
-# rkb_rev = rkb[::-1]
-# rk_rev = rk[::-1]
-# text = bin2hex(encrypt(cipher_text, rkb_rev, rk_rev))
-# print("Plain Text : ", text)
+    def generateKey(self, size):
+        if int(size) in self.keySizes:
+            # generate random key
+            numOfChar = int(int(size)/8)
+            key = get_random_string(numOfChar)
+            return key
+        else:
+            return "key size is not valid"
 
+
+# enc = DES()
+# des = enc.generateKey(64)
+# print("KEY1: " + des)
+# print("KEY2: " + des)
+
+# string = "Hello faisal"
+# # string = string.hex()
+# # print("original: ", string.upper())
+# eny = enc.encrypt(string, des, "encrypt")
+# print("encrypto : ", eny)
+# print("KEY3: " + des)
+# # # decrypt
+# dec = enc.decrypt(eny, des)
+# print("print dec:", dec.replace(" ", ""))
+# print("decrypt : ", bytearray.fromhex(
+#     "66616973616C6162757368616E6162").decode("utf-8"))
