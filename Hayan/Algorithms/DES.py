@@ -11,7 +11,6 @@ def get_random_string(length):
 
 
 class DES:
-    keySizes = [64]
     # Table of Position of 64 bits at initial level: Initial Permutation Table
     initial_perm = [58, 50, 42, 34, 26, 18, 10, 2,
                     60, 52, 44, 36, 28, 20, 12, 4,
@@ -92,22 +91,24 @@ class DES:
                   33, 1, 41, 9, 49, 17, 57, 25]
 
     def hex2bin(self, s):
-        mp = {'0': "0000",
-              '1': "0001",
-              '2': "0010",
-              '3': "0011",
-              '4': "0100",
-              '5': "0101",
-              '6': "0110",
-              '7': "0111",
-              '8': "1000",
-              '9': "1001",
-              'A': "1010",
-              'B': "1011",
-              'C': "1100",
-              'D': "1101",
-              'E': "1110",
-              'F': "1111"}
+        mp = {
+            '0': "0000",
+            '1': "0001",
+            '2': "0010",
+            '3': "0011",
+            '4': "0100",
+            '5': "0101",
+            '6': "0110",
+            '7': "0111",
+            '8': "1000",
+            '9': "1001",
+            'A': "1010",
+            'B': "1011",
+            'C': "1100",
+            'D': "1101",
+            'E': "1110",
+            'F': "1111"
+        }
         bin = ""
         for i in range(len(s)):
             bin = bin + mp[s[i]]
@@ -116,22 +117,24 @@ class DES:
     # Binary to hexadecimal conversion
 
     def bin2hex(self, s):
-        mp = {"0000": '0',
-              "0001": '1',
-              "0010": '2',
-              "0011": '3',
-              "0100": '4',
-              "0101": '5',
-              "0110": '6',
-              "0111": '7',
-              "1000": '8',
-              "1001": '9',
-              "1010": 'A',
-              "1011": 'B',
-              "1100": 'C',
-              "1101": 'D',
-              "1110": 'E',
-              "1111": 'F'}
+        mp = {
+            "0000": '0',
+            "0001": '1',
+            "0010": '2',
+            "0011": '3',
+            "0100": '4',
+            "0101": '5',
+            "0110": '6',
+            "0111": '7',
+            "1000": '8',
+            "1001": '9',
+            "1010": 'A',
+            "1011": 'B',
+            "1100": 'C',
+            "1101": 'D',
+            "1110": 'E',
+            "1111": 'F'
+        }
         hex = ""
         for i in range(0, len(s), 4):
             ch = ""
@@ -329,32 +332,41 @@ class DES:
         print("decreptedJ: ")
         return text
 
-    def getKeySizes(self):
-        return self.keySizes
 
-    def generateKey(self, size):
-        if int(size) in self.keySizes:
-            # generate random key
-            numOfChar = int(int(size)/8)
-            key = get_random_string(numOfChar)
-            return key
-        else:
-            return "key size is not valid"
+def generateKey(size):
+    if int(size) in list(map(int, getKeyBitSizes())):
+        # generate random key
+        numOfChar = int(int(size)/8)
+        key = get_random_string(numOfChar)
+        return key
+    else:
+        return "key size is not valid"
 
+
+def getKeyBitSizes():
+    return ["64"]
+
+
+def isAsymmetric():
+    return False
+
+
+def construct():
+    return DES()
 
 # enc = DES()
-# des = enc.generateKey(64)
-# print("KEY1: " + des)
-# print("KEY2: " + des)
+# key = generateKey(64)
+# print("KEY1: " + key)
+# print("KEY2: " + key)
 
 # string = "Hello faisal"
 # # string = string.hex()
 # # print("original: ", string.upper())
-# eny = enc.encrypt(string, des, "encrypt")
+# eny = enc.encrypt(string, key, "encrypt")
 # print("encrypto : ", eny)
-# print("KEY3: " + des)
+# print("KEY3: " + key)
 # # # decrypt
-# dec = enc.decrypt(eny, des)
+# dec = enc.decrypt(eny, key)
 # print("print dec:", dec.replace(" ", ""))
 # print("decrypt : ", bytearray.fromhex(
 #     "66616973616C6162757368616E6162").decode("utf-8"))

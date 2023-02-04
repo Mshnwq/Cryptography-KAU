@@ -477,8 +477,26 @@ class AES:
         return hexOut
 
 
+def getKeyBitSizes():
+    return ['128', '192', '256']
+
+
+def generateKey(size):
+    if int(size) in list(map(int, getKeyBitSizes())):
+        # generate random key
+        numOfChar = int(int(size)/8)
+        key = get_random_string(numOfChar).encode().hex()
+        key = int(key, 16)
+        return key
+    else:
+        return "key size is not valid"
+
+
+def isAsymmetric():
+    return False
+
+
 def construct():
-    print("hello")
     return AES()
 
 
