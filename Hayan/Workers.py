@@ -15,10 +15,13 @@ __modules__ = dict()
 for file_name in os.listdir(f"{fileDirectory}\\{package}"):
     if file_name.endswith('.py') and file_name != '__init__.py':
         module_name = file_name[:-3]
-        __modules__[module_name] = importlib.import_module(f"{package}.{module_name}", '.')
+        __modules__[module_name] = importlib.import_module(
+            f"{package}.{module_name}", '.')
+
 
 def getModules():
     return __modules__
+
 
 class Fetch_Worker(QThread):
     def __init__(self):
@@ -27,6 +30,7 @@ class Fetch_Worker(QThread):
     def run(self):
         ...
 
+
 class Upload_Worker(QThread):
     def __init__(self):
         super().__init__()
@@ -34,16 +38,17 @@ class Upload_Worker(QThread):
     def run(self):
         ...
 
+
 class RFID_Worker(QThread):
     '''RFID Working Thread Class'''
     ##### Signal for GUI Slots #####
     logsAppendSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal(int, QThread)
-    resultSignal   = pyqtSignal(str)
-    
+    resultSignal = pyqtSignal(str)
+
     def __init__(self, rfid, tagData=None, op='Read'):
         super().__init__()
-        
+
         self.rfid = rfid
         self.tagData = tagData
         self.op = op
@@ -64,11 +69,12 @@ class RFID_Worker(QThread):
             stat = self.rfid.writeKey(self.tagData)
             self.finishedSignal.emit(stat, self)
 
+
 class KeyGen_Worker(QThread):
     '''Key Generator Worker Thread Class'''
     progressSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
-    resultSignal   = pyqtSignal(str)
+    resultSignal = pyqtSignal(int)
 
     def __init__(self, algo, bit_size):
         super().__init__()
@@ -97,6 +103,7 @@ class Cryptor_Worker(QThread):
     finishedSignal = pyqtSignal()
     resultSignal = pyqtSignal(str)
     '''BLOCK MODE should be'''
+
     def __init__(self, block, algo, key):
         super().__init__()
         self.key = key
@@ -109,13 +116,12 @@ class Cryptor_Worker(QThread):
         #     self.setupAlgo(algo)
         self.constructCrypto(algo)
         # self.crypto.setSignals() #TODO
-    
 
     def constructCrypto(self, algo):
         self.crypto = __modules__[algo].construct()
         # match(algo):
-            # case algo == "RSA":
-                # self.crypto = 
+        # case algo == "RSA":
+        # self.crypto =
 
     def setupAllAlgos(self):
         '''Import All Algorithms Modules'''
@@ -123,7 +129,8 @@ class Cryptor_Worker(QThread):
         for file_name in os.listdir(f"{self.fileDirectory}\\{self.package}"):
             if file_name.endswith('.py') and file_name != '__init__.py':
                 module_name = file_name[:-3]
-                self.__modules__[module_name] = (importlib.import_module(f"{self.package}.{module_name}", '.'))
+                self.__modules__[module_name] = (
+                    importlib.import_module(f"{self.package}.{module_name}", '.'))
 
     def setupAlgo(self, algo):
         '''Import Algorithm Modules'''
