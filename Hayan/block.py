@@ -1,10 +1,20 @@
-class CBC:
+"""
+add padding to the plain text
+input: plain text in hex
+output: plain text with padding in hex
+"""
+
+
+def padding(self, plain):
+    pass
+
+
+class Block:
 
     def __init__(self, blockSize, algorithm, isEnc, plainText, Key):
         self.blockSize = int(blockSize/8)  # block size in byte
         # self.Enc_Dec = Enc_Dec
-        self.algorithm
-        self.plainText = plainText
+        self.algorithm = self.plainText = plainText
         self.Key = Key
         # the IV key for the enc dec size if the block zise is 64 take the first 64bit
         #  else take it all
@@ -32,7 +42,7 @@ class CBC:
 
         ciph_new = ciph_1
         # after the first block every block is xorded with the previous block
-        for i in range(1, len(self.plainText) // self.blockSize):
+        for i in range(1, len(self.plainText) / self.blockSize):
 
             # will slic the array for th required block size
             plain_i = self.plainText[i *
