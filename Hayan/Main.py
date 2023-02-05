@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
         if (self.ui.fetchSrcAction.isChecked() and self.checkCloud()):  # from Cloud
             self.ui.fetch_btn.clicked.connect(self.fetchData)
         else:  # from .txt
-            self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
+            self.ui.fetch_btn.clicked.connect(self.readCipherTxt)
 
         # Read Key
         self.readStatus = False
@@ -302,7 +302,7 @@ class MainWindow(QMainWindow):
         key_worker.resultSignal.connect(self.storeKey)
         key_worker.progressSignal.connect(self.logsAppend)
         key_worker.finishedSignal.connect(lambda:
-                                          self.finishedKeyGen(key_worker))
+                                            self.finishedKeyGen(key_worker))
 
         # Start the worker
         key_worker.start()
@@ -677,6 +677,36 @@ class MainWindow(QMainWindow):
 
         self.fetchedWindow.close()
 
+    def readCipherTxt(self):
+        self.cipherText = self.txtRdHelper()
+        stringCipher = self.fitNumber(self.cipherText, 60)
+        self.ui.ciphertext_text.setText(stringCipher)
+        self.ui.logs_box.append("Fetch Success")
+        self.ui.fetch_statusText.setText("  Success")
+        self.ui.fetch_statusText.setStyleSheet(
+            "color: rgb(0,200,0);\nfont: bold 14px;")
+        self.fetchStatus = True
+        self.ui.decryptMsg_btn.setEnabled(
+            self.readStatus and self.fetchStatus)
+        ...
+
+    def readKeyTxt(self):
+        self.__key__ = self.txtRdHelper()
+        self.ui.logs_box.append("Read Key.txt Success")
+        self.ui.readKey_statusText.setText("   Success")
+        self.ui.readKey_statusText.setStyleSheet(
+            "color: rgb(0,200,0);\nfont: bold 14px;")
+        # self.key = self.rfid.getKey()
+        self.ui.logs_box.append(f'(int) read: {int(self.__key__)}')
+        self.ui.logs_box.append(f'(hex) read: {hex(int(self.__key__))}')
+        self.ui.logs_box.append(f'(bin) read: {bin(int(self.__key__))}')
+        stringKey = self.fitNumber(self.__key__, 20)
+        self.ui.scanned_box.setText(stringKey)
+        self.readStatus = True
+        self.ui.decryptMsg_btn.setEnabled(
+            self.readStatus and self.fetchStatus)
+        ...
+
     def txtWrHelper(self, file_name, text):
         try:
             with open(file_name, "w") as file:
@@ -685,15 +715,21 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"An error occurred while writing to the file: {e}")
 
+    
     def txtRdHelper(self):
-        # TODO
-        print("FILLLL")
-        ...
-
-    def readKeyTxt(self):
-        # TODO
-        print("TODODOODO")
-        ...
+        try:
+            options = QFileDialog.Options()
+            file_name, _ = QFileDialog.getOpenFileName(self, 
+                                "QFileDialog.getOpenFileName()", "",
+                                "Text Files (*.txt);;All Files (*)", options=options)
+            if file_name:
+                with open(file_name, 'r') as f:
+                    contents = f.read()
+                # self.line_edit.setText(contents)
+                return contents
+        except Exception as e:
+            print(f"An error occurred while writing to the file: {e}")
+            return ""
 
     def establishUART(self):
         # TODO ABDULLAH HELP

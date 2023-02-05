@@ -118,8 +118,8 @@ class Ui_Receive(object):
         self.scanned_label.setGeometry(QRect(36, int(36*5), BUTTON_WIDTH+46, BUTTON_HEIGHT))
         self.scanned_groupBox = QGroupBox(self.fetch_groupBox)
         self.scanned_groupBox.setGeometry(QRect(36, int(36*6), int(36*6.5), (36*5)+4))
-        self.scanned_box = QLabel(self.scanned_groupBox)
-        self.scanned_box.setGeometry(QRect(6, 2, int(36*8), 36*5))
+        self.scanned_box = QTextEdit(self.scanned_groupBox)
+        self.scanned_box.setGeometry(QRect(5, 5, int(36*6.27), int(36*4.825)))
         font.setPointSize(10)
         font.setBold(False)
         font.setWeight(10)
@@ -203,23 +203,23 @@ class Ui_Receive(object):
         self.ciphertext_label.setFont(font)
         self.ciphertext_box = QGroupBox(self.message_groupBox)
         self.ciphertext_box.setGeometry(QRect(40, 40*2, 
-        WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40*3))
-        self.ciphertext_text = QLabel(self.message_groupBox)
+            WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40*3))
+        self.ciphertext_text = QTextEdit(self.message_groupBox)
         self.ciphertext_text.setGeometry(QRect(40, 40*2, 
-        WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40))
+            WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40*3))
 
         self.plaintext_label = QLabel("PlainText", self.message_groupBox)
         self.plaintext_label.setGeometry(QRect(40*3, int(40*7.5), 
-        WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40))
+            WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40))
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(40)
         self.plaintext_label.setFont(font)
         self.plaintext_box = QGroupBox(self.message_groupBox)
         self.plaintext_box.setGeometry(QRect(40, int(40*8.5), 
-        WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40*2))
-        self.plaintext_text = QLabel(self.plaintext_box)
-        self.plaintext_text.setGeometry(QRect(12, -45, BUTTON_WIDTH*6, BUTTON_HEIGHT*4))
+            WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40*2))
+        self.plaintext_text = QTextEdit(self.plaintext_box)
+        self.plaintext_text.setGeometry(QRect(7, 7, int(BUTTON_WIDTH*6.575), int(BUTTON_HEIGHT*1.85)))
         font.setPointSize(10)
         font.setBold(False)
         font.setWeight(10)
@@ -228,7 +228,7 @@ class Ui_Receive(object):
         self.logs_box = QTextEdit(self.centralwidget)
         self.logs_box.setGeometry(QRect(fetchBox_Xaxis + BUTTON_WIDTH + 36, 
                                         int(2.5*WINDOW_HEIGHT/24)+int(WINDOW_HEIGHT/2), 
-                                        WINDOW_WIDTH-(fetchBox_Xaxis + BUTTON_WIDTH + 4)*2, 
+                                        int(WINDOW_WIDTH-(fetchBox_Xaxis + BUTTON_WIDTH + 4)*1.55), 
                                         int(WINDOW_HEIGHT/2)-int(4.5*WINDOW_HEIGHT/24)))
 
         self.logs_label = QLabel("Logs", self.centralwidget)

@@ -105,8 +105,8 @@ class Ui_Broadcast(object):
         self.key_label.setGeometry(QRect(36, int(36*6.5), BUTTON_WIDTH+36, BUTTON_HEIGHT))
         self.key_groupBox = QGroupBox(self.keyGen_groupBox)
         self.key_groupBox.setGeometry(QRect(36, int(36*7.5), int(36*6.5), (36*5)+4))
-        self.key_box = QLabel(self.key_groupBox)
-        self.key_box.setGeometry(QRect(6, 2, int(36*6.5), 36*5))
+        self.key_box = QTextEdit(self.key_groupBox)
+        self.key_box.setGeometry(QRect(2, 2, int(36*6.4), 36*5))
         font.setPointSize(10)
         font.setBold(False)
         font.setWeight(10)
@@ -228,8 +228,8 @@ class Ui_Broadcast(object):
         self.ciphertext_box = QGroupBox(self.message_groupBox)
         self.ciphertext_box.setGeometry(QRect(40, 295, 
         WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 40*4))
-        self.ciphertext_text = QLabel(self.ciphertext_box)
-        self.ciphertext_text.setGeometry(QRect(12, 5, BUTTON_WIDTH*6, BUTTON_HEIGHT*4))
+        self.ciphertext_text = QTextEdit(self.ciphertext_box)
+        self.ciphertext_text.setGeometry(QRect(7, 7, int(BUTTON_WIDTH*6.575), BUTTON_HEIGHT*4))
 
 
         self.uploadData_btn = QPushButton("Broadcast Data", self.centralwidget)
