@@ -334,7 +334,7 @@ class DES:
 def generateKey(size):
     if int(size) in list(map(int, getKeyBitSizes())):
         # generate random key
-        numOfChar = int(int(size)/8)
+        numOfChar = int(size/8)
         key = get_random_string(numOfChar)
         return key
     else:

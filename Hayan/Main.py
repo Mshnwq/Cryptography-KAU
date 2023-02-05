@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
 
         # Key Generation Source action
         self.ui.keyGenAction.triggered.connect(
-            lambda: self.ui.logs_box.append("Key Gen on FPGA Later"))
+            lambda: self.logsAppend("Key Gen on FPGA Later"))
         # Key Write action
         self.ui.keyWrAction.triggered.connect(lambda: self.toggle_rfid('Wr'))
         # Encryption Source action
@@ -149,7 +149,7 @@ class MainWindow(QMainWindow):
         self.ui.keyRdAction.triggered.connect(lambda: self.toggle_rfid('Rd'))
         # Decryption Source action
         self.ui.decrypSrcAction.triggered.connect(
-            lambda: self.ui.logs_box.append("Decryption on FPGA Later"))
+            lambda: self.logsAppend("Decryption on FPGA Later"))
         # Save Broadcast Configuration action
         self.ui.saveConfigAction.triggered.connect(self.saveReceiveConfig)
         # logout action
@@ -243,27 +243,26 @@ class MainWindow(QMainWindow):
                 self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
 
     def saveData(self):
-        name = fileDirectory+'\\Data\\'+str(self.__key__)+"_cipher.txt"
+        name = fileDirectory+'\\Data\\'+str(self.__key)+"_cipher.txt"
         content = self.ui.plaintext_box.toPlainText()
         self.txtWrHelper(name, content)
 
-        self.ui.logs_box.append("Save Success")
+        self.logsAppend("Save Success")
         self.ui.uploadData_statusText.setText("Success")
         self.ui.uploadData_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 16px;")
 
     def saveKey(self):
-        name = fileDirectory+'\\Key\\'+str(self.__key__)+'.txt'
-        content = str(self.__key__)
+        name = fileDirectory+'\\Key\\'+str(self.__key)+'.txt'
+        content = str(self.__key)
         self.txtWrHelper(name, content)
-        print(type(self.__key__))
-        self.ui.logs_box.append("Save Key Success")
+        self.logsAppend("Save Key Success")
         self.ui.writeKey_statusText.setText("Key Saved")
         self.ui.writeKey_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 14px;")
-        self.ui.logs_box.append(f'(int) saved: {self.__key__}')
-        self.ui.logs_box.append(f'(hex) saved: {hex(self.__key__)}')
-        self.ui.logs_box.append(f'(bin) saved: {bin(self.__key__)}')
+        self.logsAppend(f'(int) saved: {self.__keyInt}')
+        self.logsAppend(f'(hex) saved: {hex(self.__keyInt)}')
+        self.logsAppend(f'(bin) saved: {bin(self.__keyInt)}')
 
     def saveBroadcastConfig(self):
         data = {
@@ -275,7 +274,7 @@ class MainWindow(QMainWindow):
         try:
             with open(fileDirectory+'\\Broadcast_config.json', 'w') as file:
                 json.dump(data, file, indent=4)
-            self.ui.logs_box.append("Settings updated successfully")
+            self.logsAppend("Settings updated successfully")
         except Exception as e:
             print(f"An error occurred while saving config file: {e}")
 
@@ -288,7 +287,7 @@ class MainWindow(QMainWindow):
         try:
             with open(fileDirectory+'\\Receive_config.json', 'w') as file:
                 json.dump(data, file, indent=4)
-            self.ui.logs_box.append("Settings updated successfully")
+            self.logsAppend("Settings updated successfully")
         except Exception as e:
             print(f"An error occurred while saving config file: {e}")
 
@@ -299,10 +298,10 @@ class MainWindow(QMainWindow):
         key_worker = KeyGen_Worker(self.getAlgoChosen(), bit_size=bitSize)
 
         # Connect signals & slots
+        key_worker.logsAppendSignal.connect(self.logsAppend)
         key_worker.resultSignal.connect(self.storeKey)
-        key_worker.progressSignal.connect(self.logsAppend)
-        key_worker.finishedSignal.connect(lambda:
-                                            self.finishedKeyGen(key_worker))
+        key_worker.finishedSignal.connect(
+            partial(self.finishedKeyGen, key_worker))
 
         # Start the worker
         key_worker.start()
@@ -315,17 +314,24 @@ class MainWindow(QMainWindow):
             [thread for thread in self._threads if thread.isRunning()])
         self.ui.statusbar.showMessage(f"Active Threads: {active_threads}")
 
-    def storeKey(self, __key__):
-        # print(f"STORING {__key__}")
-        self.__key__ = __key__
+    def storeKey(self, __key):
+        # print(f"STORING key {__key}")
+        # print(f"TYPE {type(__key)}")
+        self.__key = __key
+        self.__keyInt = int(__key.encode('utf-8').hex(),16)
+
+    def storeCipher(self, __cipherText):
+        print(f"STORING cipher {__cipherText}")
+        print(f"TYPE {type(__cipherText)}")
+        self.__cipherText = __cipherText
 
     def finishedKeyGen(self, key_worker):
         key_worker.terminate()
         self._threads.remove(key_worker)
         self.update_threads()
-        self.logsAppend("Key Generated: " + str(self.__key__))
+        self.logsAppend("Key Generated: " + str(self.__key))
         self.ui.key_box.setText(self.fitNumber(
-            str(self.__key__), 20))
+            str(self.__key), 20))
         self.ui.writeKey_btn.setEnabled(True)
         self.ui.encryptMsg_btn.setEnabled(True)
         self.logsAppend("Key Generation Success")
@@ -348,6 +354,9 @@ class MainWindow(QMainWindow):
 
     def getAlgoChosen(self):
         return self.ui.algoType_combo.currentText()
+    
+    def getModeChosen(self):
+        return self.ui.blockMode_combo.currentText()
 
     def readKey(self):
 
@@ -383,21 +392,21 @@ class MainWindow(QMainWindow):
         self.update_threads()
         self.ui.readKey_btn.setEnabled(True)
         if (stat == 1):
-            self.ui.logs_box.append("Read Key Success")
+            self.logsAppend("Read Key Success")
             self.ui.readKey_statusText.setText("   Success")
             self.ui.readKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
             # self.key = self.rfid.getKey()
-            self.ui.logs_box.append(f'(int) read: {int(self.__key__)}')
-            self.ui.logs_box.append(f'(hex) read: {hex(int(self.__key__))}')
-            self.ui.logs_box.append(f'(bin) read: {bin(int(self.__key__))}')
-            stringKey = self.fitNumber(str(self.__key__), 20)
+            self.logsAppend(f'(int) read: {self.__keyInt}')
+            self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
+            self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
+            stringKey = self.fitNumber(str(self.__key), 20)
             self.ui.scanned_box.setText(stringKey)
             self.readStatus = True
             self.ui.decryptMsg_btn.setEnabled(
                 self.readStatus and self.fetchStatus)
         elif stat == 0:
-            self.ui.logs_box.append("Read Key Failed")
+            self.logsAppend("Read Key Failed")
             self.ui.readKey_statusText.setText("    Failed")
             self.ui.readKey_statusText.setStyleSheet(
                 "color: rgb(250,0,0);\nfont: bold 12px;;")
@@ -433,7 +442,7 @@ class MainWindow(QMainWindow):
 
         # TODO FAISAL initialize data
         tagData = bytearray(16)
-        self.keyToWriteInt = int(self.__key__)
+        self.keyToWriteInt = keyInt
         # self.keyToWriteInt = 1945954
         keyToWrite = self.keyToWriteInt.to_bytes(16, byteorder='big')
 
@@ -458,15 +467,15 @@ class MainWindow(QMainWindow):
         self.update_threads()
         self.ui.writeKey_btn.setEnabled(True)
         if (stat == 1):
-            self.ui.logs_box.append("Write Key Success")
+            self.logsAppend("Write Key Success")
             self.ui.writeKey_statusText.setText("Key Issued")
             self.ui.writeKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.ui.logs_box.append(f'(int) written: {self.__key__}')
-            self.ui.logs_box.append(f'(hex) written: {hex(self.__key__)}')
-            self.ui.logs_box.append(f'(bin) written: {bin(self.__key__)}')
+            self.logsAppend(f'(int) written: {self.__keyInt}')
+            self.logsAppend(f'(hex) written: {hex(self.__keyInt)}')
+            self.logsAppend(f'(bin) written: {bin(self.__keyInt)}')
         elif stat == 0:
-            self.ui.logs_box.append("Write Key Failed")
+            self.logsAppend("Write Key Failed")
             self.ui.writeKey_statusText.setText("Issueing Failed")
             self.ui.writeKey_statusText.setStyleSheet(
                 "color: rgb(250,0,0);\nfont: bold 12px;;")
@@ -493,37 +502,36 @@ class MainWindow(QMainWindow):
     def encrypt(self):
 
         plainTextString = self.ui.plaintext_box.toPlainText()
-        nchars = len(plainTextString)
-        # string to int or long. Type depends on nchars
-        plainTextInt = sum(
-            ord(plainTextString[byte]) << 8*(nchars-byte-1) for byte in range(nchars))
-        print(plainTextInt)
-        # plainTextHex = hex(plainTextInt)[2::]
-        # print(plainTextHex)
+        # Create a worker thread
+        encrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
+                                        self.getAlgoChosen(),
+                                        self.getModeChosen(),
+                                        True, plainTextString, 
+                                        self.__key)
 
-        # encrypting # TODO
-        # stat = self.fpga.encrypt_decrypt(plainTextInt, self.rsa.getE(), self.rsa.getN())
-        # self.cipherTextInt = cipherTextInt
+        # Connect signals & slots
+        encrypt_worker.logsAppendSignal.connect(self.logsAppend)
+        encrypt_worker.resultSignal.connect(self.storeCipher)
+        encrypt_worker.finishedSignal.connect(
+                    partial(self.encryptStatus, encrypt_worker))
 
-        # cipherTextString = ''.join(chr((cipherTextInt>>8*(nchars-byte-1))&0xFF) for byte in range(nchars))
-        # int or long to string
-        # self.ui.ciphertext_text.setText(cipherTextString)
-        # self.ui.ciphertext_text.setText(str(cipherTextInt))
-        stat = 1
-        if stat == 1:
-            self.ui.logs_box.append("Encryption Success")
-            self.ui.encryptMsg_statusText.setText("Success")
-            self.ui.encryptMsg_statusText.setStyleSheet(
-                "color: rgb(0,200,0);\nfont: bold 16px;")
-            # out = self.fpga.getOut()
-            # pln = self.fitNumber(out, 20)
-            self.ui.ciphertext_text.setText("edvrvrbvewb")
-            self.ui.uploadData_btn.setEnabled(True)
-        else:
-            self.ui.logs_box.append("Encryption Failed")
-            self.ui.encryptMsg_statusText.setText("Failed")
-            self.ui.encryptMsg_statusText.setStyleSheet(
-                "color: rgb(250,0,0);\nfont: bold 16px;;")
+        # Start the worker
+        encrypt_worker.start()
+        self._threads.append(encrypt_worker)
+        self.update_threads()
+
+    def encryptStatus(self, cryptor_wroker):
+        cryptor_wroker.terminate()
+        self._threads.remove(cryptor_wroker)
+        self.update_threads()
+        self.logsAppend("Encryption Success")
+        self.ui.encryptMsg_statusText.setText("Success")
+        self.ui.encryptMsg_statusText.setStyleSheet(
+            "color: rgb(0,200,0);\nfont: bold 16px;")
+
+        cipherTextFit = self.fitNumber(self.__cipherText, 50)
+        self.ui.ciphertext_text.setText(cipherTextFit)
+        self.ui.uploadData_btn.setEnabled(True)
 
     def decrypt(self):
 
@@ -545,7 +553,7 @@ class MainWindow(QMainWindow):
         # self.ui.plaintext_text.setText(plainTextString)
         stat = 1
         if stat == 1:
-            self.ui.logs_box.append("Decryption Success")
+            self.logsAppend("Decryption Success")
             self.ui.decryptMsg_statusText.setText("Success")
             self.ui.decryptMsg_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 16px;")
@@ -553,7 +561,7 @@ class MainWindow(QMainWindow):
             pln = self.fitNumber(out, 50)
             self.ui.plaintext_text.setText(pln)
         else:
-            self.ui.logs_box.append("Decryption Failed")
+            self.logsAppend("Decryption Failed")
             self.ui.decryptMsg_statusText.setText("Failed")
             self.ui.decryptMsg_statusText.setStyleSheet(
                 "color: rgb(250,0,0);\nfont: bold 16px;;")
@@ -583,7 +591,7 @@ class MainWindow(QMainWindow):
             self.showFetched(self.dataFetched)
 
         else:
-            self.ui.logs_box.append("Fetch Failed")
+            self.logsAppend("Fetch Failed")
             self.ui.fetch_statusText.setText("Failed")
             self.ui.fetch_statusText.setStyleSheet(
                 "color: rgb(250,0,0);\nfont: bold 16px;;")
@@ -603,12 +611,12 @@ class MainWindow(QMainWindow):
             stat = 0
 
         if stat == 1:
-            self.ui.logs_box.append("Upload Success")
+            self.logsAppend("Upload Success")
             self.ui.uploadData_statusText.setText("Success")
             self.ui.uploadData_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 16px;")
         else:
-            self.ui.logs_box.append("Upload Failed")
+            self.logsAppend("Upload Failed")
             self.ui.uploadData_statusText.setText("Failed")
             self.ui.uploadData_statusText.setStyleSheet(
                 "color: rgb(250,0,0);\nfont: bold 16px;;")
@@ -666,7 +674,7 @@ class MainWindow(QMainWindow):
 
             self.ui.ciphertext_text.setText(self.cipherText)
 
-            self.ui.logs_box.append("Fetch Success")
+            self.logsAppend("Fetch Success")
             self.ui.fetch_statusText.setText("  Success")
             self.ui.fetch_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
@@ -681,7 +689,7 @@ class MainWindow(QMainWindow):
         self.cipherText = self.txtRdHelper()
         stringCipher = self.fitNumber(self.cipherText, 60)
         self.ui.ciphertext_text.setText(stringCipher)
-        self.ui.logs_box.append("Fetch Success")
+        self.logsAppend("Fetch Success")
         self.ui.fetch_statusText.setText("  Success")
         self.ui.fetch_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 14px;")
@@ -691,16 +699,16 @@ class MainWindow(QMainWindow):
         ...
 
     def readKeyTxt(self):
-        self.__key__ = self.txtRdHelper()
-        self.ui.logs_box.append("Read Key.txt Success")
+        self.__key = self.txtRdHelper()
+        self.logsAppend("Read Key.txt Success")
         self.ui.readKey_statusText.setText("   Success")
         self.ui.readKey_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 14px;")
         # self.key = self.rfid.getKey()
-        self.ui.logs_box.append(f'(int) read: {int(self.__key__)}')
-        self.ui.logs_box.append(f'(hex) read: {hex(int(self.__key__))}')
-        self.ui.logs_box.append(f'(bin) read: {bin(int(self.__key__))}')
-        stringKey = self.fitNumber(self.__key__, 20)
+        self.logsAppend(f'(int) read: {self.__keyInt}')
+        self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
+        self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
+        stringKey = self.fitNumber(self.__key, 20)
         self.ui.scanned_box.setText(stringKey)
         self.readStatus = True
         self.ui.decryptMsg_btn.setEnabled(
@@ -741,14 +749,14 @@ class MainWindow(QMainWindow):
         # stat = 1
 
         # if stat == 1:
-        #     # self.ui.logs_box.append("FPGA UART Success")
+        #     # self.logsAppend("FPGA UART Success")
         #     self.ui.FPGA_statusText.setText("  Success")
         #     self.ui.FPGA_statusText.setStyleSheet(
         #         "color: rgb(0,200,0);\nfont: bold 16px;")
         #     self.ui.GenMode_btn.setEnabled(True)
         #     self.ui.AttMode_btn.setEnabled(True)
         # else:
-        #     # self.ui.logs_box.append("FPGA UART Failed")
+        #     # self.logsAppend("FPGA UART Failed")
         #     self.ui.FPGA_statusText.setText("Failed")
         #     self.ui.FPGA_statusText.setStyleSheet(
         #         "color: rgb(250,0,0);\nfont: bold 16px;;")

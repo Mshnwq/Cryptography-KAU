@@ -1,6 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from block import Block
 import time
 import os
 import importlib
@@ -42,8 +43,8 @@ class RFID_Worker(QThread):
     '''RFID Working Thread Class'''
     ##### Signal for GUI Slots #####
     logsAppendSignal = pyqtSignal(str)
-    finishedSignal = pyqtSignal(int, QThread)
     resultSignal = pyqtSignal(str)
+    finishedSignal = pyqtSignal(int, QThread)
 
     def __init__(self, rfid, tagData=None, op='Read'):
         super().__init__()
@@ -71,9 +72,9 @@ class RFID_Worker(QThread):
 
 class KeyGen_Worker(QThread):
     '''Key Generator Worker Thread Class'''
-    progressSignal = pyqtSignal(str)
+    logsAppendSignal = pyqtSignal(str)
+    resultSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
-    resultSignal = pyqtSignal(int)
 
     def __init__(self, algo, bit_size):
         super().__init__()
@@ -84,7 +85,7 @@ class KeyGen_Worker(QThread):
         # TODO some kind of progress indicator for long
         i = 0
         while (i != 2):
-            self.progressSignal.emit(str(i))
+            self.logsAppendSignal.emit(str(i))
             time.sleep(0.25)
             i += 1
         result = __modules__[self.algo].generateKey(self.bit_size)
@@ -92,54 +93,38 @@ class KeyGen_Worker(QThread):
             self.resultSignal.emit(str(result[0][0]))
             self.finishedSignal.emit()
         else:
-            self.resultSignal.emit(result)
+            self.resultSignal.emit(str(result))
             self.finishedSignal.emit()
 
 
 class Cryptor_Worker(QThread):
-    '''Working Thread Class'''
-    progressSignal = pyqtSignal(int)
-    finishedSignal = pyqtSignal()
+    '''Working Crytor Thread Class'''
+    logsAppendSignal = pyqtSignal(str)
     resultSignal = pyqtSignal(str)
-    '''BLOCK MODE should be'''
+    finishedSignal = pyqtSignal()
 
-    def __init__(self, block, algo, key):
+
+    def __init__(self, size, algo, mode, isEnc, text, key):
+        '''
+        Cryptor Worker Constructor
+        Args:
+            size (int): bit size of blocks
+            algo (str): encryption or decryption algorithm
+            mode (str): mode of block
+            isEnc (bool): is Encryption, else Decryption
+            text (str): text to encrypt or decrypt
+            key (str): algorithm key
+        '''
         super().__init__()
-        self.key = key
-        # self.block = block(ECB, DES, Text)
-        # self.package = 'Algorithms'
-        # self.fileDirectory = os.path.dirname(__file__)
-        # if algo == None:
-        #     self.setupAllAlgos()
-        # else:
-        #     self.setupAlgo(algo)
-        self.constructCrypto(algo)
+        self.block = Block(size, algo, mode, isEnc, text, key)
         # self.crypto.setSignals() #TODO
-
-    def constructCrypto(self, algo):
-        self.crypto = __modules__[algo].construct()
-        # match(algo):
-        # case algo == "RSA":
-        # self.crypto =
-
-    def setupAllAlgos(self):
-        '''Import All Algorithms Modules'''
-        self.__modules__ = dict()
-        for file_name in os.listdir(f"{self.fileDirectory}\\{self.package}"):
-            if file_name.endswith('.py') and file_name != '__init__.py':
-                module_name = file_name[:-3]
-                self.__modules__[module_name] = (
-                    importlib.import_module(f"{self.package}.{module_name}", '.'))
-
-    def setupAlgo(self, algo):
-        '''Import Algorithm Modules'''
-        self.algo = (importlib.import_module(f"{self.package}.{algo}", '.'))
 
     def run(self):
         '''The Main Process for the Thread'''
-        result = self.crypto.encrypt_decrypt(self.block, self.key)
-        self.finishedSignal.emit()
+        result = self.block.run()
+        # self.finishedSignal.emit()
         self.resultSignal.emit(result)
+        self.finishedSignal.emit()
 
 
 if __name__ == "__main__":

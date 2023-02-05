@@ -378,8 +378,8 @@ class AES:
 
     def a2Hex(self, key):
         string = key.encode("utf-8")
-        string = string.hex()
-        return string
+        stringHex = string.hex()
+        return stringHex
 
     def prepareText(self, plainText):
         textSize = len(plainText)
@@ -487,7 +487,7 @@ def getKeyBitSizes():
 def generateKey(size):
     if int(size) in list(map(int, getKeyBitSizes())):
         # generate random key
-        numOfChar = int(int(size)/8)
+        numOfChar = int(size/8)
         key = get_random_string(numOfChar)
         # key = int(key, 16)
         return key
