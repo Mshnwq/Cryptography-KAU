@@ -11,6 +11,7 @@ def get_random_string(length):
 
 
 class AES:
+    blockSizeHex = 16  # 16 bytes <=> 128 bits
     # substitution table
     sbox0 = [
         ["63", "7c", "77", "7b", "f2", "6b", "6f", "c5",
@@ -226,7 +227,8 @@ class AES:
         for i in range(4):
             col = state[0][i]+state[1][i]+state[2][i]+state[3][i]
             if i == 0:
-                print("The col: ", col)
+                # print("The col: ", col)
+                pass
             # print("the Rou: ", roundkey[i])
             new = hex(int(col, 16) ^ int(roundkey[i], 16) | 0x00000000)[2:]
             new = new.zfill(8)
@@ -267,7 +269,7 @@ class AES:
         outputArray = [0]*11
         # transfom key from byte to hex digits
         outputArray[0] = [key[0:8], key[8:16], key[16:24], key[24:32]]
-        print(outputArray[0])
+        # print(outputArray[0])
         for i in range(1, 11):
             temp = int(self.generateTempWord(outputArray[i-1][3], i), 16)
             w0 = hex(temp ^ int(outputArray[i-1][0], 16))[2:]
@@ -292,7 +294,7 @@ class AES:
                 row = int(state[i][j][0], 16)
                 col = int(state[i][j][1], 16)
                 state[i][j] = self.sbox1[row][col]
-                print("row: ", row, "col: ", col, "value: ", state[i][j])
+                # print("row: ", row, "col: ", col, "value: ", state[i][j])
         return state
 
     def shiftRow(self, subBytes):
@@ -334,8 +336,9 @@ class AES:
         listHolder = [0]*4
         for i in range(len(lis)):
             if i == 0:
-                print(lis[0][i],
-                      lis[1][i], lis[2][i], 16, lis[3][i])
+                # print(lis[0][i],
+                #       lis[1][i], lis[2][i], 16, lis[3][i])
+                pass
             resultCol = self.calcInvMixCols(int(lis[0][i], 16), int(
                 lis[1][i], 16), int(lis[2][i], 16), int(lis[3][i], 16))
             listHolder[i] = resultCol
@@ -346,7 +349,7 @@ class AES:
     def newInvMixColumns(self, state):
         output = [[0 for i in range(4)] for j in range(4)]
         for i in range(4):
-            print(state[0][i], state[1][i], state[2][i], state[3][i])
+            # print(state[0][i], state[1][i], state[2][i], state[3][i])
             output[0][i] = (hex(self.gf_mul(0x0e, int(state[0][i], 16)) ^ self.gf_mul(
                 0x0b, int(state[1][i], 16)) ^ self.gf_mul(0x0d, int(state[2][i], 16)) ^ self.gf_mul(0x09, int(state[3][i], 16)))[2:]).zfill(2)
             output[1][i] = (hex(self.gf_mul(0x09, int(state[0][i], 16)) ^ self.gf_mul(
@@ -355,7 +358,7 @@ class AES:
                 0x09, int(state[1][i], 16)) ^ self.gf_mul(0x0e, int(state[2][i], 16)) ^ self.gf_mul(0x0b, int(state[3][i], 16)))[2:]).zfill(2)
             output[3][i] = (hex(self.gf_mul(0x0b, int(state[0][i], 16)) ^ self.gf_mul(
                 0x0d, int(state[1][i], 16)) ^ self.gf_mul(0x09, int(state[2][i], 16)) ^ self.gf_mul(0x0e, int(state[3][i], 16)))[2:]).zfill(2)
-        print("the output: ", output)
+        # print("the output: ", output)
         return output
     # gf_mul is a function that calculates multiplication over a finite field
 # it takes two inputs and returns the multiplication result
@@ -399,32 +402,32 @@ class AES:
         return state
 
     def encrypt(self, plainText, key):
-        cipher_text = ""
-        hexString = self.prepareText(plainText)
-        print("plain: ", hexString)
-        textSize = int(len(hexString)/2)
+        cipher_text = ""  # initial value for cipher
+        hexString = plainText
+        # print("plain: ", hexString)
+        textSize = len(hexString)  # size in hex digits
         # generate key
         hexKey = self.a2Hex(key)
         expKey = self.keyExaption(hexKey)
-        for i in range(int(textSize/16)):  # loop through each block
+        for i in range(int(textSize/32)):  # loop through each block
             block = hexString[i*32: i*32+32]
             state = self.generateState(block)
-            print("keys for round0: ", expKey[0])
+            # print("keys for round0: ", expKey[0])
             state = self.addRoundKey(state, expKey[0], 0)
-            print("addKey0 state0: ", state)
+            # print("addKey0 state0: ", state)
             for i in range(1, 11):
-                print("keys for round", i, ": ", expKey[i])
+                # print("keys for round", i, ": ", expKey[i])
                 subBytes = self.subBytes(state)
-                print("subByte state"+str(i)+": ", subBytes)
+                # print("subByte state"+str(i)+": ", subBytes)
                 shifted = self.shiftRow(subBytes)
-                print("shifted state"+str(i)+": ", shifted)
+                # print("shifted state"+str(i)+": ", shifted)
                 if i != 10:
                     mixedColumn = self.newMixColumns(shifted)
-                    print("mixCol state"+str(i)+": ", mixedColumn)
+                    # print("mixCol state"+str(i)+": ", mixedColumn)
                     state = self.addRoundKey(mixedColumn, expKey[i], i)
                 else:
                     state = self.addRoundKey(shifted, expKey[i], i)
-                print("addKey state"+str(i)+": ", state)
+                # print("addKey state"+str(i)+": ", state)
             # transfer state into text
             textState = self.stringfyState(state)
             cipher_text += textState
@@ -437,24 +440,24 @@ class AES:
         hexKey = self.a2Hex(key)
         expKey = self.keyExaption(hexKey)
         expKey.reverse()
-        textSize = int(len(hexString)/2)
-        for i in range(int(textSize/16)):
+        textSize = int(len(hexString))
+        for i in range(int(textSize/32)):
             block = hexString[i*32: i*32+32]
-            print("cipher: ", block, "size in hex: ", len(block))
+            # print("cipher: ", block, "size in hex: ", len(block))
             state = self.generateState(block)
             state = self.addRoundKey(state, expKey[0], 0)
-            print("addKey state0: ", state)
+            # print("addKey state0: ", state)
             for i in range(1, 11):
-                print("keys for round", i, ": ", expKey[i])
+                # print("keys for round", i, ": ", expKey[i])
                 shifted = self.invShiftRow(state)
-                print("shifted state"+str(i)+": ", shifted)
+                # print("shifted state"+str(i)+": ", shifted)
                 subBytes = self.invSubBytes(shifted)
-                print("subByte state"+str(i)+": ", subBytes)
+                # print("subByte state"+str(i)+": ", subBytes)
                 state = self.addRoundKey(subBytes, expKey[i], i)
-                print("withKey state"+str(i)+": ", state)
+                # print("withKey state"+str(i)+": ", state)
                 if i != 10:
                     state = self.newInvMixColumns(state)
-                    print("mixCol state"+str(i)+": ", state)
+                    # print("mixCol state"+str(i)+": ", state)
             textState = self.stringfyState(state)
             plainText += textState
         return plainText
@@ -485,8 +488,8 @@ def generateKey(size):
     if int(size) in list(map(int, getKeyBitSizes())):
         # generate random key
         numOfChar = int(int(size)/8)
-        key = get_random_string(numOfChar).encode().hex()
-        key = int(key, 16)
+        key = get_random_string(numOfChar)
+        # key = int(key, 16)
         return key
     else:
         return "key size is not valid"

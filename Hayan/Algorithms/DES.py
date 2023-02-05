@@ -198,15 +198,13 @@ class DES:
                 ans = ans + "1"
         return ans
 
-    def encrypt(self, plainText, key, cryptType):
+    def encrypt(self, plainText, key, cryptType="encrypt"):
         # prepare plain text
-        if cryptType != "decrypt":
-            plainText = plainText.encode("utf-8")
-            plainText = plainText.hex().upper()
+        plainText = plainText.upper()
         # prepare the key
-        key = key.encode("utf-8")
-        key = key.hex().upper()
-        print("Before padding: ", plainText)
+        key = key.encode("utf-8").hex().upper()
+        print("The keyy::: ", key)
+        # print("Before padding: ", plainText)
         rkb, rk = self.prepare(key)
         if cryptType == "decrypt":
             rkb = rkb[::-1]
@@ -214,8 +212,8 @@ class DES:
 
         # text size in hex digits
         textSize = len(plainText)
-        print("textSize is: ", textSize)
-        originalBitSize = len(self.hex2bin(plainText))
+        # print("textSize is: ", textSize)
+        # originalBitSize = len(self.hex2bin(plainText))
         if textSize < 16:
             for i in range(textSize, 16):
                 plainText += "0"
@@ -227,8 +225,8 @@ class DES:
         final_sipher = ''
         for i in range(int(textSize/16)):
             pt = self.hex2bin(plainText[i*16: i*16+16])
-            print(plainText[i*16: i*16+16])
-            print("Len bit: ", len(pt))
+            # print(plainText[i*16: i*16+16])
+            # print("Len bit: ", len(pt))
             # Initial Permutation
             pt = self.permute(pt, self.initial_perm, 64)
             # Looping through the plain text
@@ -261,8 +259,8 @@ class DES:
                 # Swapper
                 if(i != 15):
                     left, right = right, left
-                print("Round ", i + 1, " ", self.bin2hex(left),
-                      " ", self.bin2hex(right), " ", rk[i])
+                # print("Round ", i + 1, " ", self.bin2hex(left),
+                #       " ", self.bin2hex(right), " ", rk[i])
 
             # Combination
             combine = left + right
@@ -329,7 +327,7 @@ class DES:
 
     def decrypt(self, cipher_text, key):
         text = self.encrypt(cipher_text, key, "decrypt")
-        print("decreptedJ: ")
+        # print("decreptedJ: ")
         return text
 
 
