@@ -213,7 +213,7 @@ class MainWindow(QMainWindow):
                                                 )
             get_app()
             self.ref = db.reference("/storage/")
-            print("Cloud Connected ")
+            self.logsAppend"Cloud Connected ")
             return True
         except Exception as e:
             self.ref = None
@@ -614,7 +614,6 @@ class MainWindow(QMainWindow):
         self._threads.append(decrypt_worker)
         self.update_threads()
         
-
     def decryptStatus(self, cryptor_wroker):
         cryptor_wroker.terminate()
         self.update_threads()
@@ -754,7 +753,8 @@ class MainWindow(QMainWindow):
     def readCipherTxt(self):
         cipherRead = self.txtRdHelper()
         if cipherRead != None:
-            stringCipher = self.fitNumber(self.cipherText, 60)
+            self.storeCipher(cipherRead)
+            stringCipher = self.fitNumber(self.__cipherText, 60)
             self.ui.ciphertext_text.setText(stringCipher)
             self.logsAppend("Fetch Success")
             self.ui.fetch_statusText.setText("  Success")

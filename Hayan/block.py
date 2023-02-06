@@ -171,9 +171,13 @@ class Block:
     #     return cipher
 
     def ecb(self):
+        '''ECB IN PARALLEL'''
         start = time.perf_counter()
         cipher = ""
         num_processes = multiprocessing.cpu_count()
+        # print('###########')
+        # print(num_processes)
+        # print('###########')
         with multiprocessing.Pool(processes=num_processes) as pool:
             results = []
             for i in range(int(len(self.textHex) / self.blockSizeHex)):
@@ -212,7 +216,7 @@ def main():
     # print("key is: " + key)
     print("cipher is: " + cipher)
 
-    print("-------------(Decryption)----------------")
+    print("\n-------------(Decryption)----------------")
     block2 = Block(128, 'AES', 'ECB', False, cipher, key)
     orig = block2.run()
     # print("key is: " + key)
