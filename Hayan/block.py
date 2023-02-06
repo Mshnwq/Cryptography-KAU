@@ -7,6 +7,7 @@ output: plain text with padding in hex
 import importlib
 import os
 import time
+import concurrent.futures
 
 
 package = 'Algorithms'
@@ -27,6 +28,7 @@ class Block:
     '''
     Block Class
     '''
+
     def __init__(self, blockSize, algo, mode, isEnc, text, key):
         '''
         Block Constructor
@@ -43,10 +45,10 @@ class Block:
         self.isEnc = isEnc
         self.algorithm = getModules()[algo].construct()
         self.key = key
-        self.mode = mode            
-        if isEnc: # in encrypt it is ascii
+        self.mode = mode
+        if isEnc:  # in encrypt it is ascii
             self.textHex = text.encode().hex()
-        else: # already encoded hex
+        else:  # already encoded hex
             self.textHex = text  # in decryption the message is already given in hex
 
         # the IV key for the enc dec size if the block zise is 64 take the first 64bit
@@ -62,7 +64,7 @@ class Block:
                 self.textHex += "0"
         elif textSize > self.blockSizeHex and textSize % self.blockSizeHex != 0:
             for i in range(textSize,
-                        (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
+                           (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
         print("plain after: "+self.textHex)
 
@@ -100,11 +102,11 @@ class Block:
 
         # after the first block every block is xorded with the previous block
         print("number of blocks: ",
-                int(len(self.textHex) / self.blockSizeHex))
+              int(len(self.textHex) / self.blockSizeHex))
         for i in range(1, int(len(self.textHex) / self.blockSizeHex)):
             # will slic the array for th required block size
             plain_i = self.textHex[i*self.blockSizeHex: i *
-                                        self.blockSizeHex + self.blockSizeHex]
+                                   self.blockSizeHex + self.blockSizeHex]
             print(f"Block#{i}: {plain_i}")
             xored = hex(int(ciph_new, 16) ^ int(plain_i, 16))[
                 2:].zfill(self.blockSizeHex)
@@ -129,24 +131,37 @@ class Block:
             # ciph_new = ciph_i
         return cipher
 
+    def do_act(self, blockStart):
+        # print(f"Thread #{blockStart} is running.")
+        cipher = None
+        plain_i = self.textHex[blockStart*self.blockSizeHex: blockStart *
+                               self.blockSizeHex + self.blockSizeHex]
+        if self.isEnc:
+            cipher = self.algorithm.encrypt(plain_i, self.key)
+        else:
+            cipher = self.algorithm.decrypt(plain_i, self.key)
+        return cipher
+
     def ecb(self):
+
         cipher = ""
-        for i in range(int(len(self.textHex) / self.blockSizeHex)):
-            # will slic the array for th required block size
-            plain_i = self.textHex[i*self.blockSizeHex: i *
-                                        self.blockSizeHex + self.blockSizeHex]
-            if self.isEnc:
-                ciph_i = self.algorithm.encrypt(plain_i, self.key)
-            else:
-                ciph_i = self.algorithm.decrypt(plain_i, self.key)
-            cipher += ciph_i
+        numOfBlocks = int(len(self.textHex) / self.blockSizeHex)
+        blockStart = [_ for _ in range(numOfBlocks)]
+        start = time.perf_counter()
+        with concurrent.futures.ThreadPoolExecutor() as executer:
+            results = executer.map(self.do_act, blockStart)
+        for result in results:
+            cipher += result
+        finish = time.perf_counter()
+        # print(f'Finished in {round(finish-start, 2)} second(s)')
         return cipher
 
 
 def main():
 
     key = getModules()['AES'].generateKey(128)  # ascii string
-    message = "Fello World123433"
+    message = "Cybersecurity is a critical issue in today's world, with more and more personal and business activities moving online. It refers to the protection of computer systems, networks, and data from unauthorized access, theft, damage, or destruction. The goal of cybersecurity is to ensure the confidentiality, integrity, and availability of sensitive information and systems. One of the most common forms of cyber attacks is hacking, where an attacker gains unauthorized access to a computer system or network. Another type of attack is phishing, where an attacker tricks a user into revealing sensitive information through emails or websites that appear to be from legitimate sources. Another common form of attack is malware, which is a type of software specifically designed to cause harm to a computer system. To prevent cyber attacks, it is important to adopt best practices such as keeping software and systems up-to-date, using strong passwords and multi-factor authentication, and being vigilant about email and website phishing scams. Additionally, organizations should implement firewalls, intrusion detection systems, and antivirus software to protect their networks and systems from cyber attacks. It is also important for individuals to take responsibility for their own cybersecurity. This includes being careful about what information they share online and being aware of the security of their personal. This progress report provides a summary of the Car-Park simulation project that has been underway since 2023/1/26. The goal of this project is to create and synchronize multi-threaded programs in Linux.. Over the past week, our team has made significant progress towards achieving this goal. This report will highlight our accomplishments, discuss any challenges we have faced, and outline our plans for the next stage of the project.devices, such as laptops and smartphones. Additionally, individuals should use encryption and virtual private networks(VPNs) when accessing sensitive information over public Wi-Fi networks. In conclusion, cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure."
+    message = "Hello World"
     print("\n-------------(AES - Enc - ECB)----------------")
     block = Block(128, 'AES', 'ECB', True, message, key)
     cipher = block.run()
