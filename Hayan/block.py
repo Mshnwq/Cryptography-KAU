@@ -1,14 +1,13 @@
-"""
-add padding to the plain text
-input: plain text in hex
-output: plain text with padding in hex
-"""
-# import all Algorithms
+
 import importlib
 import os
 import time
+# from multiprocessing import process
+import multiprocessing
+# import concurrent.futures
 
 
+# import all Algorithms
 package = 'Algorithms'
 fileDirectory = os.path.dirname(__file__)
 __modules__ = dict()
@@ -27,6 +26,7 @@ class Block:
     '''
     Block Class
     '''
+
     def __init__(self, blockSize, algo, mode, isEnc, text, key):
         '''
         Block Constructor
@@ -41,13 +41,12 @@ class Block:
         self.blockSizeByte = int(blockSize/8)  # block size in Bytes
         self.blockSizeHex = int(blockSize/4)  # block size in Bytes
         self.isEnc = isEnc
-        self.isAsymmetric = getModules()[algo].isAsymmetric()
         self.algorithm = getModules()[algo].construct()
         self.key = key
-        self.mode = mode            
-        if isEnc: # in encrypt it is ascii
+        self.mode = mode
+        if isEnc:  # in encrypt it is ascii
             self.textHex = text.encode().hex()
-        else: # already encoded hex
+        else:  # already encoded hex
             self.textHex = text  # in decryption the message is already given in hex
 
         # the IV key for the enc dec size if the block zise is 64 take the first 64bit
@@ -63,7 +62,7 @@ class Block:
                 self.textHex += "0"
         elif textSize > self.blockSizeHex and textSize % self.blockSizeHex != 0:
             for i in range(textSize,
-                        (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
+                           (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
         # print("plain after: "+self.textHex)
 
@@ -80,55 +79,41 @@ class Block:
         # print("plain0 size: ", plain_0)
         # TODO : check if the DES and AES have same name of fucntion for encryption,
         #  else it is required to make an if statment for each added encryption
-        # print(f"IV: {self.IV[:self.blockSizeHex]}")
+        print(f"IV: {self.IV[:self.blockSizeHex]}")
         # print("IV Size: ", len(self.IV[:self.blockSizeHex]))
         initialBlock = int(self.IV[:self.blockSizeHex], 16) ^ int(plain_0, 16)
         initialBlock = hex(initialBlock)[2:].zfill(self.blockSizeHex)
         if self.isEnc:
-            if self.isAsymmetric:
-                ciph_0 = self.algorithm.encrypt(
-                    initialBlock, self.key[0], self.key[0])
-            else:
-                ciph_0 = self.algorithm.encrypt(initialBlock, self.key)
+            # TODO: change it to self.key
+            ciph_0 = self.algorithm.encrypt(initialBlock, self.key)
             ciph_new = ciph_0
         else:
-            if self.isAsymmetric:
-                ciph_0 = self.algorithm.decrypt(
-                    plain_0, self.key[0], self.key[0])
-            else:
-                ciph_0 = self.algorithm.decrypt(plain_0, self.key)
+            # TODO: change it to self.key
+            ciph_0 = self.algorithm.decrypt(plain_0, self.key)
             ciph_0 = hex(int(ciph_0, 16) ^ int(self.IV[:self.blockSizeHex], 16))[
                 2:].zfill(self.blockSizeHex)
             ciph_new = plain_0
-        # print(f"initialBlock: {initialBlock}")
+        print(f"initialBlock: {initialBlock}")
 
-        # print(f"Cipered: {ciph_0}")
+        print(f"Cipered: {ciph_0}")
         cipher += ciph_0
 
         # after the first block every block is xorded with the previous block
         # print("number of blocks: ",
-                # int(len(self.textHex) / self.blockSizeHex))
+            #   int(len(self.textHex) / self.blockSizeHex))
         for i in range(1, int(len(self.textHex) / self.blockSizeHex)):
             # will slic the array for th required block size
             plain_i = self.textHex[i*self.blockSizeHex: i *
-                                        self.blockSizeHex + self.blockSizeHex]
+                                   self.blockSizeHex + self.blockSizeHex]
             # print(f"Block#{i}: {plain_i}")
             xored = hex(int(ciph_new, 16) ^ int(plain_i, 16))[
                 2:].zfill(self.blockSizeHex)
             # TODO : decide the nu,ber of round
             if self.isEnc:
-                if self.isAsymmetric:
-                    ciph_i = self.algorithm.encrypt(
-                    xored, self.key[0], self.key[0])
-                else:
-                    ciph_i = self.algorithm.encrypt(xored, self.key)
+                ciph_i = self.algorithm.encrypt(xored, self.key)
                 ciph_new = ciph_i
             else:
-                if self.isAsymmetric:
-                    ciph_0 = self.algorithm.decrypt(
-                        plain_i, self.key[0], self.key[0])
-                else:
-                    ciph_0 = self.algorithm.decrypt(plain_i, self.key)
+                ciph_i = self.algorithm.decrypt(plain_i, self.key)
                 ciph_i = int(ciph_i, 16) ^ int(ciph_new, 16)
                 # print("xored with: " + ciph_new)
                 ciph_i = hex(ciph_i)[2:].zfill(self.blockSizeHex)
@@ -137,118 +122,142 @@ class Block:
             # print(f"Cipered: {ciph_i}")
             # xor previous block with current
             # add the blcok to thr array
-            # print(f"XORED: {xored}\n")
+            print(f"XORED: {xored}\n")
             cipher += ciph_i
 
             # set the new cipher to xor with plain text
             # ciph_new = ciph_i
         return cipher
 
+    # def do_act(self, blockStart):
+    #     print(f"Thread #{blockStart} is running.")
+    #     cipher = None
+    #     plain_i = self.textHex[blockStart*self.blockSizeHex: blockStart *
+    #                             self.blockSizeHex + self.blockSizeHex]
+    #     if self.isEnc:
+    #         cipher = self.algorithm.encrypt(plain_i, self.key)
+    #     else:
+    #         cipher = self.algorithm.decrypt(plain_i, self.key)
+    #     return cipher
+
+    # def ecb(self):
+
+    #     cipher = ""
+    #     numOfBlocks = int(len(self.textHex) / self.blockSizeHex)
+    #     blockStart = [_ for _ in range(numOfBlocks)]
+    #     start = time.perf_counter()
+    #     with concurrent.futures.ThreadPoolExecutor() as executer:
+    #         results = executer.map(self.do_act, blockStart)
+    #     for result in results:
+    #         cipher += result
+    #     finish = time.perf_counter()
+    #     print(f'Finished in {round(finish-start, 2)} second(s)')
+    #     return cipher
+    
+    # def ecb(self):
+    #     cipher = ""
+    #     start = time.perf_counter()
+    #     for i in range(int(len(self.textHex) / self.blockSizeHex)):
+    #         # will slic the array for th required block size
+    #         plain_i = self.textHex[i*self.blockSizeHex: i *
+    #                                     self.blockSizeHex + self.blockSizeHex]
+    #         if self.isEnc:
+    #             ciph_i = self.algorithm.encrypt(plain_i, self.key)
+    #         else:
+    #             ciph_i = self.algorithm.decrypt(plain_i, self.key)
+    #         cipher += ciph_i
+    #     finish = time.perf_counter()
+    #     print(f'\nFinished in {round(finish-start, 2)} second(s)\n')
+    #     return cipher
+
     def ecb(self):
+        start = time.perf_counter()
         cipher = ""
-        for i in range(int(len(self.textHex) / self.blockSizeHex)):
-            # will slice the array for th required block size
-            plain_i = self.textHex[i*self.blockSizeHex : 
-                                    i*self.blockSizeHex + self.blockSizeHex]
-            print(f"PLAIN{i} is {plain_i}")
-            print(f"PLAIN{i} type {type(plain_i)}")
-            if self.isEnc:
-                if self.isAsymmetric:
-                    ciph_i = self.algorithm.encrypt(
-                        plain_i, self.key[0], self.key[0])
-                else:
-                    ciph_i = self.algorithm.encrypt(plain_i, self.key)
-            else:
-                if self.isAsymmetric:
-                    ciph_i = self.algorithm.decrypt(
-                        plain_i, self.key[0], self.key[0])
-                else:
-                    ciph_i = self.algorithm.decrypt(plain_i, self.key)
-            print(f"adding {ciph_i}")
-            cipher += ciph_i
+        num_processes = multiprocessing.cpu_count()
+        with multiprocessing.Pool(processes=num_processes) as pool:
+            results = []
+            for i in range(int(len(self.textHex) / self.blockSizeHex)):
+                plain_i = self.textHex[i*self.blockSizeHex: i *
+                                            self.blockSizeHex + self.blockSizeHex]
+                result = pool.apply_async(self.ecb_worker, (plain_i, self.isEnc, self.algorithm, self.key))
+                results.append(result)
+
+            pool.close()
+            pool.join()
+
+        for result in results:
+            cipher += result.get()
+
+        finish = time.perf_counter()
+        print(f'\nFinished in {round(finish-start, 2)} second(s)\n')
+        return cipher
+    
+    def ecb_worker(self, plain_i, isEnc, algorithm, key):
+        # print(f"Process #{plain_i} is running.")
+        if isEnc:
+            cipher = algorithm.encrypt(plain_i, key)
+        else:
+            cipher = algorithm.decrypt(plain_i, key)
         return cipher
 
 
 def main():
 
-    key = getModules()['RSA'].generateKey(16)  # ascii string
-    # key = 'ozuqhdqvyveogvddaiwpwaoummcoxalx'  # ascii string
-    message = "RSAA"
-    print("\n-------------(RSA - Enc - ECB)----------------")
-    block = Block(16, 'RSA', 'ECB', True, message, key[0])
+    key = getModules()['AES'].generateKey(128)  # ascii string
+    message = "Cybersecurity is a critical issue in today's world, with more and more personal and business activities moving online. It refers to the protection of computer systems, networks, and data from unauthorized access, theft, damage, or destruction. The goal of cybersecurity is to ensure the confidentiality, integrity, and availability of sensitive information and systems. One of the most common forms of cyber attacks is hacking, where an attacker gains unauthorized access to a computer system or network. Another type of attack is phishing, where an attacker tricks a user into revealing sensitive information through emails or websites that appear to be from legitimate sources. Another common form of attack is malware, which is a type of software specifically designed to cause harm to a computer system. To prevent cyber attacks, it is important to adopt best practices such as keeping software and systems up-to-date, using strong passwords and multi-factor authentication, and being vigilant about email and website phishing scams. Additionally, organizations should implement firewalls, intrusion detection systems, and antivirus software to protect their networks and systems from cyber attacks. It is also important for individuals to take responsibility for their own cybersecurity. This includes being careful about what information they share online and being aware of the security of their personal. This progress report provides a summary of the Car-Park simulation project that has been underway since 2023/1/26. The goal of this project is to create and synchronize multi-threaded programs in Linux.. Over the past week, our team has made significant progress towards achieving this goal. This report will highlight our accomplishments, discuss any challenges we have faced, and outline our plans for the next stage of the project.devices, such as laptops and smartphones. Additionally, individuals should use encryption and virtual private networks(VPNs) when accessing sensitive information over public Wi-Fi networks. In conclusion, cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure."
+    # message = "Hello World"
+    print("\n-------------(AES - Enc - ECB)----------------")
+    block = Block(128, 'AES', 'ECB', True, message, key)
     cipher = block.run()
-    print(f"key is: {key[0]}")
+    # print("key is: " + key)
     print("cipher is: " + cipher)
 
     print("-------------(Decryption)----------------")
-    block2 = Block(16, 'RSA', 'ECB', False, cipher, key[1])
-    print(f"key is: {key[1]}")
+    block2 = Block(128, 'AES', 'ECB', False, cipher, key)
     orig = block2.run()
-    print("originalis: " + orig)
+    # print("key is: " + key)
+    # print("originalis: " + orig)
     b = bytes.fromhex(orig)
-    s = b.decode("utf-8")
-    print(s)
+    print(b.decode("utf-8"))
 
 
-    # print("\n-------------(AES - Enc - ECB)----------------")
-    # block = Block(128, 'AES', 'ECB', True, message, key)
+    # # print("\n-------------(AES - Enc - CBC)----------------")
+    # block = Block(128, 'AES', 'CBC', True, message, key)
     # cipher = block.run()
-    # print("key is: " + key)
-    # print("cipher is: " + cipher)
+    # # print("key is: " + key)
+    # # print("cipher is: " + cipher)
 
-    # print("-------------(Decryption)----------------")
-    # block2 = Block(128, 'AES', 'ECB', False, cipher, key)
+    # # print("-------------(Decryption)----------------")
+    # block2 = Block(128, 'AES', 'CBC', False, cipher, key)
     # orig = block2.run()
-    # print("key is: " + key)
-    # print("originalis: " + orig)
-
-    # print("\n-------------(AES - Enc - CBC)----------------")
-    # block = Block(256, 'AES', 'CBC', True, message, key)
-    # cipher = block.run()
-    # print("key is: " + key)
-    # print("cipher is: " + cipher)
-
-    # print("-------------(Decryption)----------------")
-    # block2 = Block(256, 'AES', 'CBC', False, cipher, key)
-    # orig = block2.run()
-    # print("key is: " + key)
-    # print("originalis: " + orig)
+    # # print("key is: " + key)
+    # # print("originalis: " + orig)
 
     # key = getModules()['DES'].generateKey(64)  # ascii string
 
-    # key = getModules()['DES'].generateKey(64)  # ascii string
-    # message = "hi hayan DES"
-
-    # print("\n-------------(DES - Enc - ECB)----------------")
+    # # print("\n-------------(DES - Enc - ECB)----------------")
     # block = Block(64, 'DES', 'ECB', True, message, key)
     # cipher = block.run()
-    # print("key is: " + str(type(key)))
-    # print("cipher is: " + cipher)
+    # # print("key is: " + key)
+    # # print("cipher is: " + cipher)
 
-    # print("-------------(Decryption)----------------")
+    # # print("-------------(Decryption)----------------")
     # block2 = Block(64, 'DES', 'ECB', False, cipher, key)
     # orig = block2.run()
-    # print("key is: " + key)
-    # print("originalis: " + orig)
+    # # print("key is: " + key)
+    # # print("originalis: " + orig)
 
-    # b = bytes.fromhex(orig)
-    # s = b.decode("utf-8")
-    # print(s)
-
-    # key = getModules()['AES'].generateKey(256)
-    # print("\n-------------(DES - Enc - CBC)----------------")
-    # block = Block(256, 'DES', 'CBC', True, message, key)
+    # # print("\n-------------(DES - Enc - CBC)----------------")
+    # block = Block(64, 'DES', 'CBC', True, message, key)
     # cipher = block.run()
-    # print("key is: " + key)
-    # print("cipher is: " + cipher)
+    # # print("key is: " + key)
+    # # print("cipher is: " + cipher)
 
-    # print("-------------(Decryption)----------------")
-    # block2 = Block(256, 'DES', 'CBC', False, cipher, key)
+    # # print("-------------(Decryption)----------------")
+    # block2 = Block(64, 'DES', 'CBC', False, cipher, key)
     # orig = block2.run()
-    # print("key is: " + key)
-    # print("originalis: " + orig)
-    
-    ...
+    # # print("key is: " + key)
+    # # print("originalis: " + orig)
 
 
 if __name__ == '__main__':
