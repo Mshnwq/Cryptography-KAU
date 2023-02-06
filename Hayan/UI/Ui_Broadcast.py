@@ -54,7 +54,7 @@ class Ui_Broadcast(object):
         # populate with current available algorithms
         for algo in Workers.getModules().keys():
             self.algoType_combo.addItem(algo)
-        self.algoType_combo.activated[str].connect(self.onChangedAlgo)
+        # self.algoType_combo.activated[str].connect(self.onChangedAlgo)
         self.gridLayout.addWidget(self.algoType_combo, 1, 0, 1, 1)
 
         self.bitSize_label = QLabel("Bit Size")
@@ -215,8 +215,8 @@ class Ui_Broadcast(object):
         font.setBold(True)
         font.setWeight(40)
         self.plaintext_label.setFont(font)
-        self.plaintext_box = QTextEdit(self.message_groupBox)
-        self.plaintext_box.setGeometry(QRect(40, 40*2, 
+        self.plaintext_text = QTextEdit(self.message_groupBox)
+        self.plaintext_text.setGeometry(QRect(40, 40*2, 
         WINDOW_WIDTH-(int(3*WINDOW_WIDTH/24)+ int(WINDOW_WIDTH/4)) - 40*2, 60))
         self.ciphertext_label = QLabel("Ciphertext", self.message_groupBox)
         self.ciphertext_label.setGeometry(QRect(40*3, 250, 
@@ -388,9 +388,9 @@ class Ui_Broadcast(object):
         dlg = AboutDialog()
         dlg.exec_()
 
-    def onChangedAlgo(self, algo):
-        __modules__ = Workers.getModules()
-        self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
+    # def onChangedAlgo(self, algo):
+    #     __modules__ = Workers.getModules()
+    #     self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
 
     def updateBitCombo(self, sizes = ["16", "32", "64", "128"]):
         self.bitSize_combo.clear()

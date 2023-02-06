@@ -368,7 +368,6 @@ class RFID:
 
 ##### GUI METHODS #####
     def writeKey(self, desiredDataToWrite):
-        # return 1
         dataToWrite = bytes(desiredDataToWrite) # convert to bytes
         self.logsAppendSignal.emit("writing key...")
         writtenComplete = False
@@ -381,7 +380,7 @@ class RFID:
             if stat == 2: # tags surpassed numOfTags
                 return 2 # window pop
             if stat == 0: # tags != numOfTags
-                # self.logsAppendSignal.emit("incorrect amount of tags in front of reader")
+                self.logsAppendSignal.emit("incorrect amount of tags in front of reader")
                 self.logsAppendSignal.emit(f"Place {numOfTags} tag infront of reader")
                 attemptFilter -= 1
                 if attemptFilter == 0:
@@ -424,6 +423,7 @@ class RFID:
             if stat == 2: # tags surpassed numOfTags
                 return 2 # window pop
             if stat == 0: # tags != numOfTags
+                self.logsAppendSignal.emit("incorrect amount of tags in front of reader")
                 self.logsAppendSignal.emit(f"Place {numOfTags} tag infront of reader")
                 attemptFilter -= 1
                 if attemptFilter == 0:
@@ -449,10 +449,8 @@ class RFID:
         self.logsAppendSignal.emit("******************")
     
         # Decode tag info
-        # print(tagRead
-        # self.__key  = int.from_bytes(tagRead[0:len(tagRead)], 'big')
-        # print(f"decode: {self.__key}")
-        self.__key = str(tagRead)[2:-1]
+        self.__key = tagRead.decode("utf-8")
+        print(f"decode: {self.__key}")
         
         return 1
 

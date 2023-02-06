@@ -24,7 +24,17 @@ for file_name in os.listdir(f"{fileDirectory}\\{package}"):
         print(f"{module_name[3:]}")
         __ui__[module_name[3:]] = importlib.import_module(
             f"{package}.{module_name}", '.')
-
+        
+# import all algorithms
+package = 'Algorithms'
+__modules__ = dict()
+for file_name in os.listdir(f"{fileDirectory}\\{package}"):
+    if file_name.endswith('.py') and file_name != '__init__.py':
+        module_name = file_name[:-3]
+        __modules__[module_name] = importlib.import_module(
+            f"{package}.{module_name}", '.')
+def getModules():
+    return __modules__
 
 class MainWindow(QMainWindow):
     '''GUI Class'''
@@ -49,8 +59,9 @@ class MainWindow(QMainWindow):
 
     def clear(self):
         self.dialogType = 0
-        self.rfid.closePort()
-        self.rfid = None
+        if self.rfid != None:
+            self.rfid.closePort()
+            self.rfid = None
         self.__key = None
         self.__keyInt = None
 
@@ -96,6 +107,9 @@ class MainWindow(QMainWindow):
         # Clear logs
         self.ui.clearLogs_btn.clicked.connect(
             lambda: self.ui.logs_box.setPlainText(""))
+        
+        # On changed Algortihm
+        self.ui.algoType_combo.activated[str].connect(self.onChangedAlgo)
 
         # disable buttons
         self.ui.encryptMsg_btn.setEnabled(False)
@@ -148,6 +162,9 @@ class MainWindow(QMainWindow):
 
         # disable buttons
         self.ui.decryptMsg_btn.setEnabled(False)
+        # self.__key = 'ozuqhdqvyveogvddaiwpwaoummcoxalx'
+        # self.__keyInt = int(self.__key.encode('utf-8').hex(),16)
+
 
         # Fetch Source action
         self.ui.fetchSrcAction.triggered.connect(
@@ -251,7 +268,7 @@ class MainWindow(QMainWindow):
 
     def saveData(self):
         name = fileDirectory+'\\Data\\'+str(self.__key)+"_cipher.txt"
-        content = self.ui.plaintext_box.toPlainText()
+        content = self.__cipherText
         self.txtWrHelper(name, content)
 
         self.logsAppend("Save Success")
@@ -323,16 +340,33 @@ class MainWindow(QMainWindow):
         self.ui.statusbar.showMessage(f"Active Threads: {active_threads}")
 
     def storeKey(self, __key):
-        print(f"STORING key {__key}")
-        print(f"TYPE {type(__key)}")
+        # print(f"STORING key {__key}")
+        # print(f"TYPE {type(__key)}")
         self.__key = __key
-        self.__keyInt = int(__key.encode('utf-8').hex(),16)
-        print(f"STORING key (int) {self.__keyInt}")
+        self.__keyInt = int(self.__key.encode('utf-8').hex(),16)
+        # print(f"STORING key (int) {self.__keyInt}")
+        ...
 
     def storeCipher(self, __cipherText):
-        print(f"STORING cipher {__cipherText}")
-        print(f"TYPE {type(__cipherText)}")
+        # print(f"STORING cipher {__cipherText}")
+        # print(f"TYPE {type(__cipherText)}")
         self.__cipherText = __cipherText
+
+    def storePlain(self, __plainTextHex):
+        try:
+            if __plainTextHex == None:
+                raise Exception("Error encountered in algorithm")
+            self.__plainText = bytes.fromhex(__plainTextHex).decode('utf-8')
+            self.failedDecrytion = False
+        except Exception as e:
+            self.failedDecrytion = True
+            dialog = QMessageBox()
+            dialog.setWindowTitle(f"Decrpytion Failed")
+            dialog.setText(f"Details: {e}")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Try another decryption method")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
 
     def finishedKeyGen(self, key_worker):
         key_worker.terminate()
@@ -354,9 +388,15 @@ class MainWindow(QMainWindow):
         leng = len(num)
         for i in range(leng):
             fit += num[i]
-            if ((i+1) % width == 0):
-                fit += "\n"
+        #     if ((i+1) % width == 0):
+        #         fit += "\n"
+        # return num
         return fit
+
+    def onChangedAlgo(self, algo):
+        self.ui.encryptMsg_btn.setEnabled(False)
+        self.ui.writeKey_btn.setEnabled(False)
+        self.ui.updateBitCombo(sizes = getModules()[algo].getKeyBitSizes())
 
     def getBitSizeChosen(self):
         return int(self.ui.bitSize_combo.currentText())
@@ -368,16 +408,6 @@ class MainWindow(QMainWindow):
         return self.ui.blockMode_combo.currentText()
 
     def readKey(self):
-
-        # if self.getBitSizeChosen() > 64:
-        #     dialog = QMessageBox()
-        #     dialog.setText(f"Cannot Read {self.getBitSizeChosen()} bit key on tag")
-        #     dialog.setWindowTitle("Invalid Key Bit Size!")
-        #     dialog.setIcon(QMessageBox.Critical)
-        #     dialog.setInformativeText(f"Choose a Key Bit Size of 128 or lower")
-        #     dialog.setStandardButtons(QMessageBox.Ok)
-        #     dialog.exec_()
-        #     return None
 
         self.ui.readKey_btn.setEnabled(False)
         self.dialogType = 1
@@ -405,7 +435,7 @@ class MainWindow(QMainWindow):
             self.ui.readKey_statusText.setText("   Success")
             self.ui.readKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.logsAppend(f'(str) saved: {self.__key}')
+            self.logsAppend(f'(str) read: {self.__key}')
             self.logsAppend(f'(int) read: {self.__keyInt}')
             self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
             self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
@@ -449,7 +479,7 @@ class MainWindow(QMainWindow):
         self.ui.writeKey_btn.setEnabled(False)
         self.dialogType = 2
 
-        # TODO FAISAL initialize data
+        # initialize data
         tagData = bytearray(16)
         keyToWrite = self.__keyInt.to_bytes(16, byteorder='big')
 
@@ -478,7 +508,7 @@ class MainWindow(QMainWindow):
             self.ui.writeKey_statusText.setText("Key Issued")
             self.ui.writeKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.logsAppend(f'(str) saved: {self.__key}')
+            self.logsAppend(f'(str) written: {self.__key}')
             self.logsAppend(f'(int) written: {self.__keyInt}')
             self.logsAppend(f'(hex) written: {hex(self.__keyInt)}')
             self.logsAppend(f'(bin) written: {bin(self.__keyInt)}')
@@ -508,8 +538,19 @@ class MainWindow(QMainWindow):
             self.readKey()
 
     def encrypt(self):
+        
+        if getModules()[self.getAlgoChosen()].isAsymmetric():
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Invalid Algorithm!")
+            dialog.setText(
+                f"Cannot use Block on {self.getAlgoChosen()}")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Choose a Symmetric Encryption Algorithm")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            return None
 
-        plainTextString = self.ui.plaintext_box.toPlainText()
+        plainTextString = self.ui.plaintext_text.toPlainText()
         # Create a worker thread
         encrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
                                         self.getAlgoChosen(),
@@ -543,31 +584,48 @@ class MainWindow(QMainWindow):
 
     def decrypt(self):
 
-        # cipherTextString = self.ui.ciphertext_text.text()
-        # nchars = len(cipherTextString)
-        # string to int or long. Type depends on nchars
-        # cipherTextInt = sum(ord(cipherTextString[byte])<<8*(nchars-byte-1) for byte in range(nchars))
-        cipherTextInt = int(self.ui.ciphertext_text.toPlainText())
-        # print(cipherTextInt)
-        # # plainTextHex = hex(plainTextInt)[2::]
-        # # print(plainTextHex)
+        if getModules()[self.getAlgoChosen()].isAsymmetric():
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Invalid Algorithm!")
+            dialog.setText(
+                f"Cannot use Block on {self.getAlgoChosen()}")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Choose a Symmetric Decryption Algorithm")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            return None
 
-        # decrypting # TODO
-        # stat = self.fpga.encrypt_decrypt(cipherTextInt, self.key, self.n)
-        # self.plainTextInt = plainTextInt
+        cipherTextString = self.ui.ciphertext_text.toPlainText().replace("\n","")
+        # Create a worker thread
+        decrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
+                                        self.getAlgoChosen(),
+                                        self.getModeChosen(),
+                                        False, cipherTextString, 
+                                        self.__key)
 
-        # plainTextString = ''.join(chr((plainTextInt>>8*(nchars-byte-1))&0xFF) for byte in range(nchars))
-        # # int or long to string
-        # self.ui.plaintext_text.setText(plainTextString)
-        stat = 1
-        if stat == 1:
+        # Connect signals & slots
+        decrypt_worker.logsAppendSignal.connect(self.logsAppend)
+        decrypt_worker.resultSignal.connect(self.storePlain)
+        decrypt_worker.finishedSignal.connect(
+                    partial(self.decryptStatus, decrypt_worker))
+
+        # Start the worker
+        decrypt_worker.start()
+        self._threads.append(decrypt_worker)
+        self.update_threads()
+        
+
+    def decryptStatus(self, cryptor_wroker):
+        cryptor_wroker.terminate()
+        self.update_threads()
+        self._threads.remove(cryptor_wroker)
+        if not self.failedDecrytion:
             self.logsAppend("Decryption Success")
             self.ui.decryptMsg_statusText.setText("Success")
             self.ui.decryptMsg_statusText.setStyleSheet(
-                "color: rgb(0,200,0);\nfont: bold 16px;")
-            out = self.fpga.getOut()
-            pln = self.fitNumber(out, 50)
-            self.ui.plaintext_text.setText(pln)
+                    "color: rgb(0,200,0);\nfont: bold 16px;")
+            plainTextFit = self.fitNumber(self.__plainText, 50)
+            self.ui.plaintext_text.setText(plainTextFit)
         else:
             self.logsAppend("Decryption Failed")
             self.ui.decryptMsg_statusText.setText("Failed")
@@ -694,8 +752,8 @@ class MainWindow(QMainWindow):
         self.fetchedWindow.close()
 
     def readCipherTxt(self):
-        self.cipherText = self.txtRdHelper()
-        if self.cipherText != None:
+        cipherRead = self.txtRdHelper()
+        if cipherRead != None:
             stringCipher = self.fitNumber(self.cipherText, 60)
             self.ui.ciphertext_text.setText(stringCipher)
             self.logsAppend("Fetch Success")
@@ -710,13 +768,15 @@ class MainWindow(QMainWindow):
         ...
 
     def readKeyTxt(self):
-        self.__key = self.txtRdHelper()
-        if self.cipherText != None:
+
+        keyRead = self.txtRdHelper()
+        if keyRead != None:
+            self.storeKey(keyRead)
             self.logsAppend("Read Key.txt Success")
             self.ui.readKey_statusText.setText("   Success")
             self.ui.readKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            self.logsAppend(f'(str) saved: {self.__key}')
+            self.logsAppend(f'(str) read: {self.__key}')
             self.logsAppend(f'(int) read: {self.__keyInt}')
             self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
             self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
@@ -737,7 +797,6 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"An error occurred while writing to the file: {e}")
 
-    
     def txtRdHelper(self):
         try:
             options = QFileDialog.Options()

@@ -158,7 +158,16 @@ class Ui_Receive(object):
         # populate with current available algorithms
         for algo in Workers.getModules().keys():
             self.algoType_combo.addItem(algo)
+        self.algoType_combo.activated[str].connect(self.onChangedAlgo)
         self.gridLayout.addWidget(self.algoType_combo, 1, 1, 1, 1)
+
+        self.bitSize_label = QLabel(" Block Bit Size")
+        self.gridLayout.addWidget(self.bitSize_label, 0, 2, 1, 1)
+        self.bitSize_combo = QComboBox(self.encrypt_groupBox)
+        self.bitSize_combo.setGeometry(QRect(0, 0, 18, 18))
+        self.updateBitCombo(
+            sizes = Workers.getModules()[list(Workers.getModules().keys())[0]].getKeyBitSizes()) # sorry
+        self.gridLayout.addWidget(self.bitSize_combo, 1, 2, 1, 1)
 
         self.decryptMsg_btn = QPushButton("Decrypt Message", self.message_groupBox)
         self.decryptMsg_btn.setIcon(QIcon(":unlock"))
@@ -182,7 +191,7 @@ class Ui_Receive(object):
                                     "}"
                                     )
         self.decryptMsg_btn.setGeometry(QRect(40*6, int(40*6.5), BUTTON_WIDTH+30, BUTTON_HEIGHT))
-        self.gridLayout.addWidget(self.decryptMsg_btn, 0, 2, 2, 1)
+        self.gridLayout.addWidget(self.decryptMsg_btn, 0, 3, 2, 1)
         self.decryptMsg_statusBox = QGroupBox("Status", self.message_groupBox)
         self.decryptMsg_statusBox.setStyleSheet("font-weight: bold")
         self.decryptMsg_statusBox.setGeometry(QRect(40*10, int(40*6.5), BUTTON_WIDTH, BUTTON_HEIGHT))
@@ -192,7 +201,7 @@ class Ui_Receive(object):
         self.decryptMsg_statusBox.setFont(font)
         self.decryptMsg_statusText = QLabel("-------------", self.decryptMsg_statusBox)
         self.decryptMsg_statusText.setGeometry(QRect(12, 5, BUTTON_WIDTH, BUTTON_HEIGHT))
-        self.gridLayout.addWidget(self.decryptMsg_statusBox, 0, 3, 2, 1)
+        self.gridLayout.addWidget(self.decryptMsg_statusBox, 0, 4, 2, 1)
 
         self.ciphertext_label = QLabel("CipherText", self.message_groupBox)
         self.ciphertext_label.setGeometry(QRect(40*3, 40, 
@@ -339,6 +348,14 @@ class Ui_Receive(object):
     def aboutActionButtonClick(self):
         dlg = AboutDialog()
         dlg.exec_()
+
+    def onChangedAlgo(self, algo):
+        __modules__ = Workers.getModules()
+        self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
+
+    def updateBitCombo(self, sizes = ["16", "32", "64", "128"]):
+        self.bitSize_combo.clear()
+        self.bitSize_combo.addItems(sizes)
 
 class AboutDialog(QDialog):
     def __init__(self):

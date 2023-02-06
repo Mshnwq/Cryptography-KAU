@@ -5,12 +5,26 @@ class RSA:
    def __init__(self):
       print("constrcuted RSA")
 
-   def encrypt_decrypt(self, text, key):
-      pair = key.split('@')
-      exponant = pair[0]
-      modulus = pair[1]
+   def decrypt(self, text, exponant, modulus):
+      exponant = int(exponant)
+      modulus = int(modulus)
+      # print(f"TEXT before decode {text}")
+      text = int(text)
+      # print(f"TEXT after decode {text}")
       result = (text**exponant)%modulus
-      return result
+      resultHex = hex(result)
+      resultStr = bytes.fromhex(resultHex[2:]).decode()
+      return resultStr
+   
+   def encrypt(self, text, exponant, modulus):
+      exponant = int(exponant)
+      modulus = int(modulus)
+      print(f"TEXT before encode {text}")
+      text = int(text.encode().hex(),16)
+      print(f"TEXT after encode {text}")
+      result = (text**exponant)%modulus
+      # print(f"TEXT after code {text}")
+      return str(result)
 
 def gcd(a, b):
    while a != 0:
@@ -138,9 +152,19 @@ def construct():
    return RSA()
 
 def main():
-   generateKey(64)
-   # rsa = RSA()
-   makeKeyFiles('RSA_demo', 64)
+   key = generateKey(32)
+   message = "Hiaa"
+   rsa = RSA()
+
+   ciph = rsa.encrypt(message, key[0][0], key[0][1])
+   print(f"CIPH is {ciph}")
+   # ciph = ciph.encode('utf-8').decode('utf-8')
+   # print(f"CIPH is {ciph}")
+   plain = rsa.decrypt(ciph, key[1][0], key[1][1])
+   print(f"Plain is {plain}")
+   # print(f"Plain decode {plain}")
+
+   # makeKeyFiles('RSA_demo', 64)
 
 if __name__ == '__main__':
    main()

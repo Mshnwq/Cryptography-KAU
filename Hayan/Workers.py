@@ -7,7 +7,6 @@ import os
 import importlib
 import sys
 
-
 # import all Algorithms
 package = 'Algorithms'
 fileDirectory = os.path.dirname(__file__)
@@ -103,7 +102,6 @@ class Cryptor_Worker(QThread):
     resultSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
 
-
     def __init__(self, size, algo, mode, isEnc, text, key):
         '''
         Cryptor Worker Constructor
@@ -116,15 +114,21 @@ class Cryptor_Worker(QThread):
             key (str): algorithm key
         '''
         super().__init__()
+        # print(f'Key {key}')
+        # print(f'Text {text}')
         self.block = Block(size, algo, mode, isEnc, text, key)
         # self.crypto.setSignals() #TODO
 
     def run(self):
         '''The Main Process for the Thread'''
-        result = self.block.run()
-        # self.finishedSignal.emit()
-        self.resultSignal.emit(result)
-        self.finishedSignal.emit()
+        try:
+            result = self.block.run()
+            # print(f'Worker Result {result}')
+            self.resultSignal.emit(result)
+            self.finishedSignal.emit()
+        except Exception as e:
+            self.resultSignal.emit(None)
+            self.finishedSignal.emit()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {
     "Cloud": false,
-    "RFID_rd": true,
+    "RFID_rd": false,
     "FPGA_crypt": false
 }
