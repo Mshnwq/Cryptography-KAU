@@ -1,6 +1,6 @@
 {
     "FPGA_gen": true,
-    "RFID_wr": false,
+    "RFID_wr": true,
     "FPGA_crypt": false,
     "Cloud": false
 }

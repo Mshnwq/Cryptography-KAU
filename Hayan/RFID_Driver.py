@@ -449,12 +449,13 @@ class RFID:
         self.logsAppendSignal.emit("******************")
     
         # Decode tag info
-        print(tagRead)
-        self.__key__  = int.from_bytes(tagRead[0:len(tagRead)], 'big')
-        print(f"decode: {self.__key__}")
+        # print(tagRead
+        # self.__key  = int.from_bytes(tagRead[0:len(tagRead)], 'big')
+        # print(f"decode: {self.__key}")
+        self.__key = str(tagRead)[2:-1]
         
         return 1
 
     def getKey(self):
-        return self.__key__
+        return self.__key
 

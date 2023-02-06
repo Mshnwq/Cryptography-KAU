@@ -44,8 +44,15 @@ class MainWindow(QMainWindow):
         self.choiceWindow()
 
     def logout(self):
+        self.clear() # TODO clear any data
         self.choiceWindow()
-        # self.clear() # TODO clear any data
+
+    def clear(self):
+        self.dialogType = 0
+        self.rfid.closePort()
+        self.rfid = None
+        self.__key = None
+        self.__keyInt = None
 
     def choiceWindow(self):
         self.ui = __ui__['Choice'].construct()
@@ -67,7 +74,7 @@ class MainWindow(QMainWindow):
         self.ui.genKeys_btn.clicked.connect(self.generateKeys)
 
         # Write Key
-        if (self.ui.keyWrAction.isChecked() and self.checkRFID()):  # onto RFID
+        if (self.ui.keyWrAction.isChecked() and self.checkRFID('Wr')):  # onto RFID
             self.ui.writeKey_btn.clicked.connect(self.writeKey)
         else:  # onto .txt
             self.ui.writeKey_btn.clicked.connect(self.saveKey)
@@ -127,7 +134,7 @@ class MainWindow(QMainWindow):
 
         # Read Key
         self.readStatus = False
-        if (self.ui.keyRdAction.isChecked() and self.checkRFID()):  # from RFID
+        if (self.ui.keyRdAction.isChecked() and self.checkRFID('Rd')):  # from RFID
             self.ui.readKey_btn.clicked.connect(self.readKey)
         else:  # from.txt
             self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
@@ -260,6 +267,7 @@ class MainWindow(QMainWindow):
         self.ui.writeKey_statusText.setText("Key Saved")
         self.ui.writeKey_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 14px;")
+        self.logsAppend(f'(str) saved: {self.__key}')
         self.logsAppend(f'(int) saved: {self.__keyInt}')
         self.logsAppend(f'(hex) saved: {hex(self.__keyInt)}')
         self.logsAppend(f'(bin) saved: {bin(self.__keyInt)}')
@@ -315,10 +323,11 @@ class MainWindow(QMainWindow):
         self.ui.statusbar.showMessage(f"Active Threads: {active_threads}")
 
     def storeKey(self, __key):
-        # print(f"STORING key {__key}")
-        # print(f"TYPE {type(__key)}")
+        print(f"STORING key {__key}")
+        print(f"TYPE {type(__key)}")
         self.__key = __key
         self.__keyInt = int(__key.encode('utf-8').hex(),16)
+        print(f"STORING key (int) {self.__keyInt}")
 
     def storeCipher(self, __cipherText):
         print(f"STORING cipher {__cipherText}")
@@ -396,7 +405,7 @@ class MainWindow(QMainWindow):
             self.ui.readKey_statusText.setText("   Success")
             self.ui.readKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
-            # self.key = self.rfid.getKey()
+            self.logsAppend(f'(str) saved: {self.__key}')
             self.logsAppend(f'(int) read: {self.__keyInt}')
             self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
             self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
@@ -442,9 +451,7 @@ class MainWindow(QMainWindow):
 
         # TODO FAISAL initialize data
         tagData = bytearray(16)
-        self.keyToWriteInt = keyInt
-        # self.keyToWriteInt = 1945954
-        keyToWrite = self.keyToWriteInt.to_bytes(16, byteorder='big')
+        keyToWrite = self.__keyInt.to_bytes(16, byteorder='big')
 
         for i in range(0, len(keyToWrite)):
             tagData[i] = keyToWrite[i]
@@ -471,6 +478,7 @@ class MainWindow(QMainWindow):
             self.ui.writeKey_statusText.setText("Key Issued")
             self.ui.writeKey_statusText.setStyleSheet(
                 "color: rgb(0,200,0);\nfont: bold 14px;")
+            self.logsAppend(f'(str) saved: {self.__key}')
             self.logsAppend(f'(int) written: {self.__keyInt}')
             self.logsAppend(f'(hex) written: {hex(self.__keyInt)}')
             self.logsAppend(f'(bin) written: {bin(self.__keyInt)}')
@@ -687,32 +695,38 @@ class MainWindow(QMainWindow):
 
     def readCipherTxt(self):
         self.cipherText = self.txtRdHelper()
-        stringCipher = self.fitNumber(self.cipherText, 60)
-        self.ui.ciphertext_text.setText(stringCipher)
-        self.logsAppend("Fetch Success")
-        self.ui.fetch_statusText.setText("  Success")
-        self.ui.fetch_statusText.setStyleSheet(
-            "color: rgb(0,200,0);\nfont: bold 14px;")
-        self.fetchStatus = True
-        self.ui.decryptMsg_btn.setEnabled(
-            self.readStatus and self.fetchStatus)
+        if self.cipherText != None:
+            stringCipher = self.fitNumber(self.cipherText, 60)
+            self.ui.ciphertext_text.setText(stringCipher)
+            self.logsAppend("Fetch Success")
+            self.ui.fetch_statusText.setText("  Success")
+            self.ui.fetch_statusText.setStyleSheet(
+                "color: rgb(0,200,0);\nfont: bold 14px;")
+            self.fetchStatus = True
+            self.ui.decryptMsg_btn.setEnabled(
+                self.readStatus and self.fetchStatus)
+        else:
+            self.logsAppend("Invalid file")
         ...
 
     def readKeyTxt(self):
         self.__key = self.txtRdHelper()
-        self.logsAppend("Read Key.txt Success")
-        self.ui.readKey_statusText.setText("   Success")
-        self.ui.readKey_statusText.setStyleSheet(
-            "color: rgb(0,200,0);\nfont: bold 14px;")
-        # self.key = self.rfid.getKey()
-        self.logsAppend(f'(int) read: {self.__keyInt}')
-        self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
-        self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
-        stringKey = self.fitNumber(self.__key, 20)
-        self.ui.scanned_box.setText(stringKey)
-        self.readStatus = True
-        self.ui.decryptMsg_btn.setEnabled(
-            self.readStatus and self.fetchStatus)
+        if self.cipherText != None:
+            self.logsAppend("Read Key.txt Success")
+            self.ui.readKey_statusText.setText("   Success")
+            self.ui.readKey_statusText.setStyleSheet(
+                "color: rgb(0,200,0);\nfont: bold 14px;")
+            self.logsAppend(f'(str) saved: {self.__key}')
+            self.logsAppend(f'(int) read: {self.__keyInt}')
+            self.logsAppend(f'(hex) read: {hex(self.__keyInt)}')
+            self.logsAppend(f'(bin) read: {bin(self.__keyInt)}')
+            stringKey = self.fitNumber(self.__key, 20)
+            self.ui.scanned_box.setText(stringKey)
+            self.readStatus = True
+            self.ui.decryptMsg_btn.setEnabled(
+                self.readStatus and self.fetchStatus)
+        else:
+            self.logsAppend("Invalid file")
         ...
 
     def txtWrHelper(self, file_name, text):
