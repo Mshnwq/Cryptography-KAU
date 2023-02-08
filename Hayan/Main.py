@@ -213,7 +213,7 @@ class MainWindow(QMainWindow):
                                                 )
             get_app()
             self.ref = db.reference("/storage/")
-            self.logsAppend"Cloud Connected ")
+            self.logsAppend("Cloud Connected ")
             return True
         except Exception as e:
             self.ref = None
@@ -394,6 +394,8 @@ class MainWindow(QMainWindow):
         return fit
 
     def onChangedAlgo(self, algo):
+        if getModules()[algo].isAsymmetric():
+            self.ui.blockMode_combo.setEnabled(False)
         self.ui.encryptMsg_btn.setEnabled(False)
         self.ui.writeKey_btn.setEnabled(False)
         self.ui.updateBitCombo(sizes = getModules()[algo].getKeyBitSizes())
@@ -817,7 +819,7 @@ class MainWindow(QMainWindow):
         print("kaka")
         ...
 
-        # self.fpga = FPGA() # create instance of RFID
+        # self.fpga = FPGA() # create instance of FPGA
 
         # stat = 1
 

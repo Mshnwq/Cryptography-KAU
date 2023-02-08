@@ -1,10 +1,12 @@
 
+from pydantic import BaseModel
 import importlib
 import os
 import time
 # from multiprocessing import process
 import multiprocessing
 # import concurrent.futures
+
 
 
 # import all Algorithms
@@ -22,35 +24,45 @@ def getModules():
     return __modules__
 
 
-class Block:
+    
+    
+class Block(BaseModel):
+    blockSize: int
+    algo: str
+    mode: str
+    isEnc: bool
+    text: str
+    key: str
     '''
     Block Class
+    Args:
+        blockSize (int): bit size of blocks
+        algo (str): encryption or decryption algorithm
+        mode (str): mode of block
+        isEnc (bool): is Encryption, else Decryption
+        text (str): text to encrypt or decrypt
+        key (str): algorithm key
     '''
+    # other variables
+    blockSizeByte = int(0)
+    blockSizeHex = int(0)
+    algorithm = object()
+    textHex = ''
+    IV = ''
 
-    def __init__(self, blockSize, algo, mode, isEnc, text, key):
-        '''
-        Block Constructor
-        Args:
-            blockSize (int): bit size of blocks
-            algo (str): encryption or decryption algorithm
-            mode (str): mode of block
-            isEnc (bool): is Encryption, else Decryption
-            text (str): text to encrypt or decrypt
-            key (str): algorithm key
-        '''
-        self.blockSizeByte = int(blockSize/8)  # block size in Bytes
-        self.blockSizeHex = int(blockSize/4)  # block size in Bytes
-        self.isEnc = isEnc
-        self.algorithm = getModules()[algo].construct()
-        self.key = key
-        self.mode = mode
-        if isEnc:  # in encrypt it is ascii
-            self.textHex = text.encode().hex()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.blockSizeByte = int(self.blockSize / 8)
+        self.blockSizeHex = int(self.blockSize / 4)
+        self.algorithm = getModules()[self.algo].construct()
+        if self.isEnc:  # in encrypt it is ascii
+            self.textHex = self.text.encode().hex()
         else:  # already encoded hex
-            self.textHex = text  # in decryption the message is already given in hex
+            self.textHex = self.text  # in decryption the message is already given in hex
 
         # the IV key for the enc dec size if the block zise is 64 take the first 64bit
-        self.IV = "65787A736F64786B617373746A636164"  # hix formate
+        self.IV = "65787A736F64786B617373746A636164"  # hex format
         self.makeBlocks()
 
     def makeBlocks(self):
@@ -211,13 +223,13 @@ def main():
     message = "Cybersecurity is a critical issue in today's world, with more and more personal and business activities moving online. It refers to the protection of computer systems, networks, and data from unauthorized access, theft, damage, or destruction. The goal of cybersecurity is to ensure the confidentiality, integrity, and availability of sensitive information and systems. One of the most common forms of cyber attacks is hacking, where an attacker gains unauthorized access to a computer system or network. Another type of attack is phishing, where an attacker tricks a user into revealing sensitive information through emails or websites that appear to be from legitimate sources. Another common form of attack is malware, which is a type of software specifically designed to cause harm to a computer system. To prevent cyber attacks, it is important to adopt best practices such as keeping software and systems up-to-date, using strong passwords and multi-factor authentication, and being vigilant about email and website phishing scams. Additionally, organizations should implement firewalls, intrusion detection systems, and antivirus software to protect their networks and systems from cyber attacks. It is also important for individuals to take responsibility for their own cybersecurity. This includes being careful about what information they share online and being aware of the security of their personal. This progress report provides a summary of the Car-Park simulation project that has been underway since 2023/1/26. The goal of this project is to create and synchronize multi-threaded programs in Linux.. Over the past week, our team has made significant progress towards achieving this goal. This report will highlight our accomplishments, discuss any challenges we have faced, and outline our plans for the next stage of the project.devices, such as laptops and smartphones. Additionally, individuals should use encryption and virtual private networks(VPNs) when accessing sensitive information over public Wi-Fi networks. In conclusion, cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure."
     # message = "Hello World"
     print("\n-------------(AES - Enc - ECB)----------------")
-    block = Block(128, 'AES', 'ECB', True, message, key)
+    block = Block(blockSize=128, algo='AES', mode='ECB', isEnc=True, text=message, key=key)
     cipher = block.run()
     # print("key is: " + key)
     print("cipher is: " + cipher)
 
     print("\n-------------(Decryption)----------------")
-    block2 = Block(128, 'AES', 'ECB', False, cipher, key)
+    block2 = Block(blockSize=128, algo='AES', mode='ECB', isEnc=False, text=cipher, key=key)
     orig = block2.run()
     # print("key is: " + key)
     # print("originalis: " + orig)

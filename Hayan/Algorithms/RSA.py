@@ -152,8 +152,8 @@ def construct():
    return RSA()
 
 def main():
-   key = generateKey(32)
-   message = "Hiaa"
+   key = generateKey(16)
+   message = "Hi"
    rsa = RSA()
 
    ciph = rsa.encrypt(message, key[0][0], key[0][1])
