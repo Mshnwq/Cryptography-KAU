@@ -1,0 +1,18 @@
+Fitter Status : Successful - Tue Nov 15 15:37:22 2022
+Quartus Prime Version : 18.0.0 Build 614 04/24/2018 SJ Lite Edition
+Revision Name : rsa_rfid
+Top-level Entity Name : rsa_rfid
+Family : MAX 10
+Device : 10M50DAF484C6GES
+Timing Models : Preliminary
+Total logic elements : 2,774 / 49,760 ( 6 % )
+    Total combinational functions : 2,244 / 49,760 ( 5 % )
+    Dedicated logic registers : 1,674 / 49,760 ( 3 % )
+Total registers : 1674
+Total pins : 132 / 360 ( 37 % )
+Total virtual pins : 0
+Total memory bits : 312 / 1,677,312 ( < 1 % )
+Embedded Multiplier 9-bit elements : 12 / 288 ( 4 % )
+Total PLLs : 0 / 4 ( 0 % )
+UFM blocks : 0 / 1 ( 0 % )
+ADC blocks : 0 / 2 ( 0 % )

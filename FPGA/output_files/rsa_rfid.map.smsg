@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at rom.v(23): always construct contains both blocking and non-blocking assignments File: C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v Line: 23
