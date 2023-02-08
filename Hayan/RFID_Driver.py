@@ -33,7 +33,6 @@ class RFID:
         # self.getDeviceInfo() # use when needed
         # self.closePort() # use when needed
         print("constructed RFID")
-        self.__key__ = 0
         
 ########### DEVICE INITIALIZATION METHODS ############
 
@@ -49,13 +48,15 @@ class RFID:
                 # Path 32 bit
                 # fileDirectory + '\\lib\\32 bit\\UHFReader09.dll')
         elif platform.system() == 'Linux':
-            absolutepath = os.path.abspath(__file__)
-            self.fileDirectory = os.path.dirname(absolutepath)
-            self.Objdll = ctypes.windll.LoadLibrary(
+            # absolutepath = os.path.abspath(__file__)
+            # self.fileDirectory = os.path.dirname(absolutepath)
+            # self.Objdll = ctypes.windll.LoadLibrary(
                 # Path 64 bit
-                self.fileDirectory + '/lib/64 bit/UHFReader09.so')
+                # self.fileDirectory + '/lib/64 bit/UHFReader09.so')
+            # TODO: MONO, IronPython, Pythonnet, Refrence issue, CLR, Basic.dll broken
+            ...
         else:
-            exit(f"Device does not support {platform.system()} OS")
+            raise Exception(f"Device does not support {platform.system()} OS")
 
 
     def openPort(self, port = 0):
@@ -457,3 +458,11 @@ class RFID:
     def getKey(self):
         return self.__key
 
+def main():
+    rfid = RFID()
+    # print("DDDDDDDDDDDDDDD")
+    # rfid.closePort()
+    ...
+
+if __name__ == '__main__':
+    main()

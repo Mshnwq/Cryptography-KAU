@@ -21,20 +21,10 @@ __ui__ = dict()
 for file_name in os.listdir(f"{fileDirectory}\\{package}"):
     if file_name.endswith('.py') and file_name.startswith('Ui_') and file_name != '__init__.py':
         module_name = file_name[:-3]
-        print(f"{module_name[3:]}")
+        # print(f"{module_name[3:]}")
         __ui__[module_name[3:]] = importlib.import_module(
             f"{package}.{module_name}", '.')
         
-# import all algorithms
-package = 'Algorithms'
-__modules__ = dict()
-for file_name in os.listdir(f"{fileDirectory}\\{package}"):
-    if file_name.endswith('.py') and file_name != '__init__.py':
-        module_name = file_name[:-3]
-        __modules__[module_name] = importlib.import_module(
-            f"{package}.{module_name}", '.')
-def getModules():
-    return __modules__
 
 class MainWindow(QMainWindow):
     '''GUI Class'''
@@ -50,15 +40,24 @@ class MainWindow(QMainWindow):
         self._threads = []
         self.dialogType = 0
 
+        if platform.system() == 'Windows':
+            myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        elif platform.system() == 'Linux':
+            ...
+        else:
+            print(f"Taskbar Icon not supported in {platform.system()} OS")
         # show choice window
         self.choiceWindow()
 
     def logout(self):
-        self.clear() # TODO clear any data
+        self.clearData() # TODO clear any data
         self.choiceWindow()
 
-    def clear(self):
+    def clearData(self):
         self.dialogType = 0
+        if self.default_app != None:
+            delete_app(self.default_app)
         if self.rfid != None:
             self.rfid.closePort()
             self.rfid = None
@@ -99,7 +98,7 @@ class MainWindow(QMainWindow):
             self.ui.encryptMsg_btn.clicked.connect(self.encrypt)
 
         # Upload data to backend
-        if self.ui.broadcastSrcAction.isChecked() and self.checkCloud():  # use cloud
+        if self.ui.broadcastSrcAction.isChecked() and self.checkCloud('Up'):  # use cloud
             self.ui.uploadData_btn.clicked.connect(self.sendData)
         else:  # use .txt
             self.ui.uploadData_btn.clicked.connect(self.saveData)
@@ -109,7 +108,7 @@ class MainWindow(QMainWindow):
             lambda: self.ui.logs_box.setPlainText(""))
         
         # On changed Algortihm
-        self.ui.algoType_combo.activated[str].connect(self.onChangedAlgo)
+        self.ui.algoType_combo.activated[str].connect(self.onChangedAlgoBrd)
 
         # disable buttons
         self.ui.encryptMsg_btn.setEnabled(False)
@@ -141,7 +140,7 @@ class MainWindow(QMainWindow):
 
         # Fetch keys
         self.fetchStatus = False
-        if (self.ui.fetchSrcAction.isChecked() and self.checkCloud()):  # from Cloud
+        if (self.ui.fetchSrcAction.isChecked() and self.checkCloud('Ft')):  # from Cloud
             self.ui.fetch_btn.clicked.connect(self.fetchData)
         else:  # from .txt
             self.ui.fetch_btn.clicked.connect(self.readCipherTxt)
@@ -162,9 +161,9 @@ class MainWindow(QMainWindow):
 
         # disable buttons
         self.ui.decryptMsg_btn.setEnabled(False)
-        # self.__key = 'ozuqhdqvyveogvddaiwpwaoummcoxalx'
-        # self.__keyInt = int(self.__key.encode('utf-8').hex(),16)
 
+        # On changed Algortihm
+        self.ui.algoType_combo.activated[str].connect(self.onChangedAlgoRcv)
 
         # Fetch Source action
         self.ui.fetchSrcAction.triggered.connect(
@@ -280,7 +279,9 @@ class MainWindow(QMainWindow):
         name = fileDirectory+'\\Key\\'+str(self.__key)+'.txt'
         content = str(self.__key)
         self.txtWrHelper(name, content)
+
         self.logsAppend("Save Key Success")
+        self.ui.encryptMsg_btn.setEnabled(True)
         self.ui.writeKey_statusText.setText("Key Saved")
         self.ui.writeKey_statusText.setStyleSheet(
             "color: rgb(0,200,0);\nfont: bold 14px;")
@@ -301,7 +302,7 @@ class MainWindow(QMainWindow):
                 json.dump(data, file, indent=4)
             self.logsAppend("Settings updated successfully")
         except Exception as e:
-            print(f"An error occurred while saving config file: {e}")
+            self.logsAppend(f"An error occurred while saving config file: {e}")
 
     def saveReceiveConfig(self):
         data = {
@@ -314,7 +315,7 @@ class MainWindow(QMainWindow):
                 json.dump(data, file, indent=4)
             self.logsAppend("Settings updated successfully")
         except Exception as e:
-            print(f"An error occurred while saving config file: {e}")
+            self.logsAppend(f"An error occurred while saving config file: {e}")
 
     def generateKeys(self):
 
@@ -376,7 +377,7 @@ class MainWindow(QMainWindow):
         self.ui.key_box.setText(self.fitNumber(
             str(self.__key), 20))
         self.ui.writeKey_btn.setEnabled(True)
-        self.ui.encryptMsg_btn.setEnabled(True)
+        # self.ui.encryptMsg_btn.setEnabled(True)
         self.logsAppend("Key Generation Success")
         self.ui.genKeys_statusText.setText("Keys Generated")
         self.ui.genKeys_statusText.setStyleSheet(
@@ -393,11 +394,20 @@ class MainWindow(QMainWindow):
         # return num
         return fit
 
-    def onChangedAlgo(self, algo):
+    def onChangedAlgoBrd(self, algo):
         if getModules()[algo].isAsymmetric():
             self.ui.blockMode_combo.setEnabled(False)
-        self.ui.encryptMsg_btn.setEnabled(False)
+        else:
+            self.ui.blockMode_combo.setEnabled(True)
         self.ui.writeKey_btn.setEnabled(False)
+        self.ui.encryptMsg_btn.setEnabled(False)
+        self.ui.updateBitCombo(sizes = getModules()[algo].getKeyBitSizes())
+
+    def onChangedAlgoRcv(self, algo):
+        if getModules()[algo].isAsymmetric():
+            self.ui.blockMode_combo.setEnabled(False)
+        else:
+            self.ui.blockMode_combo.setEnabled(True)
         self.ui.updateBitCombo(sizes = getModules()[algo].getKeyBitSizes())
 
     def getBitSizeChosen(self):
@@ -506,6 +516,7 @@ class MainWindow(QMainWindow):
         self.update_threads()
         self.ui.writeKey_btn.setEnabled(True)
         if (stat == 1):
+            self.ui.encryptMsg_btn.setEnabled(True)
             self.logsAppend("Write Key Success")
             self.ui.writeKey_statusText.setText("Key Issued")
             self.ui.writeKey_statusText.setStyleSheet(
@@ -541,18 +552,21 @@ class MainWindow(QMainWindow):
 
     def encrypt(self):
         
-        if getModules()[self.getAlgoChosen()].isAsymmetric():
-            dialog = QMessageBox()
-            dialog.setWindowTitle("Invalid Algorithm!")
-            dialog.setText(
-                f"Cannot use Block on {self.getAlgoChosen()}")
-            dialog.setIcon(QMessageBox.Critical)
-            dialog.setInformativeText(f"Choose a Symmetric Encryption Algorithm")
-            dialog.setStandardButtons(QMessageBox.Ok)
-            dialog.exec_()
-            return None
-
         plainTextString = self.ui.plaintext_text.toPlainText()
+
+        # if (getModules()[self.getAlgoChosen()].isAsymmetric() 
+            # and (self.getBitSizeChosen()/8) <= len(plainTextString)):
+            # dialog = QMessageBox()
+        #     dialog.setWindowTitle("Invalid Text Size!")
+        #     dialog.setText(
+        #         f"Cannot use Text of length {len(plainTextString)} on {self.getAlgoChosen()} of size {self.getBitSizeChosen()} bits")
+        #     dialog.setIcon(QMessageBox.Critical)
+        #     dialog.setInformativeText(
+        #         f"Make your text {int(self.getBitSizeChosen()/8)} characters or lower")
+        #     dialog.setStandardButtons(QMessageBox.Ok)
+        #     dialog.exec_()
+        #     return None
+
         # Create a worker thread
         encrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
                                         self.getAlgoChosen(),
@@ -632,6 +646,7 @@ class MainWindow(QMainWindow):
             self.ui.decryptMsg_statusText.setText("Failed")
             self.ui.decryptMsg_statusText.setStyleSheet(
                 "color: rgb(250,0,0);\nfont: bold 16px;;")
+            self.ui.plaintext_text.setText('')
 
     def fetchData(self):
 
@@ -667,7 +682,7 @@ class MainWindow(QMainWindow):
 
         pair = {}
         # pair["Modulus"] = self.rsa.getN()
-        pair["Cipher"] = 66661211
+        pair["Cipher"] = self.__cipherText
 
         json_object = json.dumps(pair, indent=4)
 
@@ -795,9 +810,9 @@ class MainWindow(QMainWindow):
         try:
             with open(file_name, "w") as file:
                 file.write(text)
-            print(f"Successfully wrote {file_name}")
+            self.logsAppend(f"Successfully wrote {file_name}")
         except Exception as e:
-            print(f"An error occurred while writing to the file: {e}")
+            self.logsAppend(f"An error occurred while writing to the file: {e}")
 
     def txtRdHelper(self):
         try:
@@ -811,13 +826,10 @@ class MainWindow(QMainWindow):
                 # self.line_edit.setText(contents)
                 return contents
         except Exception as e:
-            print(f"An error occurred while writing to the file: {e}")
+            self.logsAppend(f"An error occurred while writing to the file: {e}")
             return ""
 
     def establishUART(self):
-        # TODO ABDULLAH HELP
-        print("kaka")
-        ...
 
         # self.fpga = FPGA() # create instance of FPGA
 
@@ -835,6 +847,10 @@ class MainWindow(QMainWindow):
         #     self.ui.FPGA_statusText.setText("Failed")
         #     self.ui.FPGA_statusText.setStyleSheet(
         #         "color: rgb(250,0,0);\nfont: bold 16px;;")
+
+        # TODO ABDULLAH HELP
+        print("kaka")
+        ...
 
 
 if __name__ == '__main__':

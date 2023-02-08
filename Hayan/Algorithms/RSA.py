@@ -92,9 +92,10 @@ def generateLargePrime(keysize):
 ##################### for GUI FAISAL
 
 def getKeyBitSizes():
-   return ["16", "32", "64", "128"]
+   # return ["16", "32", "64", "128"]
+   return ["16"]
 
-def generateKey(keySize = 64):
+def generateKey(keySize = 16):
    keySize = keySize/2
    # Step 1: Create two prime numbers, p and q. Calculate n = p * q.
    print('Generating p prime...')
@@ -153,7 +154,7 @@ def construct():
 
 def main():
    key = generateKey(16)
-   message = "Hi"
+   message = "H"
    rsa = RSA()
 
    ciph = rsa.encrypt(message, key[0][0], key[0][1])

@@ -12,7 +12,8 @@ package = 'Algorithms'
 fileDirectory = os.path.dirname(__file__)
 __modules__ = dict()
 for file_name in os.listdir(f"{fileDirectory}\\{package}"):
-    if file_name.endswith('.py') and file_name != '__init__.py':
+    if file_name.endswith('.py') and (
+        (file_name != '__init__.py') and (file_name != 'RSA.py')):
         module_name = file_name[:-3]
         __modules__[module_name] = importlib.import_module(
             f"{package}.{module_name}", '.')
@@ -114,21 +115,39 @@ class Cryptor_Worker(QThread):
             key (str): algorithm key
         '''
         super().__init__()
+        self.isEnc = isEnc
+        self.text = text
+        self.key = key
         # print(f'Key {key}')
         # print(f'Text {text}')
-        self.block = Block(size, algo, mode, isEnc, text, key)
+        # self.isAss = __modules__[algo].isAsymmetric()
+        # if self.isAss:
+            # self.algoAss = __modules__[algo].construct()
+        # else: 
+        self.block = Block(blockSize=size, 
+                            algo=algo, mode=mode, 
+                            isEnc=isEnc, text=text, 
+                            key=key)
         # self.crypto.setSignals() #TODO
 
     def run(self):
         '''The Main Process for the Thread'''
         try:
+            # if self.isAss:
+                # if self.isEnc:
+                    # result = self.algoAss.encrypt(self.text, self.key[0])
+                # else:
+                    # result = self.algoAss.decrypt(self.text, self.key[0])
+            # else:
             result = self.block.run()
             # print(f'Worker Result {result}')
             self.resultSignal.emit(result)
             self.finishedSignal.emit()
         except Exception as e:
+            # print(f'Worker Result {result}')
             self.resultSignal.emit(None)
             self.finishedSignal.emit()
+
 
 
 if __name__ == "__main__":

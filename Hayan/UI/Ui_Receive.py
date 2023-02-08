@@ -158,7 +158,7 @@ class Ui_Receive(object):
         # populate with current available algorithms
         for algo in Workers.getModules().keys():
             self.algoType_combo.addItem(algo)
-        self.algoType_combo.activated[str].connect(self.onChangedAlgo)
+        # self.algoType_combo.activated[str].connect(self.onChangedAlgo)
         self.gridLayout.addWidget(self.algoType_combo, 1, 1, 1, 1)
 
         self.bitSize_label = QLabel(" Block Bit Size")
@@ -349,9 +349,9 @@ class Ui_Receive(object):
         dlg = AboutDialog()
         dlg.exec_()
 
-    def onChangedAlgo(self, algo):
-        __modules__ = Workers.getModules()
-        self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
+    # def onChangedAlgo(self, algo):
+    #     __modules__ = Workers.getModules()
+        # self.updateBitCombo(sizes = __modules__[algo].getKeyBitSizes())
 
     def updateBitCombo(self, sizes = ["16", "32", "64", "128"]):
         self.bitSize_combo.clear()

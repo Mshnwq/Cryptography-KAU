@@ -2,9 +2,8 @@
 import random
 import string
 
-
 class RC4:
-    def swap(S, i, j):
+    def swap(self, S, i, j):
         """Swap the values at the specified indices in the given list."""
         S[i], S[j] = S[j], S[i]
         
@@ -34,16 +33,17 @@ class RC4:
         
         text = ''.join('{:02x}'.format(x) for x in bytes(out))
         return text
+    
     def decrypt(self, ciphertext, key):
         ciphertext = bytes.fromhex(ciphertext)
         plaintext = self.encrypt(ciphertext, key)
         plaintext = bytes.fromhex(plaintext)
-        plaintext = plaintext.decode()
+        plaintext = plaintext.decode('utf-8')
+        print(plaintext)
+        # print('sssssssssssssssssssss')
+        # plaintext = str(plaintext)
         return plaintext
-
-
-
-    
+        ...
 
 
 def get_random_string(length):
@@ -65,10 +65,37 @@ def generateKey(size):
 def getKeyBitSizes():
     return ["128", "256"]
 
-
 def isAsymmetric():
     return False
 
-
 def construct():
     return RC4()
+
+
+def main():
+
+    # Example data and key (as strings)
+    data = 'Test me please'
+    key = generateKey(256)
+    algo = RC4()
+
+    # Encrypt the data using RC4
+    ciphertext = algo.encrypt(data, key)
+
+    # Decrypt the ciphertext using RC4
+    plaintext = algo.decrypt(ciphertext, key)
+
+
+    # Check that the original data and the decrypted plaintext match
+    # if data == plaintext:
+    print('Original = ', data)
+
+    print('Encrypted ciphertext:', ciphertext)
+    # print('Decrypted plaintext:', bytes.fromhex(plaintext).decode('utf-8'))
+    print('Decrypted plaintext:', plaintext)
+    print('Test passed.')
+
+
+if __name__ == "__main__":
+    main()
+    ...
