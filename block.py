@@ -63,7 +63,7 @@ class Block(BaseModel):
         self.makeBlocks()
 
     def makeBlocks(self):
-        # print("plain before: "+self.textHex)
+        print("plain before: "+self.textHex)
         textSize = len(self.textHex)
         # textSize is in hex digits
         if textSize < self.blockSizeHex:
@@ -73,7 +73,7 @@ class Block(BaseModel):
             for i in range(textSize,
                            (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
-        # print("plain after: "+self.textHex)
+        print("plain after: "+self.textHex)
 
     def run(self):
         if self.mode == 'CBC':
@@ -94,6 +94,7 @@ class Block(BaseModel):
         initialBlock = hex(initialBlock)[2:].zfill(self.blockSizeHex)
         if self.isEnc:
             # TODO: change it to self.key
+            print("initial block:", initialBlock, self.key)
             ciph_0 = self.algorithm.encrypt(initialBlock, self.key)
             ciph_new = ciph_0
         else:
@@ -219,17 +220,15 @@ class Block(BaseModel):
 def main():
     algo = 'RC4'
     key = getModules()[algo].generateKey(256)  # ascii string
-    # message = "Cybersecurity is a critical issue in today's world, with more and more personal and business activities moving online. It refers to the protection of computer systems, networks, and data from unauthorized access, theft, damage, or destruction. The goal of cybersecurity is to ensure the confidentiality, integrity, and availability of sensitive information and systems. One of the most common forms of cyber attacks is hacking, where an attacker gains unauthorized access to a computer system or network. Another type of attack is phishing, where an attacker tricks a user into revealing sensitive information through emails or websites that appear to be from legitimate sources. Another common form of attack is malware, which is a type of software specifically designed to cause harm to a computer system. To prevent cyber attacks, it is important to adopt best practices such as keeping software and systems up-to-date, using strong passwords and multi-factor authentication, and being vigilant about email and website phishing scams. Additionally, organizations should implement firewalls, intrusion detection systems, and antivirus software to protect their networks and systems from cyber attacks. It is also important for individuals to take responsibility for their own cybersecurity. This includes being careful about what information they share online and being aware of the security of their personal. This progress report provides a summary of the Car-Park simulation project that has been underway since 2023/1/26. The goal of this project is to create and synchronize multi-threaded programs in Linux.. Over the past week, our team has made significant progress towards achieving this goal. This report will highlight our accomplishments, discuss any challenges we have faced, and outline our plans for the next stage of the project.devices, such as laptops and smartphones. Additionally, individuals should use encryption and virtual private networks(VPNs) when accessing sensitive information over public Wi-Fi networks. In conclusion, cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure."
-    # message = "Cybersecurity is a critical issue in today's world, with more and more personal and business activities moving online. It refers to the protection of computer systems, networks, and data from unauthorized access, theft, damage, or destruction. The goal of cybersecurity is to ensure the confidentiality, integrity, and availability of sensitive information and systems. One of the most common forms of cyber attacks is hacking, where an attacker gains unauthorized access to a computer system or network. Another type of attack is phishing, where an attacker tricks a user into revealing sensitive information through emails or websites that appear to be from legitimate sources. Another common form of attack is malware, which is a type of software specifically designed to cause harm to a computer system. To prevent cyber attacks, it is important to adopt best practices such as keeping software and systems up-to-date, using strong passwords and multi-factor authentication, and being vigilant about email and website phishing scams. Additionally, organizations should implement firewalls, intrusion detection systems, and antivirus software to protect their networks and systems from cyber attacks. It is also important for individuals to take responsibility for their own cybersecurity. This includes being careful about what information they share online and being aware of the security of their personal. This progress report provides a summary of the Car-Park simulation project that has been underway since 2023/1/26. The goal of this project is to create and synchronize multi-threaded programs in Linux.. Over the past week, our team has made significant progress towards achieving this goal. This report will highlight our accomplishments, discuss any challenges we have faced, and outline our plans for the next stage of the project.devices, such as laptops and smartphones. Additionally, individuals should use encryption and virtual private networks(VPNs) when accessing sensitive information over public Wi-Fi networks. In conclusion, cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure."
-    message = "ffffffffffffffffff"
+    message = "Faisal Jehad Abushanab"
     print("\n-------------(RC4 - Enc - ECB)----------------")
     # block = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=True, text=message, key=key)
     block = Block(blockSize=256, algo=algo, mode='CBC',
                   isEnc=True, text=message, key=key)
     cipher = block.run()
+    print("plainHex is: " + message.encode().hex())
     print("key is: " + key)
     print("cipher is: " + cipher)
-
     print("\n-------------(Decryption)----------------")
     # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
     block2 = Block(blockSize=256, algo=algo, mode='CBC',
@@ -237,8 +236,6 @@ def main():
     orig = block2.run()
     print("key is: " + key)
     print("originalis: " + orig)
-    # b = bytes.fromhex(orig)
-    # print(b.decode("utf-8"))
 
     # # print("\n-------------(AES - Enc - CBC)----------------")
     # block = Block(128, 'AES', 'CBC', True, message, key)

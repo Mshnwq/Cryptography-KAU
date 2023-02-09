@@ -2,26 +2,26 @@
 import random
 import string
 
+
 class RC4:
     def swap(self, S, i, j):
         """Swap the values at the specified indices in the given list."""
         S[i], S[j] = S[j], S[i]
-        
+
     def encrypt(self, plaintext, key):
-        if isinstance(plaintext, str):
-            plaintext = plaintext.encode()
+        plaintext = bytes.fromhex(plaintext)
         key = key.encode()
         """Encrypt the input `data` using the key `key` using the RC4 algorithm."""
         # Initialize the state list
         S = list(range(256))
         j = 0
         out = bytearray()
-        
+
         # Key-scheduling Algorithm (KSA) Phase
         for i in range(256):
             j = (j + S[i] + key[i % len(key)]) % 256
             self.swap(S, i, j)
-        
+
         # Pseudo-Random Generation Algorithm (PRGA) Phase
         i = j = 0
         for char in plaintext:
@@ -30,20 +30,16 @@ class RC4:
             self.swap(S, i, j)
             # XOR the current character with the next keystream byte
             out.append(char ^ S[(S[i] + S[j]) % 256])
-        
+
         text = ''.join('{:02x}'.format(x) for x in bytes(out))
         return text
-    
+
     def decrypt(self, ciphertext, key):
-        ciphertext = bytes.fromhex(ciphertext)
+        print("The cipher entered to RC4: ", ciphertext)
+        print("The key entered to RC4: ", key)
         plaintext = self.encrypt(ciphertext, key)
-        plaintext = bytes.fromhex(plaintext)
-        plaintext = plaintext.decode('utf-8')
-        print(plaintext)
-        # print('sssssssssssssssssssss')
-        # plaintext = str(plaintext)
+        print("The retrived plain text: ", plaintext)
         return plaintext
-        ...
 
 
 def get_random_string(length):
@@ -51,7 +47,8 @@ def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
-    
+
+
 def generateKey(size):
     if int(size) in list(map(int, getKeyBitSizes())):
         # generate random key
@@ -65,8 +62,10 @@ def generateKey(size):
 def getKeyBitSizes():
     return ["128", "256"]
 
+
 def isAsymmetric():
     return False
+
 
 def construct():
     return RC4()
@@ -84,7 +83,6 @@ def main():
 
     # Decrypt the ciphertext using RC4
     plaintext = algo.decrypt(ciphertext, key)
-
 
     # Check that the original data and the decrypted plaintext match
     # if data == plaintext:
