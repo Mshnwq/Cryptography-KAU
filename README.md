@@ -49,7 +49,7 @@
 - DES-64 encryption/decryption
 - RC4-128,256 encryption/decryption
 - RSA-16,32,64 encryption/decryption (FPGA)
-and more comming...
+- and more comming...
 
 ### **Requirements**
 - Python 3.10+
