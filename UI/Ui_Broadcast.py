@@ -52,7 +52,8 @@ class Ui_Broadcast(object):
         self.algoType_combo = QComboBox(self.algoType_groupBox)
         self.algoType_combo.setGeometry(QRect(0, 0, 18, 18))
         # populate with current available algorithms
-        for algo in Workers.getModules().keys():
+        algos = Workers.getModules().keys()
+        for algo in algos:
             self.algoType_combo.addItem(algo)
         # self.algoType_combo.activated[str].connect(self.onChangedAlgo)
         self.gridLayout.addWidget(self.algoType_combo, 1, 0, 1, 1)
@@ -61,8 +62,10 @@ class Ui_Broadcast(object):
         self.gridLayout.addWidget(self.bitSize_label, 0, 1, 1, 1)
         self.bitSize_combo = QComboBox(self.algoType_groupBox)
         self.bitSize_combo.setGeometry(QRect(0, 0, 18, 18))
+            # eval(f"getModules()[self.getAlgoChosen()].{self.getAlgoChosen()}.isAsymmetric()"):
+        modules = Workers.getModules()
         self.updateBitCombo(
-            sizes = Workers.getModules()[list(Workers.getModules().keys())[0]].getKeyBitSizes()) # sorry
+            sizes = eval(f"modules[list(algos)[0]].{list(algos)[0]}.getKeyBitSizes()")) # sorry
         self.gridLayout.addWidget(self.bitSize_combo, 1, 1, 1, 1)
 
         self.genKeys_btn = QPushButton("Generate Key", self.keyGen_groupBox)

@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
         self.dialogType = 0
         if self.default_app != None:
             delete_app(self.default_app)
+            self.default_app = None
         if self.rfid != None:
             self.rfid.closePort()
             self.rfid = None
@@ -129,7 +130,7 @@ class MainWindow(QMainWindow):
         # Save Broadcast Configuration action
         self.ui.saveConfigAction.triggered.connect(self.saveBroadcastConfig)
         # logout action
-        self.ui.logoutAction.triggered.connect(self.logout)
+        self.ui.logoutAction.triggered.connect(lambda: self.logout())
 
     def receiveMode(self):
         # construct the window
@@ -176,7 +177,7 @@ class MainWindow(QMainWindow):
         # Save Broadcast Configuration action
         self.ui.saveConfigAction.triggered.connect(self.saveReceiveConfig)
         # logout action
-        self.ui.logoutAction.triggered.connect(self.logout)
+        self.ui.logoutAction.triggered.connect(lambda: self.logout())
 
     def logsAppend(self, data):
         '''Append a text to the logs box'''
@@ -185,6 +186,7 @@ class MainWindow(QMainWindow):
     def checkRFID(self, mode):
         try:  # connect RFID
             self.rfid = RFID()
+            # self.logsAppend("RFID Connected ")
             return True
         except Exception as e:
             self.rfid = None
@@ -203,6 +205,7 @@ class MainWindow(QMainWindow):
 
     def checkCloud(self, mode):
         try:  # connect to cloud
+            # if self.default_app == None:
             cred = credentials.Certificate(
                 fileDirectory + '\\ee495-military-cryptology-firebase-adminsdk-b4q79-7de77dd092.json')
             self.default_app = initialize_app(cred,
@@ -212,9 +215,9 @@ class MainWindow(QMainWindow):
                                                 )
             get_app()
             self.ref = db.reference("/storage/")
-            self.logsAppend("Cloud Connected ")
             return True
         except Exception as e:
+            self.default_app = None
             self.ref = None
             dialog = QMessageBox()
             dialog.setWindowTitle(f"Error Occured with Cloud")
@@ -233,16 +236,26 @@ class MainWindow(QMainWindow):
         # Connect the button to the appropriate function based on the toggle state
         if mode == 'Wr':
             if self.ui.keyWrAction.isChecked() and self.checkRFID(mode):
+                self.logsAppend("RFID Connected")
                 self.ui.writeKey_btn.clicked.disconnect()
                 self.ui.writeKey_btn.clicked.connect(self.writeKey)
             else:
+                if self.rfid != None:
+                    self.logsAppend("RFID Disconnected")
+                    self.rfid.closePort()
+                self.rfid = None
                 self.ui.writeKey_btn.clicked.disconnect()
                 self.ui.writeKey_btn.clicked.connect(self.saveKey)
         else:
             if self.ui.keyRdAction.isChecked() and self.checkRFID(mode):
+                self.logsAppend("RFID Connected")
                 self.ui.readKey_btn.clicked.disconnect()
                 self.ui.readKey_btn.clicked.connect(self.readKey)
             else:
+                if self.rfid != None:
+                    self.logsAppend("RFID Disconnected")
+                    self.rfid.closePort()
+                self.rfid = None
                 self.ui.readKey_btn.clicked.disconnect()
                 self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
 
@@ -250,18 +263,26 @@ class MainWindow(QMainWindow):
         # Connect the button to the appropriate function based on the toggle state
         if mode == 'Up':
             if self.ui.broadcastSrcAction.isChecked() and self.checkCloud(mode):
+                self.logsAppend("Cloud Connected")
                 self.ui.uploadData_btn.clicked.disconnect()
                 self.ui.uploadData_btn.clicked.connect(self.sendData)
             else:
-                delete_app(self.default_app)
+                if self.default_app != None:
+                    self.logsAppend("Cloud Disconnected")
+                    delete_app(self.default_app)
+                self.default_app = None
                 self.ui.uploadData_btn.clicked.disconnect()
                 self.ui.uploadData_btn.clicked.connect(self.saveData)
         else:
             if self.ui.fetchSrcAction.isChecked() and self.checkCloud(mode):
+                self.logsAppend("Cloud Connected")
                 self.ui.fetch_btn.clicked.disconnect()
                 self.ui.fetch_btn.clicked.connect(self.fetchData)
             else:
-                delete_app(self.default_app)
+                if self.default_app != None:
+                    self.logsAppend("Cloud Disconnected")
+                    delete_app(self.default_app)
+                self.default_app = None
                 self.ui.fetch_btn.clicked.disconnect()
                 self.ui.fetch_btn.clicked.connect(self.txtRdHelper)
 
@@ -395,20 +416,20 @@ class MainWindow(QMainWindow):
         return fit
 
     def onChangedAlgoBrd(self, algo):
-        if getModules()[algo].isAsymmetric():
+        if eval(f"getModules()[algo].{algo}.isAsymmetric()"):
             self.ui.blockMode_combo.setEnabled(False)
         else:
             self.ui.blockMode_combo.setEnabled(True)
         self.ui.writeKey_btn.setEnabled(False)
         self.ui.encryptMsg_btn.setEnabled(False)
-        self.ui.updateBitCombo(sizes = getModules()[algo].getKeyBitSizes())
+        self.ui.updateBitCombo(sizes = eval(f"getModules()[algo].{algo}.getKeyBitSizes()"))
 
     def onChangedAlgoRcv(self, algo):
-        if getModules()[algo].isAsymmetric():
+        if eval(f"getModules()[algo].{algo}.isAsymmetric()"):
             self.ui.blockMode_combo.setEnabled(False)
         else:
             self.ui.blockMode_combo.setEnabled(True)
-        self.ui.updateBitCombo(sizes = getModules()[algo].getKeyBitSizes())
+        self.ui.updateBitCombo(sizes = eval(f"getModules()[algo].{algo}.getKeyBitSizes()"))
 
     def getBitSizeChosen(self):
         return int(self.ui.bitSize_combo.currentText())
@@ -600,7 +621,7 @@ class MainWindow(QMainWindow):
 
     def decrypt(self):
 
-        if getModules()[self.getAlgoChosen()].isAsymmetric():
+        if eval(f"getModules()[self.getAlgoChosen()].{self.getAlgoChosen()}.isAsymmetric()"):
             dialog = QMessageBox()
             dialog.setWindowTitle("Invalid Algorithm!")
             dialog.setText(

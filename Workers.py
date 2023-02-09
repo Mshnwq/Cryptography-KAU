@@ -80,16 +80,19 @@ class KeyGen_Worker(QThread):
         super().__init__()
         self.algo = algo
         self.bit_size = bit_size
+        print("CONSTR")
 
     def run(self):
         # TODO some kind of progress indicator for long
         i = 0
         while (i != 2):
             self.logsAppendSignal.emit(str(i))
-            time.sleep(0.25)
+            time.sleep(0.15)
             i += 1
-        result = __modules__[self.algo].generateKey(self.bit_size)
-        if __modules__[self.algo].isAsymmetric():
+        module = __modules__[self.algo]
+        result = eval(f"module.{self.algo}.generateKey({self.bit_size})")
+        print(f'Result: {result}')
+        if eval(f"module.{self.algo}.isAsymmetric()"):
             self.resultSignal.emit(str(result[0][0]))
             self.finishedSignal.emit()
         else:
@@ -151,8 +154,11 @@ class Cryptor_Worker(QThread):
 
 
 if __name__ == "__main__":
-    cryptor = KeyGen_Worker("RSA", 32)
+    app = QApplication(sys.argv)
+    cryptor = KeyGen_Worker("DES", 64)
     cryptor.start()
+    sys.exit(app.exec_())
+    # cryptor
     # rsa = __modules__['RSA'].RSA()
     # rsa.makeKeyFiles('RSA_demo', 32)
     ...
