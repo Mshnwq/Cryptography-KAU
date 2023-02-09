@@ -156,6 +156,13 @@ class Block:
         # print(f'Finished in {round(finish-start, 2)} second(s)')
         return cipher
 
+    def ofb(self):
+        s0 = self.IV
+        k0 = self.key
+        print("s0: ", s0)
+        print("k0: ", k0)
+        t0 = algorithm.encrypt(s0, k0)
+
 
 def main():
 
@@ -163,25 +170,25 @@ def main():
     message = "Cybersecurity is a critical issue in today's world, with more and more personal and business activities moving online. It refers to the protection of computer systems, networks, and data from unauthorized access, theft, damage, or destruction. The goal of cybersecurity is to ensure the confidentiality, integrity, and availability of sensitive information and systems. One of the most common forms of cyber attacks is hacking, where an attacker gains unauthorized access to a computer system or network. Another type of attack is phishing, where an attacker tricks a user into revealing sensitive information through emails or websites that appear to be from legitimate sources. Another common form of attack is malware, which is a type of software specifically designed to cause harm to a computer system. To prevent cyber attacks, it is important to adopt best practices such as keeping software and systems up-to-date, using strong passwords and multi-factor authentication, and being vigilant about email and website phishing scams. Additionally, organizations should implement firewalls, intrusion detection systems, and antivirus software to protect their networks and systems from cyber attacks. It is also important for individuals to take responsibility for their own cybersecurity. This includes being careful about what information they share online and being aware of the security of their personal. This progress report provides a summary of the Car-Park simulation project that has been underway since 2023/1/26. The goal of this project is to create and synchronize multi-threaded programs in Linux.. Over the past week, our team has made significant progress towards achieving this goal. This report will highlight our accomplishments, discuss any challenges we have faced, and outline our plans for the next stage of the project.devices, such as laptops and smartphones. Additionally, individuals should use encryption and virtual private networks(VPNs) when accessing sensitive information over public Wi-Fi networks. In conclusion, cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure. cybersecurity is a crucial aspect of our digital lives and requires a collective effort from individuals, organizations, and governments to ensure the protection of sensitive information and systems. Adopting best practices and being vigilant can help prevent cyber attacks and keep personal and business information secure."
     message = "Hello World"
     print("\n-------------(AES - Enc - ECB)----------------")
-    block = Block(128, 'AES', 'ECB', True, message, key)
+    block = Block(256, 'AES', 'ECB', True, message, key)
     cipher = block.run()
     print("key is: " + key)
     print("cipher is: " + cipher)
 
     print("-------------(Decryption)----------------")
-    block2 = Block(128, 'AES', 'ECB', False, cipher, key)
+    block2 = Block(256, 'AES', 'ECB', False, cipher, key)
     orig = block2.run()
     print("key is: " + key)
     print("originalis: " + orig)
 
     print("\n-------------(AES - Enc - CBC)----------------")
-    block = Block(128, 'AES', 'CBC', True, message, key)
+    block = Block(256, 'AES', 'CBC', True, message, key)
     cipher = block.run()
     print("key is: " + key)
     print("cipher is: " + cipher)
 
     print("-------------(Decryption)----------------")
-    block2 = Block(128, 'AES', 'CBC', False, cipher, key)
+    block2 = Block(256, 'AES', 'CBC', False, cipher, key)
     orig = block2.run()
     print("key is: " + key)
     print("originalis: " + orig)
