@@ -33,6 +33,7 @@
 - [Contributing](#contributing)
 - [Built Using](#built_using)
 - [Authors](#authors)
+- [License](#license)
 - [Acknowledgments](#acknowledgement)
 
 ## :computer: About <a name = "about"></a>
@@ -81,6 +82,16 @@ See [contributing](https://github.com/Mshnwq/Encryption-Application/graphs/contr
 - [@Hetheli](https://github.com/) - Cryptographer, FPGA
 
 See also the list of [contributors](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) who participated in this project.
+
+## License <a name="license"></a>
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Mshnwq/Encryption-Application/blob/LICENSE) file for details.
+
+<p align="left" style="margin: 0;">
+    <a href="mailto:hmachnouk@scfs.tech">hmachnouk@scfs.tech</a>
+</p>
+<p align="right">
+    <img width=100px height=100px src="assets/icons/SCFS.png" alt="Company logo">
+</p>
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
