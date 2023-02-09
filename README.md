@@ -86,11 +86,11 @@ See also the list of [contributors](https://github.com/Mshnwq/Encryption-Applica
 ## License <a name="license"></a>
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/Mshnwq/Encryption-Application/blob/main/LICENSE) file for details.
 
-<p align="left" style="margin: 0;">
-    <a href="mailto:hmachnouk@scfs.tech">hmachnouk@scfs.tech</a>
-</p>
-<p align="right">
-    <img width=100px height=100px src="assets/icons/SCFS.png" alt="Company logo">
+- [hmachnouk@scfs.tech](mailto:hmachnouk@scfs.tech)
+- [fabushanab@scfs.tech](mailto:fabushanab@scfs.tech)
+
+<p align="center">
+    <img width=150px height=150px src="assets/icons/SCFS.png" alt="Company logo">
 </p>
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
