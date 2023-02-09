@@ -1,7 +1,7 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img width=2000px height=200px src="assets/images/background_blur.jpg" alt="Project logo">
-    <div style="background-image: url('https://github.com/Mshnwq/Encryption-Application/blob/main/assets/images/background_blur.jpg');
+    <img width=2000px height=200px src="assets/images/background_blur.jpeg" alt="Project logo">
+    <div style="background-image: url('https://github.com/Mshnwq/Encryption-Application/blob/main/assets/images/KAU E Y.jpg');
                 background-size: cover;
                 background-position: center;
                 width: 2000px;
