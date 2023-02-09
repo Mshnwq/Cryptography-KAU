@@ -221,47 +221,47 @@ def testWindow():
     ui.setupUi(Window)
     json = [
             {
-            "N":"3333",
+            # "N":"3333",
             "Cipher":"151151"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"696vebr55555569ffffff663"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-            "N":"001",
-            "Cipher":"77777"
+            # "N":"001",
+            "Cipher":"77777jorhigouwyfecfyguogwyilguiu9gf7y897y89g7fy89geuyfui7fgyepgywegugeyeyfyeyegbyb"
             }
             ,{
-            "N":"311",
+            # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-                "N":"311",
+                # "N":"311",
             "Cipher":"69669663"
             }
             ,{
-                "N":"311",
+                # "N":"311",
             "Cipher":"69669663"
             }
             ]
