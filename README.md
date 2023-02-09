@@ -84,7 +84,7 @@ See [contributing](https://github.com/Mshnwq/Encryption-Application/graphs/contr
 See also the list of [contributors](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) who participated in this project.
 
 ## License <a name="license"></a>
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/Mshnwq/Encryption-Application/blob/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Mshnwq/Encryption-Application/blob/main/LICENSE) file for details.
 
 <p align="left" style="margin: 0;">
     <a href="mailto:hmachnouk@scfs.tech">hmachnouk@scfs.tech</a>
