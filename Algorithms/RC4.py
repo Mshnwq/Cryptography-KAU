@@ -40,6 +40,24 @@ class RC4:
         plaintext = self.encrypt(ciphertext, key)
         print("The retrived plain text: ", plaintext)
         return plaintext
+    
+    @staticmethod
+    def generateKey(size):
+        if int(size) in list(map(int, RC4.getKeyBitSizes())):
+        # generate random key
+            numOfChar = int(size/8)
+            key = get_random_string(numOfChar)
+            return key
+        else:
+            return "key size is not valid"
+
+    @staticmethod
+    def isAsymmetric():
+        return False
+
+    @staticmethod
+    def getKeyBitSizes():
+        return ['128', '256']
 
 
 def get_random_string(length):
@@ -49,33 +67,16 @@ def get_random_string(length):
     return result_str
 
 
-def generateKey(size):
-    if int(size) in list(map(int, getKeyBitSizes())):
-        # generate random key
-        numOfChar = int(size/8)
-        key = get_random_string(numOfChar)
-        return key
-    else:
-        return "key size is not valid"
 
-
-def getKeyBitSizes():
-    return ["128", "256"]
-
-
-def isAsymmetric():
-    return False
-
-
-def construct():
-    return RC4()
+# def construct():
+#     return RC4()
 
 
 def main():
 
     # Example data and key (as strings)
     data = 'Test me please'
-    key = generateKey(256)
+    key = RC4.generateKey(256)
     algo = RC4()
 
     # Encrypt the data using RC4

@@ -43,7 +43,7 @@ class Block(BaseModel):
     # other variables
     blockSizeByte = int(0)
     blockSizeHex = int(0)
-    algorithm = object()
+    algorithm = object() # TODO type
     textHex = ''
     IV = ''
 
@@ -52,7 +52,7 @@ class Block(BaseModel):
 
         self.blockSizeByte = int(self.blockSize / 8)
         self.blockSizeHex = int(self.blockSize / 4)
-        self.algorithm = getModules()[self.algo].construct()
+        self.algorithm = eval(f"getModules()[self.algo].{self.algo}()")
         if self.isEnc:  # in encrypt it is ascii
             self.textHex = self.text.encode().hex()
         else:  # already encoded hex
@@ -85,8 +85,6 @@ class Block(BaseModel):
         cipher = ""
         # take the first block of the array of plaintext
         plain_0 = self.textHex[:self.blockSizeHex]
-        # print("plain0 size: ", plain_0)
-        # TODO : check if the DES and AES have same name of fucntion for encryption,
         #  else it is required to make an if statment for each added encryption
         print(f"IV: {self.IV[:self.blockSizeHex]}")
         # print("IV Size: ", len(self.IV[:self.blockSizeHex]))
@@ -170,7 +168,7 @@ class Block(BaseModel):
         for i in range(int(len(self.textHex) / self.blockSizeHex)):
             # will slic the array for th required block size
             plain_i = self.textHex[i*self.blockSizeHex: i *
-                                   self.blockSizeHex + self.blockSizeHex]
+                                    self.blockSizeHex + self.blockSizeHex]
             if self.isEnc:
                 ciph_i = self.algorithm.encrypt(plain_i, self.key)
             else:
@@ -219,11 +217,11 @@ class Block(BaseModel):
 
 def main():
     algo = 'RC4'
-    key = getModules()[algo].generateKey(256)  # ascii string
+    key = getModules()[algo].RC4.generateKey(128)  # ascii string
     message = "Faisal Jehad Abushanab"
-    print("\n-------------(RC4 - Enc - ECB)----------------")
+    print("\n-------------(RC4 - Enc - CBC)----------------")
     # block = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=True, text=message, key=key)
-    block = Block(blockSize=256, algo=algo, mode='CBC',
+    block = Block(blockSize=256, algo=algo, mode='ECB',
                   isEnc=True, text=message, key=key)
     cipher = block.run()
     print("plainHex is: " + message.encode().hex())
@@ -231,11 +229,14 @@ def main():
     print("cipher is: " + cipher)
     print("\n-------------(Decryption)----------------")
     # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
-    block2 = Block(blockSize=256, algo=algo, mode='CBC',
+    block2 = Block(blockSize=256, algo=algo, mode='ECB',
                    isEnc=False, text=cipher, key=key)
     orig = block2.run()
     print("key is: " + key)
     print("originalis: " + orig)
+    b = bytes.fromhex(orig)
+    s = b.decode("utf-8")
+    print(s)
 
     # # print("\n-------------(AES - Enc - CBC)----------------")
     # block = Block(128, 'AES', 'CBC', True, message, key)

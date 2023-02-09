@@ -156,7 +156,8 @@ class Ui_Receive(object):
         self.algoType_combo = QComboBox(self.encrypt_groupBox)
         self.algoType_combo.setGeometry(QRect(0, 0, 18, 18))
         # populate with current available algorithms
-        for algo in Workers.getModules().keys():
+        algos = Workers.getModules().keys()
+        for algo in algos:
             self.algoType_combo.addItem(algo)
         # self.algoType_combo.activated[str].connect(self.onChangedAlgo)
         self.gridLayout.addWidget(self.algoType_combo, 1, 1, 1, 1)
@@ -165,8 +166,9 @@ class Ui_Receive(object):
         self.gridLayout.addWidget(self.bitSize_label, 0, 2, 1, 1)
         self.bitSize_combo = QComboBox(self.encrypt_groupBox)
         self.bitSize_combo.setGeometry(QRect(0, 0, 18, 18))
+        modules = Workers.getModules()
         self.updateBitCombo(
-            sizes = Workers.getModules()[list(Workers.getModules().keys())[0]].getKeyBitSizes()) # sorry
+            sizes = eval(f"modules[list(algos)[0]].{list(algos)[0]}.getKeyBitSizes()")) # sorry
         self.gridLayout.addWidget(self.bitSize_combo, 1, 2, 1, 1)
 
         self.decryptMsg_btn = QPushButton("Decrypt Message", self.message_groupBox)

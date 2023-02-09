@@ -155,7 +155,7 @@ class Cryptor_Worker(QThread):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    cryptor = KeyGen_Worker("AES", 128)
+    cryptor = KeyGen_Worker("DES", 64)
     cryptor.start()
     sys.exit(app.exec_())
     # cryptor

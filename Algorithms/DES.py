@@ -330,27 +330,27 @@ class DES:
         # print("decreptedJ: ")
         return text
 
-
-def generateKey(size):
-    if int(size) in list(map(int, getKeyBitSizes())):
+    @staticmethod
+    def generateKey(size):
+        if int(size) in list(map(int, DES.getKeyBitSizes())):
         # generate random key
-        numOfChar = int(size/8)
-        key = get_random_string(numOfChar)
-        return key
-    else:
-        return "key size is not valid"
+            numOfChar = int(size/8)
+            key = get_random_string(numOfChar)
+            return key
+        else:
+            return "key size is not valid"
+
+    @staticmethod
+    def isAsymmetric():
+        return False
+
+    @staticmethod
+    def getKeyBitSizes():
+        return ['64']
 
 
-def getKeyBitSizes():
-    return ["64"]
-
-
-def isAsymmetric():
-    return False
-
-
-def construct():
-    return DES()
+# def construct():
+    # return DES()
 
 # enc = DES()
 # key = generateKey(64)

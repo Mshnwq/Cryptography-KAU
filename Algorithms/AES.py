@@ -481,11 +481,10 @@ class AES:
 
     @staticmethod
     def generateKey(size):
-        if int(size) in list(map(int, ['128', '192', '256'])):
+        if int(size) in list(map(int, AES.getKeyBitSizes())):
         # generate random key
             numOfChar = int(size/8)
             key = get_random_string(numOfChar)
-            # key = int(key, 16)
             return key
         else:
             return "key size is not valid"
