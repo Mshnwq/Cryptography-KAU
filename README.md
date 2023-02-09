@@ -1,7 +1,7 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img width=2000px height=200px src="assets/images/background_blur.jpeg" alt="Project logo">
-    <div style="background-image: url('https://github.com/Mshnwq/Encryption-Application/blob/main/assets/images/KAU E Y.jpg');
+    <img width=2000px height=200px src="assets/images/KAU E Y.jpeg" alt="Project logo">
+    <div style="background-image: url('https://github.com/Mshnwq/Encryption-Application/blob/main/assets/images/KAU E Y.jpeg');
                 background-size: cover;
                 background-position: center;
                 width: 2000px;
@@ -77,7 +77,7 @@ See [contributing](https://github.com/Mshnwq/Encryption-Application/graphs/contr
 ## ✍️ Authors <a name = "authors"></a>
 
 - [**@Mshnwq**](https://github.com/Mshnwq) - **Code Structure Design, GUI, RFID, FPGA**
-- [@Faisal](https://github.com/) - Cryptographer, Testing
+- [@Faisal](https://github.com/FaisalJAbushanab) - **Code Structure Design, Cryptographer, Backend, Testing**
 - [@Rhman](https://github.com/) - Cryptographer,
 - [@Hetheli](https://github.com/) - Cryptographer, FPGA
 
