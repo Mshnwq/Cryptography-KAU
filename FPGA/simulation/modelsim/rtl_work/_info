@@ -1,0 +1,257 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/simulation/modelsim
+vcontrolUnit
+Z1 !s110 1668515449
+!i10b 1
+!s100 RY^O5i[P5XI3279GzLzL<1
+IXfgMWSKWFENTZVVz>Mok`2
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1668514800
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/controlunit.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/controlunit.v
+L0 2
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1668515449.000000
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/controlunit.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/controlunit.v|
+!i113 1
+Z5 o-vlog01compat -work work
+Z6 !s92 -vlog01compat -work work +incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid
+Z7 tCvgOpt 0
+ncontrol@unit
+vcounter
+R1
+!i10b 1
+!s100 [NeJj2L`Te[KfeTZLJlln0
+ISQaXP<BaUH16icT:A4TK92
+R2
+R0
+w1668514806
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/counter.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/counter.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/counter.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/counter.v|
+!i113 1
+R5
+R6
+R7
+vdataPath
+R1
+!i10b 1
+!s100 Ae69X`ZZ@]NQ_g0[EzEOh1
+IhVn1=>:G_UKlPXEEN6ZMI2
+R2
+R0
+w1668510330
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/datapath.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/datapath.v
+L0 1
+R3
+r1
+!s85 0
+31
+Z8 !s108 1668515448.000000
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/datapath.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/datapath.v|
+!i113 1
+R5
+R6
+R7
+ndata@path
+vdivider64
+R1
+!i10b 1
+!s100 _jRhV?GmIWMU[z1COmLUo3
+I0cM;H;dnMASEXZ92B`cZG1
+R2
+R0
+Z9 w1668508512
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v
+L0 39
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v|
+!i113 1
+R5
+R6
+R7
+vencrypt_decrypt
+R1
+!i10b 1
+!s100 m?oFmE9><k;DXMB:?UdJ82
+IR?;LLZTL=1PeJNIYjKRD^0
+R2
+R0
+R9
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v|
+!i113 1
+R5
+R6
+R7
+vmux2to1
+Z10 !s110 1668515448
+!i10b 1
+!s100 LIYd;AYRH=_VCjWcLIfG_2
+I;=@YI;4W`6XP3b?1f=X4h3
+R2
+R0
+R9
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux2to1.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux2to1.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux2to1.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux2to1.v|
+!i113 1
+R5
+R6
+R7
+vmux4to1
+R1
+!i10b 1
+!s100 6dl>O2?oYLRXR:KK>7V2g2
+IO5SI:3bhWzd_je65Io@_j3
+R2
+R0
+R9
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux4to1.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux4to1.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux4to1.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/mux4to1.v|
+!i113 1
+R5
+R6
+R7
+vROM
+R1
+!i10b 1
+!s100 l;F@ScAK@A=9B=@KJNT_03
+IehRKeCT=1@?aCdZDCLAN>3
+R2
+R0
+w1668514807
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v|
+!i113 1
+R5
+R6
+R7
+n@r@o@m
+vrsa_rfid
+R10
+!i10b 1
+!s100 ohKOEGflB=_lE;_I;6=253
+IjbGR`lGTGOKChWgCd:To82
+R2
+R0
+w1668513170
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v|
+!i113 1
+R5
+R6
+R7
+vstaticValue
+R1
+!i10b 1
+!s100 N:G3@hWDnf[0@K1l;ae@N1
+I:;L<El5mL0[g8La2Mb3:Z1
+R2
+R0
+R9
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/staticvalue.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/staticvalue.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/staticvalue.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/staticvalue.v|
+!i113 1
+R5
+R6
+R7
+nstatic@value
+vtestRSA
+R1
+!i10b 1
+!s100 6PR9WIWc`A:kVElCJMh`L1
+I;`lahcR4<nND=3<jkYjf43
+R2
+R0
+w1668512919
+8C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA.v
+FC:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA.v
+L0 2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid|C:/Users/Perux/Desktop/RSA_empty/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA.v|
+!i113 1
+R5
+R6
+R7
+ntest@r@s@a

@@ -1,0 +1,18 @@
+module rsa_rfid
+	#(parameter WordSize = 8) 
+	(  
+	// Top Level I/O
+	input clk, reset, go,
+	input  [WordSize-1:0] x,
+	
+	output [WordSize-1:0] freq,
+	output done
+	);
+	
+	wire load, incFreq, running, equal, over;
+	
+	dataPath DP(clk, reset, x, freq, load, incFreq, running, equal, over);
+	controlUnit CU(clk, reset, go, done, load, incFreq, running, equal, over);
+
+
+endmodule 

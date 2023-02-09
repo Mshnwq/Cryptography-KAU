@@ -1,0 +1,44 @@
+module testRSA;
+
+	//inputs
+	reg [7:0] numberIn;
+	reg go, reset, clk;
+	
+	//outputs
+	wire done;
+	wire [7:0] numberOut;
+	
+	//module to test
+	RSA_RFID rsa(clk, reset, go, numberIn, numberOut, done);
+	
+	always
+		#5 clk = ~clk;
+	
+	initial begin
+		// intilaizing data
+		numberIn = 0;
+		go = 0;
+		reset = 0;
+		clk = 0;
+		
+		///////////////
+		@(posedge clk);
+		numberIn = 5;
+		
+		@(posedge clk);
+		go = 1;
+		
+		@(posedge clk);
+		go = 0;
+		
+		
+		#2600; // let ir run for 260 cycles
+		$stop;
+		
+		
+	end
+	
+endmodule
+		
+		
+		
