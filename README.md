@@ -77,9 +77,10 @@ See [contributing](https://github.com/Mshnwq/Encryption-Application/graphs/contr
 ## ✍️ Authors <a name = "authors"></a>
 
 - [**@Mshnwq**](https://github.com/Mshnwq) - **Code Structure Design, GUI, RFID, FPGA**
-- [@Faisal](https://github.com/FaisalJAbushanab) - **Code Structure Design, Cryptographer, Backend, Testing**
+- [@FaisalJAbushanab](https://github.com/FaisalJAbushanab) - **Code Structure Design, Cryptographer, Backend, Testing**
+- [@AAlhethili](https://github.com/AAlhethili) - Cryptographer, FPGA
 - [@Rhman](https://github.com/) - Cryptographer,
-- [@Hetheli](https://github.com/) - Cryptographer, FPGA
+
 
 See also the list of [contributors](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) who participated in this project.
 
