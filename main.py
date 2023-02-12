@@ -364,6 +364,7 @@ class MainWindow(QMainWindow):
     def storeKey(self, __key):
         # print(f"STORING key {__key}")
         # print(f"TYPE {type(__key)}")
+        # _key = _key.split('_')
         self.__key = __key
         self.__keyInt = int(self.__key.encode('utf-8').hex(),16)
         # print(f"STORING key (int) {self.__keyInt}")
@@ -765,14 +766,14 @@ class MainWindow(QMainWindow):
                         if rows[i].isChecked():
                             arr = rows[i].objectName().split("#")
                             index = int(arr[len(arr)-1])
-                            collectChosen["Modulus"] = rows[i-2].text()
+                            # collectChosen["Modulus"] = rows[i-2].text()
                             collectChosen["Cipher"] = rows[i-1].text()
 
         # display the chosen
         self.chosenFetched = collectChosen
         if (self.chosenFetched != {}):
 
-            self.N = self.chosenFetched["Modulus"]
+            # self.N = self.chosenFetched["Modulus"]
             self.cipherText = self.chosenFetched["Cipher"]
 
             self.ui.ciphertext_text.setText(self.cipherText)
