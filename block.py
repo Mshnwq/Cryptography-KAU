@@ -71,7 +71,7 @@ class Block(BaseModel):
                 self.textHex += "0"
         elif textSize > self.blockSizeHex and textSize % self.blockSizeHex != 0:
             for i in range(textSize,
-                           (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
+                            (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
         print("plain after: "+self.textHex)
 
@@ -91,12 +91,10 @@ class Block(BaseModel):
         initialBlock = int(self.IV[:self.blockSizeHex], 16) ^ int(plain_0, 16)
         initialBlock = hex(initialBlock)[2:].zfill(self.blockSizeHex)
         if self.isEnc:
-            # TODO: change it to self.key
             print("initial block:", initialBlock, self.key)
             ciph_0 = self.algorithm.encrypt(initialBlock, self.key)
             ciph_new = ciph_0
         else:
-            # TODO: change it to self.key
             ciph_0 = self.algorithm.decrypt(plain_0, self.key)
             ciph_0 = hex(int(ciph_0, 16) ^ int(self.IV[:self.blockSizeHex], 16))[
                 2:].zfill(self.blockSizeHex)
@@ -112,7 +110,7 @@ class Block(BaseModel):
         for i in range(1, int(len(self.textHex) / self.blockSizeHex)):
             # will slic the array for th required block size
             plain_i = self.textHex[i*self.blockSizeHex: i *
-                                   self.blockSizeHex + self.blockSizeHex]
+                                    self.blockSizeHex + self.blockSizeHex]
             # print(f"Block#{i}: {plain_i}")
             xored = hex(int(ciph_new, 16) ^ int(plain_i, 16))[
                 2:].zfill(self.blockSizeHex)
@@ -216,23 +214,25 @@ class Block(BaseModel):
 
 
 def main():
-    algo = 'RC4'
-    key = getModules()[algo].RC4.generateKey(128)  # ascii string
+    algo = 'RSA'
+    # key = getModules()[algo].RSA.generateKey(16)  # ascii string
+    key = ('43123$48443', '187$48443')
     message = "Faisal Jehad Abushanab"
-    print("\n-------------(RC4 - Enc - CBC)----------------")
+    # message = "Hi"
+    print("\n-------------(RSA - Enc - ECB)----------------")
     # block = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=True, text=message, key=key)
-    block = Block(blockSize=256, algo=algo, mode='ECB',
-                  isEnc=True, text=message, key=key)
+    block = Block(blockSize=16, algo=algo, mode='CBC',
+                    isEnc=True, text=message, key=key[0])
     cipher = block.run()
     print("plainHex is: " + message.encode().hex())
-    print("key is: " + key)
+    print("key is: " + key[0])
     print("cipher is: " + cipher)
     print("\n-------------(Decryption)----------------")
     # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
-    block2 = Block(blockSize=256, algo=algo, mode='ECB',
-                   isEnc=False, text=cipher, key=key)
+    block2 = Block(blockSize=16, algo=algo, mode='CBC',
+                    isEnc=False, text=cipher, key=key[1])
     orig = block2.run()
-    print("key is: " + key)
+    print("key is: " + key[1])
     print("originalis: " + orig)
     b = bytes.fromhex(orig)
     s = b.decode("utf-8")

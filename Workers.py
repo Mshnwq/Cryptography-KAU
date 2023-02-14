@@ -14,6 +14,7 @@ __modules__ = dict()
 for file_name in os.listdir(f"{fileDirectory}\\{package}"):
     if file_name.endswith('.py') and (
         (file_name != '__init__.py') and (file_name != 'RSA.py')):
+        # (file_name != '__init__.py')):
         module_name = file_name[:-3]
         __modules__[module_name] = importlib.import_module(
             f"{package}.{module_name}", '.')
@@ -93,7 +94,7 @@ class KeyGen_Worker(QThread):
         result = eval(f"module.{self.algo}.generateKey({self.bit_size})")
         print(f'Result: {result}')
         if eval(f"module.{self.algo}.isAsymmetric()"):
-            self.resultSignal.emit(str(result[0][0]))
+            self.resultSignal.emit(str(f'{result[0]}_{result[1]}'))
             self.finishedSignal.emit()
         else:
             self.resultSignal.emit(str(result))
