@@ -1,3 +1,4 @@
+from Algorithms.Algorithm import Algorithm, EncModel
 from copy import copy
 import string
 import random
@@ -10,7 +11,7 @@ def get_random_string(length):
     return result_str
 
 
-class AES:
+class AES(Algorithm):
     blockSizeHex = 16  # 16 bytes <=> 128 bits
     # substitution table
     sbox0 = [
@@ -400,8 +401,11 @@ class AES:
             state[k % 4][int(k/4)] = block[k*2:k*2+2]
             # transform key
         return state
+    # args = {plainText, key, isEnc = True}
 
-    def encrypt(self, plainText, key):
+    def encrypt(self, args):
+        plainText = args.plainText
+        key = args.key
         cipher_text = ""  # initial value for cipher
         hexString = plainText
         # print("plain: ", hexString)
@@ -433,10 +437,10 @@ class AES:
             cipher_text += textState
         return cipher_text
 
-    def decrypt(self, cipher, key):
+    def decrypt(self, args: EncModel):
         plainText = ""
-        # hexString = self.prepareText(cipher)
-        hexString = cipher
+        hexString = args.plainText
+        key = args.key
         hexKey = self.a2Hex(key)
         expKey = self.keyExaption(hexKey)
         expKey.reverse()
@@ -482,7 +486,7 @@ class AES:
     @staticmethod
     def generateKey(size):
         if int(size) in list(map(int, AES.getKeyBitSizes())):
-        # generate random key
+            # generate random key
             numOfChar = int(size/8)
             key = get_random_string(numOfChar)
             return key
@@ -502,7 +506,7 @@ class AES:
 #     return AES()
 
 
-# trd = AES().generateKey(256)
+trd = AES.generateKey(256)
 # print(trd)
 # cipher = AES().encrypt("faisaljabushanab", "abc1234567890123", None)
 # print("cipher:\t", cipher)
@@ -516,3 +520,6 @@ class AES:
 # print("hexText:\t", hexe)
 # print(hexe == plain)
 # # 580fd9329040973a395b9a5e17939f187f97c96c0f00ef42339add712f5b360b
+
+# enc = AES().encrypt("sdfdfdf", trd)
+# print(enc)

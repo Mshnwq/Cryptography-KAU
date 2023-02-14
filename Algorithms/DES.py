@@ -1,6 +1,7 @@
 import string
 import random
 import binascii
+from Algorithms.Algorithm import Algorithm, EncModel
 
 
 def get_random_string(length):
@@ -10,7 +11,7 @@ def get_random_string(length):
     return result_str
 
 
-class DES:
+class DES(Algorithm):
     # Table of Position of 64 bits at initial level: Initial Permutation Table
     initial_perm = [58, 50, 42, 34, 26, 18, 10, 2,
                     60, 52, 44, 36, 28, 20, 12, 4,
@@ -198,7 +199,10 @@ class DES:
                 ans = ans + "1"
         return ans
 
-    def encrypt(self, plainText, key, cryptType="encrypt"):
+    def encrypt(self, args):
+        plainText = args.plainText
+        key = args.key
+        isEncrypt = args.isEncrypt
         # prepare plain text
         plainText = plainText.upper()
         # prepare the key
@@ -206,7 +210,7 @@ class DES:
         print("The keyy::: ", key)
         # print("Before padding: ", plainText)
         rkb, rk = self.prepare(key)
-        if cryptType == "decrypt":
+        if not isEncrypt:
             rkb = rkb[::-1]
             rk = rk[::-1]
 
@@ -325,15 +329,15 @@ class DES:
             rk.append(self.bin2hex(round_key))
         return rkb, rk
 
-    def decrypt(self, cipher_text, key):
-        text = self.encrypt(cipher_text, key, "decrypt")
+    def decrypt(self, args):
+        text = self.encrypt(args)
         # print("decreptedJ: ")
         return text
 
     @staticmethod
     def generateKey(size):
         if int(size) in list(map(int, DES.getKeyBitSizes())):
-        # generate random key
+            # generate random key
             numOfChar = int(size/8)
             key = get_random_string(numOfChar)
             return key

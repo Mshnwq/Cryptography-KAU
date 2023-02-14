@@ -6,6 +6,7 @@ import time
 # from multiprocessing import process
 import multiprocessing
 # import concurrent.futures
+from Algorithms.Algorithm import EncModel
 
 
 # import all Algorithms
@@ -43,7 +44,7 @@ class Block(BaseModel):
     # other variables
     blockSizeByte = int(0)
     blockSizeHex = int(0)
-    algorithm = object() # TODO type
+    algorithm = object()  # TODO type
     textHex = ''
     IV = ''
 
@@ -71,7 +72,7 @@ class Block(BaseModel):
                 self.textHex += "0"
         elif textSize > self.blockSizeHex and textSize % self.blockSizeHex != 0:
             for i in range(textSize,
-                            (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
+                           (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
         print("plain after: "+self.textHex)
 
@@ -92,10 +93,14 @@ class Block(BaseModel):
         initialBlock = hex(initialBlock)[2:].zfill(self.blockSizeHex)
         if self.isEnc:
             print("initial block:", initialBlock, self.key)
-            ciph_0 = self.algorithm.encrypt(initialBlock, self.key)
+            args = EncModel(**{"plainText": initialBlock,
+                            "key": self.key, "isEncrypt": True})
+            ciph_0 = self.algorithm.encrypt(args)
             ciph_new = ciph_0
         else:
-            ciph_0 = self.algorithm.decrypt(plain_0, self.key)
+            args = EncModel(**{"plainText": plain_0,
+                            "key": self.key, "isEncrypt": False})
+            ciph_0 = self.algorithm.decrypt(args)
             ciph_0 = hex(int(ciph_0, 16) ^ int(self.IV[:self.blockSizeHex], 16))[
                 2:].zfill(self.blockSizeHex)
             ciph_new = plain_0
@@ -110,16 +115,20 @@ class Block(BaseModel):
         for i in range(1, int(len(self.textHex) / self.blockSizeHex)):
             # will slic the array for th required block size
             plain_i = self.textHex[i*self.blockSizeHex: i *
-                                    self.blockSizeHex + self.blockSizeHex]
+                                   self.blockSizeHex + self.blockSizeHex]
             # print(f"Block#{i}: {plain_i}")
             xored = hex(int(ciph_new, 16) ^ int(plain_i, 16))[
                 2:].zfill(self.blockSizeHex)
             # TODO : decide the nu,ber of round
             if self.isEnc:
-                ciph_i = self.algorithm.encrypt(xored, self.key)
+                args = EncModel(**{"plainText": xored,
+                                   "key": self.key, "isEncrypt": True})
+                ciph_i = self.algorithm.encrypt(args)
                 ciph_new = ciph_i
             else:
-                ciph_i = self.algorithm.decrypt(plain_i, self.key)
+                args = EncModel(**{"plainText": plain_i,
+                                   "key": self.key, "isEncrypt": False})
+                ciph_i = self.algorithm.decrypt(args)
                 ciph_i = int(ciph_i, 16) ^ int(ciph_new, 16)
                 # print("xored with: " + ciph_new)
                 ciph_i = hex(ciph_i)[2:].zfill(self.blockSizeHex)
@@ -135,42 +144,21 @@ class Block(BaseModel):
             # ciph_new = ciph_i
         return cipher
 
-    # def do_act(self, blockStart):
-    #     print(f"Thread #{blockStart} is running.")
-    #     cipher = None
-    #     plain_i = self.textHex[blockStart*self.blockSizeHex: blockStart *
-    #                             self.blockSizeHex + self.blockSizeHex]
-    #     if self.isEnc:
-    #         cipher = self.algorithm.encrypt(plain_i, self.key)
-    #     else:
-    #         cipher = self.algorithm.decrypt(plain_i, self.key)
-    #     return cipher
-
-    # def ecb(self):
-
-    #     cipher = ""
-    #     numOfBlocks = int(len(self.textHex) / self.blockSizeHex)
-    #     blockStart = [_ for _ in range(numOfBlocks)]
-    #     start = time.perf_counter()
-    #     with concurrent.futures.ThreadPoolExecutor() as executer:
-    #         results = executer.map(self.do_act, blockStart)
-    #     for result in results:
-    #         cipher += result
-    #     finish = time.perf_counter()
-    #     print(f'Finished in {round(finish-start, 2)} second(s)')
-    #     return cipher
-
     def ecb(self):
         cipher = ""
         start = time.perf_counter()
         for i in range(int(len(self.textHex) / self.blockSizeHex)):
             # will slic the array for th required block size
             plain_i = self.textHex[i*self.blockSizeHex: i *
-                                    self.blockSizeHex + self.blockSizeHex]
+                                   self.blockSizeHex + self.blockSizeHex]
             if self.isEnc:
-                ciph_i = self.algorithm.encrypt(plain_i, self.key)
+                args = EncModel(**{"plainText": plain_i,
+                                   "key": self.key, "isEncrypt": True})
+                ciph_i = self.algorithm.encrypt(args)
             else:
-                ciph_i = self.algorithm.decrypt(plain_i, self.key)
+                args = EncModel(**{"plainText": plain_i,
+                                   "key": self.key, "isEncrypt": False})
+                ciph_i = self.algorithm.decrypt(args)
             cipher += ciph_i
         finish = time.perf_counter()
         print(f'\nFinished in {round(finish-start, 2)} second(s)\n')
@@ -214,41 +202,43 @@ class Block(BaseModel):
 
 
 def main():
-    algo = 'RSA'
-    # key = getModules()[algo].RSA.generateKey(16)  # ascii string
-    key = ('43123$48443', '187$48443')
+    # algo = 'RSA'
+    # # key = getModules()[algo].RSA.generateKey(16)  # ascii string
+    # key = ('43123$48443', '187$48443')
     message = "Faisal Jehad Abushanab"
-    # message = "Hi"
-    print("\n-------------(RSA - Enc - ECB)----------------")
-    # block = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=True, text=message, key=key)
-    block = Block(blockSize=16, algo=algo, mode='CBC',
-                    isEnc=True, text=message, key=key[0])
-    cipher = block.run()
-    print("plainHex is: " + message.encode().hex())
-    print("key is: " + key[0])
-    print("cipher is: " + cipher)
-    print("\n-------------(Decryption)----------------")
-    # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
-    block2 = Block(blockSize=16, algo=algo, mode='CBC',
-                    isEnc=False, text=cipher, key=key[1])
-    orig = block2.run()
-    print("key is: " + key[1])
-    print("originalis: " + orig)
-    b = bytes.fromhex(orig)
-    s = b.decode("utf-8")
-    print(s)
-
-    # # print("\n-------------(AES - Enc - CBC)----------------")
-    # block = Block(128, 'AES', 'CBC', True, message, key)
+    # # message = "Hi"
+    # print("\n-------------(RSA - Enc - ECB)----------------")
+    # # block = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=True, text=message, key=key)
+    # block = Block(blockSize=16, algo=algo, mode='CBC',
+    #                 isEnc=True, text=message, key=key[0])
     # cipher = block.run()
-    # # print("key is: " + key)
-    # # print("cipher is: " + cipher)
-
-    # # print("-------------(Decryption)----------------")
-    # block2 = Block(128, 'AES', 'CBC', False, cipher, key)
+    # print("plainHex is: " + message.encode().hex())
+    # print("key is: " + key[0])
+    # print("cipher is: " + cipher)
+    # print("\n-------------(Decryption)----------------")
+    # # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
+    # block2 = Block(blockSize=16, algo=algo, mode='CBC',
+    #                 isEnc=False, text=cipher, key=key[1])
     # orig = block2.run()
-    # # print("key is: " + key)
-    # # print("originalis: " + orig)
+    # print("key is: " + key[1])
+    # print("originalis: " + orig)
+    # b = bytes.fromhex(orig)
+    # s = b.decode("utf-8")
+    # print(s)
+    key = getModules()["RC4"].RC4.generateKey(64)
+    print("\n-------------(AES - Enc - CBC)----------------")
+    block = Block(blockSize=64, algo='DES', mode='ECB',
+                  isEnc=True, text=message, key=key)
+    cipher = block.run()
+    print("key is: " + key)
+    print("cipher is: " + cipher)
+
+    print("-------------(Decryption)----------------")
+    block2 = Block(blockSize=64, algo='DES', mode='ECB',
+                   isEnc=False, text=cipher, key=key)
+    orig = block2.run()
+    print("key is: " + key)
+    print("originalis: " + orig)
 
     # key = getModules()['DES'].generateKey(64)  # ascii string
 

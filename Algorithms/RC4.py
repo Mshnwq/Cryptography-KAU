@@ -1,14 +1,17 @@
 
 import random
 import string
+from Algorithms.Algorithm import Algorithm
 
 
-class RC4:
+class RC4(Algorithm):
     def swap(self, S, i, j):
         """Swap the values at the specified indices in the given list."""
         S[i], S[j] = S[j], S[i]
 
-    def encrypt(self, plaintext, key):
+    def encrypt(self, args):
+        plaintext = args.plainText
+        key = args.key
         plaintext = bytes.fromhex(plaintext)
         key = key.encode()
         """Encrypt the input `data` using the key `key` using the RC4 algorithm."""
@@ -34,26 +37,28 @@ class RC4:
         text = ''.join('{:02x}'.format(x) for x in bytes(out))
         return text
 
-    def decrypt(self, ciphertext, key):
+    def decrypt(self, args):
+        ciphertext = args.plainText
+        key = args.key
         print("The cipher entered to RC4: ", ciphertext)
         print("The key entered to RC4: ", key)
-        plaintext = self.encrypt(ciphertext, key)
+        plaintext = self.encrypt(args)
         print("The retrived plain text: ", plaintext)
         return plaintext
-    
+
     @staticmethod
     def generateKey(size):
         if int(size) in list(map(int, RC4.getKeyBitSizes())):
-        # generate random key
+            # generate random key
             numOfChar = int(size/8)
             key = get_random_string(numOfChar)
             return key
         else:
             return "key size is not valid"
 
-    @staticmethod
-    def isAsymmetric():
-        return False
+    # @staticmethod
+    # def isAsymmetric():
+    #     return False
 
     @staticmethod
     def getKeyBitSizes():
@@ -65,7 +70,6 @@ def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
-
 
 
 # def construct():
