@@ -1,0 +1,263 @@
+# Reading C:/intelFPGA_lite/18.0/modelsim_ase/tcl/vsim/pref.tcl
+# do rsa_rfid_run_msim_rtl_verilog.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 10.5b Lib Mapping Utility 2016.10 Oct  5 2016
+# vmap work rtl_work 
+# Copying C:/intelFPGA_lite/18.0/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:13 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v 
+# -- Compiling module rsa_rfid
+# 
+# Top level modules:
+# 	rsa_rfid
+# End time: 22:25:13 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/bytes_to_words_opt.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:13 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/bytes_to_words_opt.v 
+# -- Compiling module bytes_to_words_opt
+# 
+# Top level modules:
+# 	bytes_to_words_opt
+# End time: 22:25:13 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/send_data.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:13 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/send_data.v 
+# -- Compiling module send_data
+# 
+# Top level modules:
+# 	send_data
+# End time: 22:25:13 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/hex_to_7seg.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:13 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/hex_to_7seg.v 
+# -- Compiling module hex_to_7seg
+# 
+# Top level modules:
+# 	hex_to_7seg
+# End time: 22:25:13 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/datapath.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:13 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/datapath.v 
+# -- Compiling module dataPath
+# 
+# Top level modules:
+# 	dataPath
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/staticvalue.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/staticvalue.v 
+# -- Compiling module staticValue
+# 
+# Top level modules:
+# 	staticValue
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v 
+# -- Compiling module encrypt_decrypt
+# 
+# Top level modules:
+# 	encrypt_decrypt
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v 
+# -- Compiling module divider64
+# 
+# Top level modules:
+# 	divider64
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/controlunit.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/controlunit.v 
+# -- Compiling module controlUnit
+# 
+# Top level modules:
+# 	controlUnit
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/counter.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/counter.v 
+# -- Compiling module counter
+# 
+# Top level modules:
+# 	counter
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/rom.v 
+# -- Compiling module ROM
+# 
+# Top level modules:
+# 	ROM
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/mux4to1.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/mux4to1.v 
+# -- Compiling module mux4to1
+# 
+# Top level modules:
+# 	mux4to1
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v 
+# -- Compiling module uart
+# 
+# Top level modules:
+# 	uart
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/baud_timer.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/baud_timer.v 
+# -- Compiling module baud_timer
+# 
+# Top level modules:
+# 	baud_timer
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart_rx.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart_rx.v 
+# -- Compiling module uart_rx
+# 
+# Top level modules:
+# 	uart_rx
+# End time: 22:25:14 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/fiforsa.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:14 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/fiforsa.v 
+# -- Compiling module fifoRsa
+# 
+# Top level modules:
+# 	fifoRsa
+# End time: 22:25:15 on Feb 21,2023, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart_tx.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:15 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart_tx.v 
+# -- Compiling module uart_tx
+# 
+# Top level modules:
+# 	uart_tx
+# End time: 22:25:15 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/Perux/Documents/KAU/5th\ year/Trimester\ 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid {C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA2.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:25:15 on Feb 21,2023
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid" C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA2.v 
+# -- Compiling module testRSA2
+# 
+# Top level modules:
+# 	testRSA2
+# End time: 22:25:15 on Feb 21,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L fiftyfivenm_ver -L rtl_work -L work -voptargs="+acc"  testRSA2
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L fiftyfivenm_ver -L rtl_work -L work -voptargs=""+acc"" testRSA2 
+# Start time: 22:25:15 on Feb 21,2023
+# Loading work.testRSA2
+# Loading work.rsa_rfid
+# Loading work.dataPath
+# Loading work.staticValue
+# Loading work.bytes_to_words_opt
+# Loading work.encrypt_decrypt
+# Loading work.divider64
+# Loading lpm_ver.lpm_divide
+# Loading lpm_ver.LPM_HINT_EVALUATION
+# Loading work.send_data
+# Loading work.controlUnit
+# Loading work.counter
+# Loading work.ROM
+# Loading work.mux4to1
+# Loading work.uart
+# Loading work.baud_timer
+# Loading work.uart_rx
+# Loading work.fifoRsa
+# Loading altera_mf_ver.scfifo
+# Loading altera_mf_ver.ALTERA_DEVICE_FAMILIES
+# Loading work.uart_tx
+# Loading work.hex_to_7seg
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v(40): [PCDPC] - Port size (64) does not match connection size (32) for port 'remain'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v(44).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/dataPath_rsa/encrypt_decrypt_state_machine/base_squared_mod_modulo File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v(48): [PCDPC] - Port size (64) does not match connection size (32) for port 'remain'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v(44).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/dataPath_rsa/encrypt_decrypt_state_machine/result_mul_base_mod_modulo File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v(51): [PCDPC] - Port size (11) does not match connection size (32) for port 'TIMER_FINAL_VALUE'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v(22).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/uart_rsa File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v(45): [PCDPC] - Port size (12) does not match connection size (10) for port 'usedw'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/fiforsa.v(48).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/uart_rsa/rx_FIFO File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/fiforsa.v
+# 
+# add wave *
+# ** Warning: (vsim-WLF-5000) WLF file currently in use: vsim.wlf
+#           File in use by: Perux  Hostname: DESKTOP-SJ89738  ProcessID: 28692
+#           Attempting to use alternate WLF file "./wlftt0n3vx".
+# ** Warning: (vsim-WLF-5001) Could not open WLF file: vsim.wlf
+#           Using alternate file: ./wlftt0n3vx
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+# ** Note: $stop    : C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA2.v(75)
+#    Time: 17605636 ns  Iteration: 0  Instance: /testRSA2
+# Break in Module testRSA2 at C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA2.v line 75
+add wave -position end  sim:/testRSA2/RSA/uart_rsa/tx_FIFO/q
+add wave -position end  sim:/testRSA2/RSA/uart_rsa/transmitter/tx_start
+add wave -position end  sim:/testRSA2/RSA/uart_rsa/transmitter/tx_din
+add wave -position end  sim:/testRSA2/RSA/uart_rsa/transmitter/tx_done_tick
+add wave -position end  sim:/testRSA2/RSA/uart_rsa/transmitter/tx
+add wave -position end  sim:/testRSA2/RSA/uart_rsa/tx_FIFO/wrreq
+restart -f
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v(40): [PCDPC] - Port size (64) does not match connection size (32) for port 'remain'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v(44).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/dataPath_rsa/encrypt_decrypt_state_machine/base_squared_mod_modulo File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/encrypt_decrypt.v(48): [PCDPC] - Port size (64) does not match connection size (32) for port 'remain'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v(44).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/dataPath_rsa/encrypt_decrypt_state_machine/result_mul_base_mod_modulo File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/divider64.v
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/rsa_rfid.v(51): [PCDPC] - Port size (11) does not match connection size (32) for port 'TIMER_FINAL_VALUE'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v(22).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/uart_rsa File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v
+# ** Warning: (vsim-3015) C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/uart.v(45): [PCDPC] - Port size (12) does not match connection size (10) for port 'usedw'. The port definition is at: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/fiforsa.v(48).
+#    Time: 0 ps  Iteration: 0  Instance: /testRSA2/RSA/uart_rsa/rx_FIFO File: C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/fiforsa.v
+run -all
+# ** Note: $stop    : C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA2.v(75)
+#    Time: 17605636 ns  Iteration: 0  Instance: /testRSA2
+# Break in Module testRSA2 at C:/Users/Perux/Documents/KAU/5th year/Trimester 1/EE460/project/FPGA_RSA_UHF_RFID/rsa_rfid/testRSA2.v line 75
+# End time: 23:12:39 on Feb 21,2023, Elapsed time: 0:47:24
+# Errors: 0, Warnings: 10

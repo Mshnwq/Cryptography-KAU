@@ -1,6 +1,0 @@
-
-State Machine - |rsa_rfid|dataPath:DP|encrypt_decrypt:encrypt_decrypt_state_machine|state
-Name state.HOLD state.DIVIDING state.UPDATE 
-state.DIVIDING 0 0 0 
-state.UPDATE 0 1 1 
-state.HOLD 1 1 0 

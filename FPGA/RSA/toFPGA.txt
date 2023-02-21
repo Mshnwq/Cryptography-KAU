@@ -1,0 +1,9 @@
+{
+"Key": ["DDDD","NNNN"],
+"text": 
+      [
+	64bit,
+	64bit,
+	64bit,
+      ],
+}
