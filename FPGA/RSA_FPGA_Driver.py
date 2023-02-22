@@ -11,12 +11,13 @@ class RSA_FPGA:
     """
     # fpga constructor
     def __init__(self):
-        try:
+        try:  
             self.read = None
             self.key = None
             self.mod = None
-            self.text = None
-            # self.__setupPort()# use when needed
+            self.text = None 
+            # print(self.find_all())
+            self.__setupPort()# use when needed
             # self.openPort()   # use when needed
             # self.closePort()  # use when needed
             print("constructed FPGA")
@@ -42,6 +43,41 @@ class RSA_FPGA:
         except Exception as e:
             print(f"failed setup {e}")
 
+    def find_all(pattern=None):
+        """
+        Returns all serial ports present.
+
+        params:
+            pattern (str): pattern to search for when retrieving serial ports
+        returns: list of devices
+        raises: :py:class:`~alarmdecoder.util.CommError`
+        """
+        devices = []
+
+        # try:
+        #     if pattern:
+        #         devices = serial.tools.list_ports.grep(pattern)
+        #     else:
+        devices = serial.tools.list_ports.comports(include_links=True)
+
+        # except serial.SerialException as err:
+        #     raise CommError('Error enumerating serial devices: {0}'.format(str(err)), err)
+
+        for i, device in enumerate(devices):
+            print(f"#{i} description {device.description}")
+            print(f"#{i} device {device.device}")
+            print(f"#{i} name {device.name}")
+            print(f"#{i} hwid {device.hwid}")
+            print(f"#{i} pid {device.pid}")
+            print(f"#{i} vid {device.vid}")
+            print(f"#{i} interface {device.interface}")
+            print(f"#{i} product {device.product}")
+            print(f"#{i} location {device.location}")
+            print(f"#{i} serial_number {device.serial_number}")
+            print(f"#{i} manufacturer {device.manufacturer}\n")
+
+        # return devices
+
     def openPort(self) -> bool:
         try:
             self.port.open()
@@ -63,7 +99,7 @@ class RSA_FPGA:
         ...    
 
     def isPortOpen(self) -> bool:
-        return self.port.is_open()
+        return self.port.isOpen()
 
     def encrypt(self): # TODO
         # send data to FPGA
@@ -113,6 +149,7 @@ class RSA_FPGA:
             # pack the the 96 bit data to be sent
             packed_data = struct.pack('3I', self.key, self.mod, self.text)
             self.port.write(packed_data)
+            return True
 
         except Exception as e:
             print(f"error {e}")
@@ -155,6 +192,24 @@ class RSA_FPGA:
 if __name__ == "__main__":
     
     fpga = RSA_FPGA()
-    # E = 13
-    # D = 133
-    # mod = 169
+    # fpga.openPort()
+    fpga.isPortOpen()
+    
+    fpga.setKey("0x10001")
+    fpga.setMod("0xf0c792cb")
+    message = 'E460'.encode().hex()
+    print(message)
+    fpga.setText(message)
+    cipher = fpga.encrypt()
+    print(f" the cipher is {cipher}")
+    print(f" the cipher is type {type(cipher)}")
+    
+
+    fpga.setKey("0xe4f319c1")
+    fpga.setMod("0xf0c792cb")
+    fpga.setText(cipher)
+    plain = fpga.encrypt()
+    print(f" the plain is {plain}")
+    # print(f" the plain is {plain.decode()}")
+    
+    fpga.closePort()
