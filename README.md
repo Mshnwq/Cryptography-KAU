@@ -49,7 +49,7 @@
 - AES-128,192,256 encryption/decryption
 - DES-64 encryption/decryption
 - RC4-128,256 encryption/decryption
-- RSA-16,32,64 encryption/decryption (FPGA)
+- RSA-16,32 encryption/decryption (FPGA)
 - and more comming...
 
 ### **Requirements**
