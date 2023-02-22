@@ -1,12 +1,10 @@
 
 from pydantic import BaseModel
-import importlib
-import os
-import time
-# from multiprocessing import process
-import multiprocessing
-# import concurrent.futures
+import importlib, os, time
 from Algorithms.Algorithm import EncModel
+import multiprocessing
+# from multiprocessing import process
+# import concurrent.futures
 
 
 # import all Algorithms
@@ -14,7 +12,8 @@ package = 'Algorithms'
 fileDirectory = os.path.dirname(__file__)
 __modules__ = dict()
 for file_name in os.listdir(f"{fileDirectory}\\{package}"):
-    if file_name.endswith('.py') and file_name != '__init__.py':
+    if file_name.endswith('.py') and (
+        (file_name != '__init__.py') and (file_name != 'Algorithm.py')):
         module_name = file_name[:-3]
         __modules__[module_name] = importlib.import_module(
             f"{package}.{module_name}", '.')
@@ -72,7 +71,7 @@ class Block(BaseModel):
                 self.textHex += "0"
         elif textSize > self.blockSizeHex and textSize % self.blockSizeHex != 0:
             for i in range(textSize,
-                           (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
+                            (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
         print("plain after: "+self.textHex)
 

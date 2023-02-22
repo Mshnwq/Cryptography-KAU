@@ -1,6 +1,7 @@
 import random, sys, os
+from Algorithms.Algorithm import Algorithm
 
-class RSA:
+class RSA(Algorithm):
 
    def __init__(self):
       print("constrcuted RSA")
@@ -166,7 +167,7 @@ class RSA:
       fo.close()
 
    @staticmethod
-   def isAsymmetric():
+   def isAsymmetric() -> bool:
       return True
 
 # def construct():

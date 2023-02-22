@@ -33,7 +33,7 @@ class Algorithm(abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def isAsymmetric():
+    def isAsymmetric() -> bool:
         pass
 
     @staticmethod

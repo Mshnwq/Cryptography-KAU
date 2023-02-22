@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(":seal"))
 
         self.rfid = None
+        self.default_app = None
         self._threads = []
         self.dialogType = 0
 

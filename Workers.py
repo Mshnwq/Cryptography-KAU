@@ -1,27 +1,27 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from block import Block
+from block import Block, getModules
 import time
 import os
 import importlib
 import sys
 
 # import all Algorithms
-package = 'Algorithms'
-fileDirectory = os.path.dirname(__file__)
-__modules__ = dict()
-for file_name in os.listdir(f"{fileDirectory}\\{package}"):
-    if file_name.endswith('.py') and (
-        (file_name != '__init__.py') and (file_name != 'RSA.py')):
-        # (file_name != '__init__.py')):
-        module_name = file_name[:-3]
-        __modules__[module_name] = importlib.import_module(
-            f"{package}.{module_name}", '.')
+# package = 'Algorithms'
+# fileDirectory = os.path.dirname(__file__)
+# __modules__ = dict()
+# for file_name in os.listdir(f"{fileDirectory}\\{package}"):
+#     if file_name.endswith('.py') and (
+#         (file_name != '__init__.py') and (file_name != 'Algorithm.py')):
+#         # (file_name != '__init__.py')):
+#         module_name = file_name[:-3]
+#         __modules__[module_name] = importlib.import_module(
+#             f"{package}.{module_name}", '.')
 
 
-def getModules():
-    return __modules__
+# def getModules():
+#     return getModules()
 
 
 class Fetch_Worker(QThread):
@@ -90,7 +90,7 @@ class KeyGen_Worker(QThread):
             self.logsAppendSignal.emit(str(i))
             time.sleep(0.15)
             i += 1
-        module = __modules__[self.algo]
+        module = getModules()[self.algo]
         result = eval(f"module.{self.algo}.generateKey({self.bit_size})")
         print(f'Result: {result}')
         if eval(f"module.{self.algo}.isAsymmetric()"):
