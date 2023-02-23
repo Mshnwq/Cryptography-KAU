@@ -7,22 +7,6 @@ import os
 import importlib
 import sys
 
-# import all Algorithms
-# package = 'Algorithms'
-# fileDirectory = os.path.dirname(__file__)
-# __modules__ = dict()
-# for file_name in os.listdir(f"{fileDirectory}\\{package}"):
-#     if file_name.endswith('.py') and (
-#         (file_name != '__init__.py') and (file_name != 'Algorithm.py')):
-#         # (file_name != '__init__.py')):
-#         module_name = file_name[:-3]
-#         __modules__[module_name] = importlib.import_module(
-#             f"{package}.{module_name}", '.')
-
-
-# def getModules():
-#     return getModules()
-
 
 class Fetch_Worker(QThread):
     def __init__(self):
@@ -107,7 +91,7 @@ class Cryptor_Worker(QThread):
     resultSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal()
 
-    def __init__(self, size, algo, mode, isEnc, text, key):
+    def __init__(self, size, algo, mode, isEnc, text, key, fpga = None):
         '''
         Cryptor Worker Constructor
         Args:
@@ -117,40 +101,68 @@ class Cryptor_Worker(QThread):
             isEnc (bool): is Encryption, else Decryption
             text (str): text to encrypt or decrypt
             key (str): algorithm key
+            "optional" 
+            fpga (FPGA): attach FPGA to algorithm
         '''
         super().__init__()
         self.isEnc = isEnc
         self.text = text
-        self.key = key
-        # print(f'Key {key}')
-        # print(f'Text {text}')
-        # self.isAss = __modules__[algo].isAsymmetric()
-        # if self.isAss:
-            # self.algoAss = __modules__[algo].construct()
-        # else: 
-        self.block = Block(blockSize=size, 
-                            algo=algo, mode=mode, 
-                            isEnc=isEnc, text=text, 
-                            key=key)
-        # self.crypto.setSignals() #TODO
+        print(f'Key {key}')
+        print(f'Key type {type(key)}')
+        print(f'Text {text}')
+        print(f'Text type {type(text)}')
+        module = getModules()[algo]
+        self.isAss = eval(f"module.{algo}.isAsymmetric()")
+        if fpga != None:
+            if self.isAss:
+                key = key.split('_')
+                if self.isEnc:
+                    self.block = Block(blockSize=size, 
+                                    algo=algo, mode=mode, 
+                                    isEnc=isEnc, text=text, 
+                                    key=key[0], fpga=fpga)
+                else:
+                    self.block = Block(blockSize=size, 
+                                    algo=algo, mode=mode, 
+                                    isEnc=isEnc, text=text, 
+                                    key=key[1], fpga=fpga)
+            else:
+                self.block = Block(blockSize=size, 
+                                    algo=algo, mode=mode, 
+                                    isEnc=isEnc, text=text, 
+                                    key=key, fpga=fpga)
+        else: # SORRU SORRY
+            if self.isAss:
+                key = key.split('_')
+                if self.isEnc:
+                    print("CONSTRUCUTN BLOCK ASS ENC")
+                    self.block = Block(blockSize=size, 
+                                    algo=algo, mode=mode, 
+                                    isEnc=isEnc, text=text, 
+                                    key=key[0])
+                else:
+                    print("CONSTRUCUTN BLOCK ASS DEC")
+                    self.block = Block(blockSize=size, 
+                                    algo=algo, mode=mode, 
+                                    isEnc=isEnc, text=text, 
+                                    key=key[1])
+            else:
+                self.block = Block(blockSize=size, 
+                                    algo=algo, mode=mode, 
+                                    isEnc=isEnc, text=text, 
+                                    key=key)
 
     def run(self):
         '''The Main Process for the Thread'''
-        try:
-            # if self.isAss:
-                # if self.isEnc:
-                    # result = self.algoAss.encrypt(self.text, self.key[0])
-                # else:
-                    # result = self.algoAss.decrypt(self.text, self.key[0])
-            # else:
-            result = self.block.run()
-            # print(f'Worker Result {result}')
-            self.resultSignal.emit(result)
-            self.finishedSignal.emit()
-        except Exception as e:
-            # print(f'Worker Result {result}')
-            self.resultSignal.emit(None)
-            self.finishedSignal.emit()
+        # try:
+        result = self.block.run()
+        print(f'Worker Result {result}')
+        self.resultSignal.emit(result)
+        self.finishedSignal.emit()
+        # except Exception as e:
+        #     print(f'Worker Result {e}')
+        #     self.resultSignal.emit(None)
+        #     self.finishedSignal.emit()
 
 
 

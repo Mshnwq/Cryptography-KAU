@@ -1,42 +1,46 @@
-# from abc import ABC, abstractmethod
-import abc
+from abc import ABC, abstractmethod
 from pydantic import BaseModel, validator
 from typing import Optional
 
 
 class EncModel(BaseModel):
-    plainText: str
+    text: str
     key: str
     isEncrypt: Optional[bool] = True
 
-    @validator('plainText')
-    def check_hex(cls, value):
-        if not all(c in '0123456789abcdefABCDEF' for c in value):
-            raise ValueError('not a valid hex string')
-        return value
+    # @validator('plainText')
+    # def check_hex(cls, value):
+    #     if not all(c in '0123456789abcdefABCDEF' for c in value):
+    #         raise ValueError('not a valid hex string')
+    #     return value
 
 
-class Algorithm(abc.ABC):
+class Algorithm(ABC):
 
-    @abc.abstractmethod
+    @abstractmethod
     def encrypt(self, args: EncModel) -> str:
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def decrypt(self, args: EncModel) -> str:
         pass
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def generateKey(size: int):
         pass
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def isAsymmetric() -> bool:
         pass
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
+    def hasFPGA() -> bool:
+        pass
+
+    @staticmethod
+    @abstractmethod
     def getKeyBitSizes():
         pass

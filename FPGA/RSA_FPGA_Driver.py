@@ -13,11 +13,11 @@ class RSA_FPGA:
     def __init__(self):
         try:  
             self.read = None
-            self.key = None
+            self.exp = None
             self.mod = None
             self.text = None 
             # print(self.find_all())
-            self.__setupPort()# use when needed
+            self.__setupPort()
             # self.openPort()   # use when needed
             # self.closePort()  # use when needed
             print("constructed FPGA")
@@ -101,18 +101,21 @@ class RSA_FPGA:
     def isPortOpen(self) -> bool:
         return self.port.isOpen()
 
-    def encrypt(self): # TODO
+    def decrypt(self):
+        return self.encrypt()
+
+    def encrypt(self):
         # send data to FPGA
         if self.writeToFPGA():
             print("Written to FPGA")
         else:
             print("Failed to write to FPGA")
             return
-        self.clearKey()
+        self.clearExp()
         self.clearMod()
         self.clearText()
         
-        time.sleep(0.2) # TODO
+        time.sleep(0.01)
         # read data from FPGA
         if self.readFromFPGA():
             print("Read from FPGA")
@@ -127,12 +130,13 @@ class RSA_FPGA:
     def readFromFPGA(self) -> bool:
         try:
             hex_string = ""
-            for i in range(4): # TODO
+            for i in range(4):
                 data_byte = self.port.read(1)
                 print(data_byte)
-                hex_string = format(data_byte[0], "02X") + "" + hex_string
+                hex_string = format(data_byte[0], "02x") + "" + hex_string
             self.read = hex_string
             return True
+        
         except Exception as e:
             print(f"error {e}")
             return False
@@ -140,14 +144,14 @@ class RSA_FPGA:
 
     def writeToFPGA(self) -> bool:
         try:
-            if self.key == None:
-                raise Exception("Invalid key")
+            if self.exp == None:
+                raise Exception("Invalid Exp")
             if self.mod == None:
                 raise Exception("Invalid mod")
             if self.text == None:
                 raise Exception("Invalid text")
             # pack the the 96 bit data to be sent
-            packed_data = struct.pack('3I', self.key, self.mod, self.text)
+            packed_data = struct.pack('3I', self.exp, self.mod, self.text)
             self.port.write(packed_data)
             return True
 
@@ -156,14 +160,14 @@ class RSA_FPGA:
             return False
         ...
 
-    def clearKey(self):
-        self.key = None
+    def clearExp(self):
+        self.exp = None
 
-    def setKey(self, val: hex):
-        self.key = int(val, 16)
+    def setExp(self, val: hex):
+        self.exp = int(val, 16)
 
-    def getKey(self) -> str:
-        return str(self.key)
+    def getExp(self) -> str:
+        return str(self.exp)
     
     def clearMod(self):
         self.mod = None
@@ -192,10 +196,9 @@ class RSA_FPGA:
 if __name__ == "__main__":
     
     fpga = RSA_FPGA()
-    # fpga.openPort()
-    fpga.isPortOpen()
+    # fpga.isPortOpen()
     
-    fpga.setKey("0x10001")
+    fpga.setExp("0x10001")
     fpga.setMod("0xf0c792cb")
     message = 'E460'.encode().hex()
     print(message)
@@ -203,13 +206,16 @@ if __name__ == "__main__":
     cipher = fpga.encrypt()
     print(f" the cipher is {cipher}")
     print(f" the cipher is type {type(cipher)}")
-    
 
-    fpga.setKey("0xe4f319c1")
+    fpga.setExp("0xe4f319c1")
     fpga.setMod("0xf0c792cb")
     fpga.setText(cipher)
-    plain = fpga.encrypt()
+    plain = fpga.decrypt()
     print(f" the plain is {plain}")
-    # print(f" the plain is {plain.decode()}")
+    print(f" the plain is {plain.decode()}")
+
+    b = bytes.fromhex(cipher)
+    s = b.decode("utf-8")
+    print(s)
     
-    fpga.closePort()
+    # fpga.closePort()

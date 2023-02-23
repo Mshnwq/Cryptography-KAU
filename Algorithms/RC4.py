@@ -10,7 +10,7 @@ class RC4(Algorithm):
         S[i], S[j] = S[j], S[i]
 
     def encrypt(self, args):
-        plaintext = args.plainText
+        plaintext = args.text
         key = args.key
         plaintext = bytes.fromhex(plaintext)
         key = key.encode()
@@ -38,7 +38,7 @@ class RC4(Algorithm):
         return text
 
     def decrypt(self, args):
-        ciphertext = args.plainText
+        ciphertext = args.text
         key = args.key
         print("The cipher entered to RC4: ", ciphertext)
         print("The key entered to RC4: ", key)
@@ -56,9 +56,13 @@ class RC4(Algorithm):
         else:
             return "key size is not valid"
 
-    # @staticmethod
-    # def isAsymmetric():
-    #     return False
+    @staticmethod
+    def isAsymmetric() -> bool:
+        return False
+    
+    @staticmethod
+    def hasFPGA() -> bool:
+        return False
 
     @staticmethod
     def getKeyBitSizes():

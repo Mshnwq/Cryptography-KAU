@@ -311,8 +311,8 @@ class Ui_Receive(object):
         fetchSrcMenu.addAction(self.fetchSrcAction)
         keyRdMenu = configMenu.addMenu("&Key Read Source")
         keyRdMenu.addAction(self.keyRdAction)
-        decrypSrcMenu = configMenu.addMenu("&Decryption Source")
-        decrypSrcMenu.addAction(self.decrypSrcAction)
+        decryptSrcMenu = configMenu.addMenu("&Decryption Source")
+        decryptSrcMenu.addAction(self.decryptSrcAction)
         configMenu.addSeparator()
         configMenu.addAction(self.saveConfigAction)
 
@@ -334,8 +334,8 @@ class Ui_Receive(object):
         self.keyRdAction = QAction('&RFID', MainWindow, checkable=True)
         self.keyRdAction.setChecked(config['RFID_rd'])
 
-        self.decrypSrcAction = QAction('&FPGA', MainWindow, checkable=True)
-        self.decrypSrcAction.setChecked(config['FPGA_crypt'])
+        self.decryptSrcAction = QAction('&FPGA', MainWindow, checkable=True)
+        self.decryptSrcAction.setChecked(config['FPGA_crypt'])
 
         self.saveConfigAction = QAction("&Save Config", MainWindow)
         # TODO for FPGA

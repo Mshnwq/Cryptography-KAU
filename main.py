@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from Workers import *
 from RFID_Driver import RFID
+from FPGA.RSA_FPGA_Driver import RSA_FPGA
 from firebase_admin import *
 from firebase_admin import db
 import assets.qrc
@@ -37,6 +38,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(":seal"))
 
         self.rfid = None
+        self.fpga = None
         self.default_app = None
         self._threads = []
         self.dialogType = 0
@@ -63,6 +65,9 @@ class MainWindow(QMainWindow):
         if self.rfid != None:
             self.rfid.closePort()
             self.rfid = None
+        if self.fpga != None:
+            self.fpga.closePort()
+            self.fpga = None
         self.__key = None
         self.__keyInt = None
 
@@ -78,7 +83,7 @@ class MainWindow(QMainWindow):
     def broadcastMode(self):
         # construct the window
         self.ui = __ui__['Broadcast'].construct()
-        with open(fileDirectory+'\\Broadcast'+'_config.json', 'r') as file:
+        with open(fileDirectory+'\\config\\Broadcast'+'_config.json', 'r') as file:
             config = json.load(file)
         self.ui.setupUi(self, config)
 
@@ -86,21 +91,24 @@ class MainWindow(QMainWindow):
         self.ui.genKeys_btn.clicked.connect(self.generateKeys)
 
         # Write Key
-        if (self.ui.keyWrAction.isChecked() and self.checkRFID('Wr')):  # onto RFID
+        if (self.ui.keyWrAction.isChecked() 
+            and self.checkRFID('Wr')): # onto RFID
             self.ui.writeKey_btn.clicked.connect(self.writeKey)
         else:  # onto .txt
             self.ui.writeKey_btn.clicked.connect(self.saveKey)
 
         # Encrpyt the plaintext
-        # if self.ui.encrypSrcAction.isChecked():
-        if False:  # Hardware Encrypt
-            # TODO an fpga encrypt
-            ...
+        if (self.ui.encryptSrcAction.isChecked() 
+            and self.checkFPGA('En')): # Hardware Encrypt 
+            self.ui.encryptMsg_btn.clicked.connect(
+                lambda: self.encrypt(self.fpga))
         else:  # Software Encrypt
-            self.ui.encryptMsg_btn.clicked.connect(self.encrypt)
+            self.ui.encryptMsg_btn.clicked.connect(
+                lambda: self.encrypt(None))
 
         # Upload data to backend
-        if self.ui.broadcastSrcAction.isChecked() and self.checkCloud('Up'):  # use cloud
+        if (self.ui.broadcastSrcAction.isChecked() 
+            and self.checkCloud('Up')): # use cloud
             self.ui.uploadData_btn.clicked.connect(self.sendData)
         else:  # use .txt
             self.ui.uploadData_btn.clicked.connect(self.saveData)
@@ -111,6 +119,8 @@ class MainWindow(QMainWindow):
         
         # On changed Algortihm
         self.ui.algoType_combo.activated[str].connect(self.onChangedAlgoBrd)
+        # On changed Bit Size
+        self.ui.bitSize_combo.activated[str].connect(self.onChangedBitSizeBrd)
 
         # disable buttons
         self.ui.encryptMsg_btn.setEnabled(False)
@@ -121,10 +131,11 @@ class MainWindow(QMainWindow):
         self.ui.keyGenAction.triggered.connect(
             lambda: self.logsAppend("Key Gen on FPGA Later"))
         # Key Write action
-        self.ui.keyWrAction.triggered.connect(lambda: self.toggle_rfid('Wr'))
+        self.ui.keyWrAction.triggered.connect(
+            lambda: self.toggle_rfid('Wr'))
         # Encryption Source action
-        self.ui.encrypSrcAction.triggered.connect(
-            lambda: self.logs_box.append("Encryption on FPGA Later"))
+        self.ui.encryptSrcAction.triggered.connect(
+            lambda: self.toggle_fpga('En'))
         # Broadcast Source action
         self.ui.broadcastSrcAction.triggered.connect(
             lambda: self.toggle_Cloud('Up'))
@@ -136,26 +147,34 @@ class MainWindow(QMainWindow):
     def receiveMode(self):
         # construct the window
         self.ui = __ui__['Receive'].construct()
-        with open(fileDirectory+'\\Receive'+'_config.json', 'r') as file:
+        with open(fileDirectory+'\\config\\Receive'+'_config.json', 'r') as file:
             config = json.load(file)
         self.ui.setupUi(self, config)
 
         # Fetch keys
         self.fetchStatus = False
-        if (self.ui.fetchSrcAction.isChecked() and self.checkCloud('Ft')):  # from Cloud
+        if (self.ui.fetchSrcAction.isChecked() 
+            and self.checkCloud('Ft')): # from Cloud
             self.ui.fetch_btn.clicked.connect(self.fetchData)
         else:  # from .txt
             self.ui.fetch_btn.clicked.connect(self.readCipherTxt)
 
         # Read Key
         self.readStatus = False
-        if (self.ui.keyRdAction.isChecked() and self.checkRFID('Rd')):  # from RFID
+        if (self.ui.keyRdAction.isChecked() 
+            and self.checkRFID('Rd')): # from RFID
             self.ui.readKey_btn.clicked.connect(self.readKey)
         else:  # from.txt
             self.ui.readKey_btn.clicked.connect(self.readKeyTxt)
 
-        # Decrpyt the plaintext
-        self.ui.decryptMsg_btn.clicked.connect(self.decrypt)
+        # Decrpyt the ciphertext
+        if (self.ui.decryptSrcAction.isChecked() 
+            and self.checkFPGA('De')): # Hardware Encrypt 
+            self.ui.decryptMsg_btn.clicked.connect(
+                lambda: self.decrypt(self.fpga))
+        else:
+            self.ui.decryptMsg_btn.clicked.connect(
+                lambda: self.decrypt(None))
 
         # Clear logs
         self.ui.clearLogs_btn.clicked.connect(
@@ -171,10 +190,11 @@ class MainWindow(QMainWindow):
         self.ui.fetchSrcAction.triggered.connect(
             lambda: self.toggle_Cloud('Ft'))
         # Key Read action
-        self.ui.keyRdAction.triggered.connect(lambda: self.toggle_rfid('Rd'))
+        self.ui.keyRdAction.triggered.connect(
+            lambda: self.toggle_rfid('Rd'))
         # Decryption Source action
-        self.ui.decrypSrcAction.triggered.connect(
-            lambda: self.logsAppend("Decryption on FPGA Later"))
+        self.ui.decryptSrcAction.triggered.connect(
+            lambda: self.toggle_fpga('De'))
         # Save Broadcast Configuration action
         self.ui.saveConfigAction.triggered.connect(self.saveReceiveConfig)
         # logout action
@@ -183,6 +203,26 @@ class MainWindow(QMainWindow):
     def logsAppend(self, data):
         '''Append a text to the logs box'''
         self.ui.logs_box.append(data)
+
+    def checkFPGA(self, mode):
+        try:  # connect FPGA
+            self.fpga = RSA_FPGA()
+            # self.logsAppend("FPGA Connected ")
+            return True
+        except Exception as e:
+            self.fpga = None
+            dialog = QMessageBox()
+            dialog.setWindowTitle(f"Error Occured with FPGA")
+            dialog.setText(f"Details: {e}")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(f"Make sure FPGA is connected")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            if mode == 'En':
+                self.ui.encryptSrcAction.setChecked(False)
+            else:
+                self.ui.decryptSrcAction.setChecked(False)
+            return False
 
     def checkRFID(self, mode):
         try:  # connect RFID
@@ -232,6 +272,36 @@ class MainWindow(QMainWindow):
             else:
                 self.ui.fetchSrcAction.setChecked(False)
             return False
+
+    def toggle_fpga(self, mode):
+        if mode == 'En':
+            if self.ui.encryptSrcAction.isChecked() and self.checkFPGA(mode):
+                self.logsAppend("FPGA Connected")
+                self.ui.encryptMsg_btn.clicked.disconnect()
+                self.ui.encryptMsg_btn.clicked.connect(
+                    lambda: self.encrypt(self.fpga))
+            else:
+                if self.fpga != None:
+                    self.logsAppend("FPGA Disconnected")
+                    self.fpga.closePort()
+                self.fpga = None
+                self.ui.encryptMsg_btn.clicked.disconnect()
+                self.ui.encryptMsg_btn.clicked.connect(
+                    lambda: self.encrypt(None))
+        else:
+            if self.ui.decryptSrcAction.isChecked() and self.checkFPGA(mode):
+                self.logsAppend("FPGA Connected")
+                self.ui.decryptMsg_btn.clicked.disconnect()
+                self.ui.decryptMsg_btn.clicked.connect(
+                    lambda: self.decrypt(self.fpga))
+            else:
+                if self.fpga != None:
+                    self.logsAppend("FPGA Disconnected")
+                    self.fpga.closePort()
+                self.fpga = None
+                self.ui.decryptMsg_btn.clicked.disconnect()
+                self.ui.decryptMsg_btn.clicked.connect(
+                    lambda: self.decrypt(None))
 
     def toggle_rfid(self, mode):
         # Connect the button to the appropriate function based on the toggle state
@@ -316,11 +386,11 @@ class MainWindow(QMainWindow):
         data = {
             "FPGA_gen": self.ui.keyGenAction.isChecked(),
             "RFID_wr": self.ui.keyWrAction.isChecked(),
-            "FPGA_crypt": self.ui.encrypSrcAction.isChecked(),
+            "FPGA_crypt": self.ui.encryptSrcAction.isChecked(),
             "Cloud": self.ui.broadcastSrcAction.isChecked()
         }
         try:
-            with open(fileDirectory+'\\Broadcast_config.json', 'w') as file:
+            with open(fileDirectory+'\\config\\Broadcast_config.json', 'w') as file:
                 json.dump(data, file, indent=4)
             self.logsAppend("Settings updated successfully")
         except Exception as e:
@@ -330,10 +400,10 @@ class MainWindow(QMainWindow):
         data = {
             "Cloud": self.ui.fetchSrcAction.isChecked(),
             "RFID_rd": self.ui.keyRdAction.isChecked(),
-            "FPGA_crypt": self.ui.decrypSrcAction.isChecked()
+            "FPGA_crypt": self.ui.decryptSrcAction.isChecked()
         }
         try:
-            with open(fileDirectory+'\\Receive_config.json', 'w') as file:
+            with open(fileDirectory+'\\config\\Receive_config.json', 'w') as file:
                 json.dump(data, file, indent=4)
             self.logsAppend("Settings updated successfully")
         except Exception as e:
@@ -418,19 +488,15 @@ class MainWindow(QMainWindow):
         return fit
 
     def onChangedAlgoBrd(self, algo):
-        if eval(f"getModules()[algo].{algo}.isAsymmetric()"):
-            self.ui.blockMode_combo.setEnabled(False)
-        else:
-            self.ui.blockMode_combo.setEnabled(True)
         self.ui.writeKey_btn.setEnabled(False)
         self.ui.encryptMsg_btn.setEnabled(False)
         self.ui.updateBitCombo(sizes = eval(f"getModules()[algo].{algo}.getKeyBitSizes()"))
 
+    def onChangedBitSizeBrd(self, algo):
+        self.ui.writeKey_btn.setEnabled(False)
+        self.ui.encryptMsg_btn.setEnabled(False)
+
     def onChangedAlgoRcv(self, algo):
-        if eval(f"getModules()[algo].{algo}.isAsymmetric()"):
-            self.ui.blockMode_combo.setEnabled(False)
-        else:
-            self.ui.blockMode_combo.setEnabled(True)
         self.ui.updateBitCombo(sizes = eval(f"getModules()[algo].{algo}.getKeyBitSizes()"))
 
     def getBitSizeChosen(self):
@@ -573,29 +639,48 @@ class MainWindow(QMainWindow):
         if(self.dialogType == 1 and btn.text() == 'Retry'):
             self.readKey()
 
-    def encrypt(self):
-        
+    def encrypt(self, attachFPGA):
+
         plainTextString = self.ui.plaintext_text.toPlainText()
 
-        # if (getModules()[self.getAlgoChosen()].isAsymmetric() 
-            # and (self.getBitSizeChosen()/8) <= len(plainTextString)):
-            # dialog = QMessageBox()
-        #     dialog.setWindowTitle("Invalid Text Size!")
-        #     dialog.setText(
-        #         f"Cannot use Text of length {len(plainTextString)} on {self.getAlgoChosen()} of size {self.getBitSizeChosen()} bits")
-        #     dialog.setIcon(QMessageBox.Critical)
-        #     dialog.setInformativeText(
-        #         f"Make your text {int(self.getBitSizeChosen()/8)} characters or lower")
-        #     dialog.setStandardButtons(QMessageBox.Ok)
-        #     dialog.exec_()
-        #     return None
-
         # Create a worker thread
-        encrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
-                                        self.getAlgoChosen(),
-                                        self.getModeChosen(),
-                                        True, plainTextString, 
-                                        self.__key)
+        if attachFPGA != None:
+            # handle invalid algo for FPGA
+            module = getModules()[self.getAlgoChosen()]
+            if not eval(f"module.{self.getAlgoChosen()}.hasFPGA()"): 
+                dialog = QMessageBox()
+                dialog.setWindowTitle("Invalid Algorithm for FPGA!")
+                dialog.setText(
+                    f"Cannot use FPGA on {self.getAlgoChosen()} algorithm")
+                dialog.setIcon(QMessageBox.Critical)
+                dialog.setInformativeText(
+                    f"Choose an algorithm that has an FPGA implementation")
+                dialog.setStandardButtons(QMessageBox.Ok)
+                dialog.exec_()
+                return None
+            encrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
+                                            self.getAlgoChosen(),
+                                            self.getModeChosen(),
+                                            True, plainTextString, 
+                                            self.__key, attachFPGA)
+        else:
+            # handle invalid bit size
+            if ((self.getBitSizeChosen() > 16) and (self.getAlgoChosen() == 'RSA')):
+                dialog = QMessageBox()
+                dialog.setWindowTitle("Invalid Bit Size!")
+                dialog.setText(
+                    f"Cannot use Bit Size of {self.getBitSizeChosen()} on {self.getAlgoChosen()} without FPGA")
+                dialog.setIcon(QMessageBox.Critical)
+                dialog.setInformativeText(
+                    f"Attach an FPGA, or choose a lower bit size")
+                dialog.setStandardButtons(QMessageBox.Ok)
+                dialog.exec_()
+                return None
+            encrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
+                                            self.getAlgoChosen(),
+                                            self.getModeChosen(),
+                                            True, plainTextString, 
+                                            self.__key)
 
         # Connect signals & slots
         encrypt_worker.logsAppendSignal.connect(self.logsAppend)
@@ -621,26 +706,49 @@ class MainWindow(QMainWindow):
         self.ui.ciphertext_text.setText(cipherTextFit)
         self.ui.uploadData_btn.setEnabled(True)
 
-    def decrypt(self):
-
-        if eval(f"getModules()[self.getAlgoChosen()].{self.getAlgoChosen()}.isAsymmetric()"):
-            dialog = QMessageBox()
-            dialog.setWindowTitle("Invalid Algorithm!")
-            dialog.setText(
-                f"Cannot use Block on {self.getAlgoChosen()}")
-            dialog.setIcon(QMessageBox.Critical)
-            dialog.setInformativeText(f"Choose a Symmetric Decryption Algorithm")
-            dialog.setStandardButtons(QMessageBox.Ok)
-            dialog.exec_()
-            return None
+    def decrypt(self, attachFPGA):
 
         cipherTextString = self.ui.ciphertext_text.toPlainText().replace("\n","")
+        
         # Create a worker thread
-        decrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
+        if attachFPGA != None:
+            # handle invalid algo for FPGA
+            module = getModules()[self.getAlgoChosen()]
+            if not eval(f"module.{self.getAlgoChosen()}.hasFPGA()"): 
+                dialog = QMessageBox()
+                dialog.setWindowTitle("Invalid Algorithm for FPGA!")
+                dialog.setText(
+                    f"Cannot use FPGA on {self.getAlgoChosen()} algorithm")
+                dialog.setIcon(QMessageBox.Critical)
+                dialog.setInformativeText(
+                    f"Choose an algorithm that has an FPGA implementation")
+                dialog.setStandardButtons(QMessageBox.Ok)
+                dialog.exec_()
+                return None
+            decrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
+                                            self.getAlgoChosen(),
+                                            self.getModeChosen(),
+                                            False, cipherTextString, 
+                                            self.__key, attachFPGA)
+        else:
+            # handle invalid bit size
+            if ((self.getBitSizeChosen() > 16) and (self.getAlgoChosen() == 'RSA')):
+                dialog = QMessageBox()
+                dialog.setWindowTitle("Invalid Bit Size!")
+                dialog.setText(
+                    f"Cannot use Bit Size of {self.getBitSizeChosen()} on {self.getAlgoChosen()} without FPGA")
+                dialog.setIcon(QMessageBox.Critical)
+                dialog.setInformativeText(
+                    f"Attach an FPGA, or choose a lower bit size")
+                dialog.setStandardButtons(QMessageBox.Ok)
+                dialog.exec_()
+                return None
+            decrypt_worker = Cryptor_Worker(self.getBitSizeChosen(),
                                         self.getAlgoChosen(),
                                         self.getModeChosen(),
                                         False, cipherTextString, 
                                         self.__key)
+        
 
         # Connect signals & slots
         decrypt_worker.logsAppendSignal.connect(self.logsAppend)

@@ -4,37 +4,51 @@ from Algorithms.Algorithm import Algorithm
 class RSA(Algorithm):
 
    def __init__(self):
+      self.fpga = None
       print("constrcuted RSA")
 
-   def decrypt(self, text, key):
-      key = key.split('$')
+   def attachFPGA(self, fpga):
+      self.fpga = fpga
+      ...
+
+   def decrypt(self, args):
+      key = args.key.split('$')
       exponant = int(key[0])
       modulus = int(key[1])
-      print(f'TYPE TEXT {type(text)}')
-      print(f"Cipher before decode {text}")
-      text = int(text,16)
-      print(f"Cipher after decode {text}")
-      result = (text**exponant)%modulus
-      resultHex = hex(result)
-      # resultStr = bytes.fromhex(resultHex[2:]).decode()
-      # return resultStr
-      return resultHex[2:]
+      text = int(args.text,16)
+      if self.fpga == None:
+         result = (text**exponant)%modulus
+         resultHex = hex(result)
+         return resultHex[2:]
+      else:
+         self.fpga.setExp("0x"+key[0])
+         self.fpga.setMod("0x"+key[1])
+         message = args.text.encode().hex()
+         print(f'Message to fpga {message}')
+         self.fpga.setText(message)
+         return self.fpga.decrypt()
    
-   def encrypt(self, text, key):
-      key = key.split('$')
+   def encrypt(self, args):
+      key = args.key.split('$')
+      # print(f"THE KEY in RSA {key}")
       exponant = int(key[0])
       modulus = int(key[1])
-      modulusHexSize = int((len(bin(modulus)[2:])+1)/4)
-      print(f'Mod Size (hex) {modulusHexSize}')
-      print(f'TYPE TEXT {type(text)}')
-      print(f"Plain before encode {text}")
-      text = int(text,16)
-      print(f"Plain after encode {text}")
-      result = (text**exponant)%modulus
-      # print(f"TEXT after code {text}")
-      resultHex = hex(result)[2:]
-      paddedResult = resultHex.zfill(modulusHexSize)
-      return paddedResult
+      text = int(args.text,16)
+      if self.fpga == None:
+         modulusHexSize = int((len(bin(modulus)[2:])+1)/4)
+         # print(f"Plain after encode {text}")
+         result = (text**exponant)%modulus
+         # print(f"TEXT after code {text}")
+         resultHex = hex(result)[2:]
+         paddedResult = resultHex.zfill(modulusHexSize)
+         return paddedResult
+      else:
+         self.fpga.setExp("0x"+key[0])
+         self.fpga.setMod("0x"+key[1])
+         message = args.text.encode().hex()
+         print(f'Message to fpga {message}')
+         self.fpga.setText(message)
+         return self.fpga.encrypt()
 
    @staticmethod
    def gcd(a, b):
@@ -108,8 +122,7 @@ class RSA(Algorithm):
 
    @staticmethod
    def getKeyBitSizes():
-      # return ["16", "32", "64", "128"]
-      return ["16"]
+      return ["16", "32"]
 
    @staticmethod
    def generateKey(keySize = 16):
@@ -168,6 +181,10 @@ class RSA(Algorithm):
 
    @staticmethod
    def isAsymmetric() -> bool:
+      return True
+   
+   @staticmethod
+   def hasFPGA() -> bool:
       return True
 
 # def construct():
