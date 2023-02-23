@@ -200,7 +200,7 @@ class DES(Algorithm):
         return ans
 
     def encrypt(self, args):
-        plainText = args.plainText
+        plainText = args.text
         key = args.key
         isEncrypt = args.isEncrypt
         # prepare plain text
@@ -345,12 +345,18 @@ class DES(Algorithm):
             return "key size is not valid"
 
     @staticmethod
-    def isAsymmetric():
+    def isAsymmetric() -> bool:
+        return False
+
+    @staticmethod
+    def hasFPGA() -> bool:
         return False
 
     @staticmethod
     def getKeyBitSizes():
         return ['64']
+    
+
 
 
 # def construct():

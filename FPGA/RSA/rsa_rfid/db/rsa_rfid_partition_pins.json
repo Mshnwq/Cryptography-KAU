@@ -1,0 +1,201 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "tx",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment2[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment3[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment4[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sev_segment5[6]",
+					"strict" : false
+				},
+				{
+					"name" : "done",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "reset",
+					"strict" : false
+				},
+				{
+					"name" : "go",
+					"strict" : false
+				},
+				{
+					"name" : "rx",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

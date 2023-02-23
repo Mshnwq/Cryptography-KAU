@@ -1,0 +1,70 @@
+module test_fifoRsa;
+
+reg clock_sig;
+reg [7:0] data_sig;
+reg rdreq_sig, sclr_sig, wrreq_sig;
+wire empty_sig, full_sig;
+wire [7:0] q_sig;
+wire [3:0] usedw_sig;
+
+fifoRsa fifoRsa_inst (
+	.clock ( clock_sig ),
+	.data ( data_sig ),
+	.rdreq ( rdreq_sig ),
+	.sclr ( sclr_sig ),
+	.wrreq ( wrreq_sig ),
+	.empty ( empty_sig ),
+	.full ( full_sig ),
+	.q ( q_sig ),
+	.usedw ( usedw_sig )
+);
+
+initial begin
+    // Initialize signals
+    clock_sig = 0;
+    rdreq_sig = 0;
+    sclr_sig = 0;
+    wrreq_sig = 0;
+    data_sig = 0;
+    
+    // Reset the FIFO
+    sclr_sig = 1;
+    #10;
+    sclr_sig = 0;
+    
+    // Write 16 bytes to the FIFO
+    integer i;
+    for (i = 0; i < 16; i = i + 1) begin
+        // Wait until the FIFO is not full
+        while (full_sig) begin
+            #1;
+        end
+        
+        // Write random data to the FIFO
+        data_sig = $random;
+        wrreq_sig = 1;
+        #1;
+        wrreq_sig = 0;
+    end
+    
+    // Read data from the FIFO
+    integer j;
+    for (j = 0; j < 16; j = j + 1) begin
+        // Wait until the FIFO is not empty
+        while (empty_sig) begin
+            #1;
+        end
+        
+        // Read data from the FIFO
+        rdreq_sig = 1;
+        #1;
+        rdreq_sig = 0;
+    end
+    
+    $finish;
+end
+
+// Clock generator
+always #5 clock_sig = ~clock_sig;
+
+endmodule

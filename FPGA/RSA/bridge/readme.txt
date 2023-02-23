@@ -1,0 +1,1 @@
+this script should establish UART communication bridge to FPGA, and send the contents of private key with a hex value of a message to encrypt, and post encrypted message to cloud alongside the modulus

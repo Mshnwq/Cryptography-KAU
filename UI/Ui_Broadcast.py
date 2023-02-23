@@ -346,8 +346,8 @@ class Ui_Broadcast(object):
         keyGenMenu.addAction(self.keyGenAction)
         keyWrMenu = configMenu.addMenu("&Key Write Destination")
         keyWrMenu.addAction(self.keyWrAction)
-        encrypSrcMenu = configMenu.addMenu("&Encryption Source")
-        encrypSrcMenu.addAction(self.encrypSrcAction)
+        encryptSrcMenu = configMenu.addMenu("&Encryption Source")
+        encryptSrcMenu.addAction(self.encryptSrcAction)
         broadcastSrcMenu = configMenu.addMenu("&Broadcast Destination")
         broadcastSrcMenu.addAction(self.broadcastSrcAction)
         configMenu.addSeparator()
@@ -371,8 +371,8 @@ class Ui_Broadcast(object):
         self.keyWrAction = QAction('&RFID', MainWindow, checkable=True)
         self.keyWrAction.setChecked(config['RFID_wr'])
 
-        self.encrypSrcAction = QAction('&FPGA', MainWindow, checkable=True)
-        self.encrypSrcAction.setChecked(config['FPGA_crypt'])
+        self.encryptSrcAction = QAction('&FPGA', MainWindow, checkable=True)
+        self.encryptSrcAction.setChecked(config['FPGA_crypt'])
 
         self.broadcastSrcAction = QAction('&Cloud', MainWindow, checkable=True)
         self.broadcastSrcAction.setChecked(config['Cloud'])

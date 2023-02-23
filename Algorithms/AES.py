@@ -404,7 +404,7 @@ class AES(Algorithm):
     # args = {plainText, key, isEnc = True}
 
     def encrypt(self, args):
-        plainText = args.plainText
+        plainText = args.text
         key = args.key
         cipher_text = ""  # initial value for cipher
         hexString = plainText
@@ -439,7 +439,7 @@ class AES(Algorithm):
 
     def decrypt(self, args: EncModel):
         plainText = ""
-        hexString = args.plainText
+        hexString = args.text
         key = args.key
         hexKey = self.a2Hex(key)
         expKey = self.keyExaption(hexKey)
@@ -494,7 +494,11 @@ class AES(Algorithm):
             return "key size is not valid"
 
     @staticmethod
-    def isAsymmetric():
+    def isAsymmetric() -> bool:
+        return False
+    
+    @staticmethod
+    def hasFPGA() -> bool:
         return False
 
     @staticmethod
