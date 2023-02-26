@@ -73,6 +73,7 @@ See [contributing](https://github.com/Mshnwq/Encryption-Application/graphs/contr
 
 - [PyQt5](https://www.qt.io/) - GUI
 - [FireBase](https://firebase.google.com/) - Backend
+- Verilog - FPGA
 
 ## ✍️ Authors <a name = "authors"></a>
 
