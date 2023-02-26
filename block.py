@@ -212,15 +212,20 @@ class Block(BaseModel):
 
 def main():
     algo = 'RSA'
-    key = getModules()[algo].RSA.generateKey(16)  # ascii string
+    key = getModules()[algo].RSA.generateKey(32)  # ascii string
+    # key = ('10001$f0c792cb', 'e4f319c1$f0c792cb')
     # key = ('43123$48443', '187$48443')
     # key = ('4117$20567', '133$20567')
-    message = "HI RSA ECB"
-    fpga = RSA_FPGA
+    message = "HI RSA ECB EE460"
+    # message = "E460"
+    # message = "HI RSA CBC EE460"
+    fpga = RSA_FPGA()
     # message = "Hi"
     print("\n-------------(RSA - Enc - ECB)----------------")
-    block = Block(blockSize=16, algo=algo, mode='CBC',
+    # block = Block(blockSize=32, algo=algo, mode='CBC',
+    block = Block(blockSize=32, algo=algo, mode='ECB',
                     isEnc=True, text=message, key=key[0], fpga=fpga)
+                    # isEnc=True, text=message, key=key[0])
     cipher = block.run()
     # cipher = '4f7d2fa2215816860fd4'
     print("plainHex is: " + message.encode().hex())
@@ -228,8 +233,10 @@ def main():
     print("cipher is: " + cipher)
     print("\n-------------(Decryption)----------------")
     # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
-    block2 = Block(blockSize=16, algo=algo, mode='CBC',
+    # block2 = Block(blockSize=32, algo=algo, mode='CBC',
+    block2 = Block(blockSize=32, algo=algo, mode='ECB',
                     isEnc=False, text=cipher, key=key[1], fpga=fpga)
+                    # isEnc=False, text=cipher, key=key[1])
     orig = block2.run()
     print("key is: " + key[1])
     print("originalis: " + orig)

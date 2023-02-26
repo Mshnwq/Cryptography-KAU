@@ -25,7 +25,7 @@ for file_name in os.listdir(f"{fileDirectory}\\{package}"):
         # print(f"{module_name[3:]}")
         __ui__[module_name[3:]] = importlib.import_module(
             f"{package}.{module_name}", '.')
-        
+
 
 class MainWindow(QMainWindow):
     '''GUI Class'''
@@ -510,6 +510,19 @@ class MainWindow(QMainWindow):
 
     def readKey(self):
 
+        module = getModules()[self.getAlgoChosen()]
+        if eval(f"module.{self.getAlgoChosen()}.isAsymmetric()"): 
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Invalid Algorithm for RFID!")
+            dialog.setText(
+                f"Cannot use RFID on {self.getAlgoChosen()} asymmetric algorithm")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(
+                f"Choose an algorithm that is symmetric if you wish to use RFID")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            return None
+
         self.ui.readKey_btn.setEnabled(False)
         self.dialogType = 1
 
@@ -565,6 +578,19 @@ class MainWindow(QMainWindow):
             dialog.exec_()
 
     def writeKey(self):
+
+        module = getModules()[self.getAlgoChosen()]
+        if eval(f"module.{self.getAlgoChosen()}.isAsymmetric()"): 
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Invalid Algorithm for RFID!")
+            dialog.setText(
+                f"Cannot use RFID on {self.getAlgoChosen()} asymmetric algorithm")
+            dialog.setIcon(QMessageBox.Critical)
+            dialog.setInformativeText(
+                f"Choose an algorithm that is symmetric if you wish to use RFID")
+            dialog.setStandardButtons(QMessageBox.Ok)
+            dialog.exec_()
+            return None
 
         if self.getBitSizeChosen() > 128:
             dialog = QMessageBox()

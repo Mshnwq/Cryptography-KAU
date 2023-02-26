@@ -154,13 +154,13 @@ class Cryptor_Worker(QThread):
 
     def run(self):
         '''The Main Process for the Thread'''
-        # try:
-        result = self.block.run()
-        print(f'Worker Result {result}')
-        self.resultSignal.emit(result)
-        self.finishedSignal.emit()
-        # except Exception as e:
-        #     print(f'Worker Result {e}')
+        try:
+            result = self.block.run()
+            print(f'Worker Result {result}')
+            self.resultSignal.emit(result)
+            self.finishedSignal.emit()
+        except Exception as e:
+            print(f'Worker Result {e}')
         #     self.resultSignal.emit(None)
         #     self.finishedSignal.emit()
 

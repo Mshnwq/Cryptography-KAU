@@ -8,10 +8,16 @@ class EncModel(BaseModel):
     key: str
     isEncrypt: Optional[bool] = True
 
-    # @validator('plainText')
+    # @validator('text', allow_reuse=True)
     # def check_hex(cls, value):
     #     if not all(c in '0123456789abcdefABCDEF' for c in value):
-    #         raise ValueError('not a valid hex string')
+    #         raise ValueError('not a valid hex string for text')
+    #     return value
+    
+    # @validator('key', allow_reuse=True)
+    # def check_hex(cls, value):
+    #     if not all(c in '$0123456789abcdefABCDEF' for c in value):
+    #         raise ValueError('not a valid hex string for key')
     #     return value
 
 

@@ -1,7 +1,8 @@
 import random, sys, os
-from Algorithms.Algorithm import Algorithm
+# from Algorithms.Algorithm import Algorithm
 
-class RSA(Algorithm):
+# class RSA(Algorithm):
+class RSA:
 
    def __init__(self):
       self.fpga = None
@@ -13,17 +14,17 @@ class RSA(Algorithm):
 
    def decrypt(self, args):
       key = args.key.split('$')
-      exponant = int(key[0])
-      modulus = int(key[1])
-      text = int(args.text,16)
       if self.fpga == None:
+         exponant = int(key[0], 16)
+         modulus = int(key[1], 16)
+         text = int(args.text, 16)
          result = (text**exponant)%modulus
          resultHex = hex(result)
          return resultHex[2:]
       else:
          self.fpga.setExp("0x"+key[0])
          self.fpga.setMod("0x"+key[1])
-         message = args.text.encode().hex()
+         message = '0x'+args.text
          print(f'Message to fpga {message}')
          self.fpga.setText(message)
          return self.fpga.decrypt()
@@ -31,10 +32,10 @@ class RSA(Algorithm):
    def encrypt(self, args):
       key = args.key.split('$')
       # print(f"THE KEY in RSA {key}")
-      exponant = int(key[0])
-      modulus = int(key[1])
-      text = int(args.text,16)
       if self.fpga == None:
+         exponant = int(key[0],16)
+         modulus = int(key[1],16)
+         text = int(args.text,16)
          modulusHexSize = int((len(bin(modulus)[2:])+1)/4)
          # print(f"Plain after encode {text}")
          result = (text**exponant)%modulus
@@ -43,11 +44,11 @@ class RSA(Algorithm):
          paddedResult = resultHex.zfill(modulusHexSize)
          return paddedResult
       else:
-         self.fpga.setExp("0x"+key[0])
-         self.fpga.setMod("0x"+key[1])
-         message = args.text.encode().hex()
+         self.fpga.setExp(val="0x"+key[0])
+         self.fpga.setMod(val="0x"+key[1])
+         message = '0x'+args.text
          print(f'Message to fpga {message}')
-         self.fpga.setText(message)
+         self.fpga.setText(val=message)
          return self.fpga.encrypt()
 
    @staticmethod
@@ -146,9 +147,9 @@ class RSA(Algorithm):
       # Step 3: Calculate d, the mod inverse of e.
       print('Calculating d that is mod inverse of e...')
       d = RSA.findModInverse(e, phi)
-      privateKey = str(f'{d}${n}')
+      privateKey = str(f'{hex(d)[2:]}${hex(n)[2:]}')
       # privateKey = (d, n)
-      publicKey = str(f'{e}${n}')
+      publicKey = str(f'{hex(e)[2:]}${hex(n)[2:]}')
       # publicKey = (e, n)
       # window.logs_box.append(f'Private key: {privateKey}')
       print('Private key:', privateKey)
@@ -191,19 +192,20 @@ class RSA(Algorithm):
 #    return RSA()
 
 def main():
-   # key = RSA.generateKey(16)
-   key = ('43123$48443', '187$48443')
+   key = RSA.generateKey(16)
+   print(f"KEY is {key}")
+   # key = ('43123$48443', '187$48443')
    message = "di"
    message = message.encode().hex()
    rsa = RSA()
 
    ciph = rsa.encrypt(message, key[0])
    print(f"CIPH is {ciph}")
-   # ciph = ciph.encode('utf-8').decode('utf-8')
-   # print(f"CIPH is {ciph}")
+   ciph = ciph.encode('utf-8').decode('utf-8')
+   print(f"CIPH is {ciph}")
    plain = rsa.decrypt(ciph, key[1])
    print(f"Plain is text {plain}")
-   # print(f"Plain decode hex {int(plain,16)}")
+   print(f"Plain decode hex {int(plain,16)}")
    b = bytes.fromhex(plain)
    s = b.decode("utf-8")
    print(s)

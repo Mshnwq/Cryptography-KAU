@@ -11,7 +11,7 @@ class RSA_FPGA:
     """
     # fpga constructor
     def __init__(self):
-        try:  
+        # try:  
             self.read = None
             self.exp = None
             self.mod = None
@@ -21,8 +21,8 @@ class RSA_FPGA:
             # self.openPort()   # use when needed
             # self.closePort()  # use when needed
             print("constructed FPGA")
-        except Exception as e:
-            print(f"failed FPGA {e}")
+        # except Exception as e:
+            # print(f"failed FPGA {e}")
 
     def __setupPort(self):
         try:
@@ -41,7 +41,7 @@ class RSA_FPGA:
                         timeout=1)
             
         except Exception as e:
-            print(f"failed setup {e}")
+            raise Exception(f"failed setup {e}")
 
     def find_all(pattern=None):
         """
@@ -109,13 +109,13 @@ class RSA_FPGA:
         if self.writeToFPGA():
             print("Written to FPGA")
         else:
-            print("Failed to write to FPGA")
-            return
+            # print("Failed to write to FPGA")
+            raise Exception("Failed to write to FPGA")
         self.clearExp()
         self.clearMod()
         self.clearText()
         
-        time.sleep(0.01)
+        time.sleep(0.3)
         # read data from FPGA
         if self.readFromFPGA():
             print("Read from FPGA")
@@ -138,7 +138,7 @@ class RSA_FPGA:
             return True
         
         except Exception as e:
-            print(f"error {e}")
+            print(f"read error {e}")
             return False
         ...
 
@@ -151,12 +151,16 @@ class RSA_FPGA:
             if self.text == None:
                 raise Exception("Invalid text")
             # pack the the 96 bit data to be sent
+            print(self.exp)
+            print(self.mod)
+            print(self.text)
             packed_data = struct.pack('3I', self.exp, self.mod, self.text)
             self.port.write(packed_data)
+            print(f"packed data {packed_data}")
             return True
 
         except Exception as e:
-            print(f"error {e}")
+            print(f"write error {e}")
             return False
         ...
 
@@ -201,7 +205,7 @@ if __name__ == "__main__":
     fpga.setExp("0x10001")
     fpga.setMod("0xf0c792cb")
     message = 'E460'.encode().hex()
-    print(message)
+    # print(message)
     fpga.setText(message)
     cipher = fpga.encrypt()
     print(f" the cipher is {cipher}")
@@ -209,13 +213,13 @@ if __name__ == "__main__":
 
     fpga.setExp("0xe4f319c1")
     fpga.setMod("0xf0c792cb")
-    fpga.setText(cipher)
+    fpga.setText("0x"+cipher)
     plain = fpga.decrypt()
     print(f" the plain is {plain}")
-    print(f" the plain is {plain.decode()}")
+    # print(f" the plain is {plain.decode()}")
 
-    b = bytes.fromhex(cipher)
+    b = bytes.fromhex(plain)
     s = b.decode("utf-8")
-    print(s)
+    print(b)
     
     # fpga.closePort()
