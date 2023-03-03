@@ -63,11 +63,11 @@
 
 ## 🏁 Guide <a name = "guide"></a>
 
-See [written guide](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) or [video guide](https://drive.google.com/drive/folders/10jrCU3F_7SaCHny6i0zd1NPGIG_tyQQt?usp=share_link).
+See [written guide](https://github.com/Mshnwq/Encryption-Application/blob/main/Guide) or [video guide](https://drive.google.com/drive/folders/10jrCU3F_7SaCHny6i0zd1NPGIG_tyQQt?usp=share_link).
 
 ## 🚀 Contributing <a name = "contributing"></a>
 
-- See [contributing](https://github.com/Mshnwq/Encryption-Application/blob/main/Guide) for steps.
+- See [contributing](https://drive.google.com/drive/folders/10jrCU3F_7SaCHny6i0zd1NPGIG_tyQQt?usp=share_link) for steps.
 - See [UML](https://github.com/Mshnwq/Encryption-Application/blob/main/UML) for UML.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
