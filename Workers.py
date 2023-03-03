@@ -67,22 +67,30 @@ class KeyGen_Worker(QThread):
         self.bit_size = bit_size
         print("CONSTR")
 
-    def run(self):
+    def run(self) -> str:
         # TODO some kind of progress indicator for long
         i = 0
         while (i != 2):
             self.logsAppendSignal.emit(str(i))
-            time.sleep(0.15)
+            time.sleep(0.1)
             i += 1
-        module = getModules()[self.algo]
-        result = eval(f"module.{self.algo}.generateKey({self.bit_size})")
-        print(f'Result: {result}')
-        if eval(f"module.{self.algo}.isAsymmetric()"):
-            self.resultSignal.emit(str(f'{result[0]}_{result[1]}'))
-            self.finishedSignal.emit()
-        else:
-            self.resultSignal.emit(str(result))
-            self.finishedSignal.emit()
+        try:
+            module = getModules()[self.algo]
+            result = eval(f"module.{self.algo}.generateKey({self.bit_size})")
+            print(f'Result: {result}')
+            if eval(f"module.{self.algo}.isAsymmetric()"):
+                ass_key = str(f'{result[0]}_{result[1]}')
+                self.resultSignal.emit(ass_key)
+                # return ass_key
+                self.finishedSignal.emit()
+            else:
+                self.resultSignal.emit(str(result))
+                self.finishedSignal.emit()
+        except Exception as e:
+            print(f'Worker Result {e}')
+            return result
+        #     self.resultSignal.emit(None)
+        #     self.finishedSignal.emit()
 
 
 class Cryptor_Worker(QThread):
@@ -108,9 +116,9 @@ class Cryptor_Worker(QThread):
         self.isEnc = isEnc
         self.text = text
         print(f'Key {key}')
-        print(f'Key type {type(key)}')
+        # print(f'Key type {type(key)}')
         print(f'Text {text}')
-        print(f'Text type {type(text)}')
+        # print(f'Text type {type(text)}')
         module = getModules()[algo]
         self.isAss = eval(f"module.{algo}.isAsymmetric()")
         if fpga != None:
@@ -135,13 +143,11 @@ class Cryptor_Worker(QThread):
             if self.isAss:
                 key = key.split('_')
                 if self.isEnc:
-                    print("CONSTRUCUTN BLOCK ASS ENC")
                     self.block = Block(blockSize=size, 
                                     algo=algo, mode=mode, 
                                     isEnc=isEnc, text=text, 
                                     key=key[0])
                 else:
-                    print("CONSTRUCUTN BLOCK ASS DEC")
                     self.block = Block(blockSize=size, 
                                     algo=algo, mode=mode, 
                                     isEnc=isEnc, text=text, 
@@ -158,6 +164,7 @@ class Cryptor_Worker(QThread):
             result = self.block.run()
             print(f'Worker Result {result}')
             self.resultSignal.emit(result)
+            # return result
             self.finishedSignal.emit()
         except Exception as e:
             print(f'Worker Result {e}')
@@ -168,9 +175,53 @@ class Cryptor_Worker(QThread):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    cryptor = KeyGen_Worker("DES", 64)
-    cryptor.start()
-    sys.exit(app.exec_())
+    # cryptor = KeyGen_Worker("DES", 64)
+    # cryptor.start()
+    # sys.exit(app.exec_())
+    algo = 'RSA'
+    # mode = 'ECB'
+    mode = 'CBC'
+    size = 16
+    # key_gen = KeyGen_Worker(algo=algo, bit_size=size)
+    # key = key_gen.start()
+    # time.sleep(1)
+    # key = '744b$ad59_fb$ad59'
+    # key = '1783$9d37_8b$9d37'
+    res = getModules()[algo].RSA.generateKey(size)  # ascii string
+    key = str(f'{res[0]}_{res[1]}')
+    # key = getModules()[algo].RSA.generateKey(size)  # ascii string
+    # key = ('10001$f0c792cb', 'e4f319c1$f0c792cb')
+    # key = '43123$48443_187$48443'
+    # key = ('4117$20567', '133$20567')
+    print(f"\nKEY all {key}")
+    # message = "RSA ECB"
+    # message = "E460"
+    # message = "HI RSA CBC EE46"
+    message = "RSA CBC"
+    # fpga = RSA_FPGA()
+    # message = "Hi"
+    print("\n-------------(RSA - Enc - ECB)----------------")
+    block = Cryptor_Worker(size=size, algo=algo, mode=mode,
+                    isEnc=True, text=message, key=key)
+    #                 # isEnc=True, text=message, key=key, fpga=fpga)
+    time.sleep(0.2)
+    cipher = block.run()
+    time.sleep(0.2)
+    print("plainHex is: " + message.encode().hex())
+    print("key is: " + key.split('_')[0])
+    print("cipher is: " + cipher)
+    print("\n-------------(Decryption)----------------")
+    block2 = Cryptor_Worker(size=size, algo=algo, mode=mode,
+                    isEnc=False, text=cipher, key=key)
+    #                 # isEnc=False, text=cipher, key=key, fpga=fpga)
+    time.sleep(0.2)
+    orig = block2.run()
+    time.sleep(0.2)
+    print("key is: " + key.split('_')[1])
+    print("originalis: " + orig)
+    bytesOrig = bytes.fromhex(orig)
+    plain = bytesOrig.decode("utf-8")
+    print(plain)
     # cryptor
     # rsa = __modules__['RSA'].RSA()
     # rsa.makeKeyFiles('RSA_demo', 32)

@@ -20,10 +20,8 @@ for file_name in os.listdir(f"{fileDirectory}\\{package}"):
         __modules__[module_name] = importlib.import_module(
             f"{package}.{module_name}", '.')
 
-
 def getModules():
     return __modules__
-
 
 class Block(BaseModel):
     """
@@ -48,7 +46,7 @@ class Block(BaseModel):
     # other variables
     blockSizeByte = int(0)
     blockSizeHex = int(0)
-    algorithm = object()  # TODO type
+    algorithm = object()
     textHex = ''
     IV = ''
 
@@ -63,16 +61,17 @@ class Block(BaseModel):
             self.algorithm.attachFPGA(self.fpga)
         if self.isEnc:  # in encrypt it is ascii
             self.textHex = self.text.encode().hex()
+            self.makeBlocks()
         else:  # already encoded hex
             self.textHex = self.text  # in decryption the message is already given in hex
 
         # the IV key for the enc dec size if the block zise is 64 take the first 64bit
-        self.IV = "65787A736F64786B617373746A636164"  # hex format
-        print(f"THE KEY in block {self.key}")
-        self.makeBlocks()
+        self.IV = "657871136164786B6173737461636164"  # hex format
+        # self.IV = "010101010010101010101010101"  # hex format
+        # print(f"THE KEY in block {self.key}")
 
     def makeBlocks(self):
-        print("plain before blocks: "+self.textHex)
+        print("before blocks: "+self.textHex)
         textSize = len(self.textHex)
         # textSize is in hex digits
         if textSize < self.blockSizeHex:
@@ -82,10 +81,10 @@ class Block(BaseModel):
             for i in range(textSize,
                             (textSize + (self.blockSizeHex - textSize % self.blockSizeHex))):
                 self.textHex += "0"
-        print("plain after blocks: "+self.textHex)
+        print("after blocks: "+self.textHex)
 
     def run(self):
-        print("RUN")
+        # print("RUN")
         if self.mode == 'CBC':
             return self.cbc()
         else:
@@ -101,7 +100,7 @@ class Block(BaseModel):
         initialBlock = int(self.IV[:self.blockSizeHex], 16) ^ int(plain_0, 16)
         initialBlock = hex(initialBlock)[2:].zfill(self.blockSizeHex)
         if self.isEnc:
-            print("initial block:", initialBlock, self.key)
+            # print("initial block:", initialBlock, self.key)
             args = EncModel(**{"text": initialBlock,
                             "key": self.key, "isEncrypt": True})
             ciph_0 = self.algorithm.encrypt(args)
@@ -113,9 +112,9 @@ class Block(BaseModel):
             ciph_0 = hex(int(ciph_0, 16) ^ int(self.IV[:self.blockSizeHex], 16))[
                 2:].zfill(self.blockSizeHex)
             ciph_new = plain_0
-        print(f"initialBlock: {initialBlock}")
+        # print(f"initialBlock: {initialBlock}")
 
-        print(f"Cipered: {ciph_0}")
+        # print(f"Cipered: {ciph_0}")
         cipher += ciph_0
 
         # after the first block every block is xorded with the previous block
@@ -141,12 +140,13 @@ class Block(BaseModel):
                 ciph_i = int(ciph_i, 16) ^ int(ciph_new, 16)
                 # print("xored with: " + ciph_new)
                 ciph_i = hex(ciph_i)[2:].zfill(self.blockSizeHex)
+                # ciph_i = hex(ciph_i)[2:]
                 ciph_new = plain_i
 
             # print(f"Cipered: {ciph_i}")
             # xor previous block with current
             # add the blcok to thr array
-            print(f"XORED: {xored}\n")
+            # print(f"XORED: {xored}\n")
             cipher += ciph_i
 
             # set the new cipher to xor with plain text
@@ -212,51 +212,56 @@ class Block(BaseModel):
 
 def main():
     algo = 'RSA'
-    key = getModules()[algo].RSA.generateKey(32)  # ascii string
+    size = 16
+    key = getModules()[algo].RSA.generateKey(size)  # ascii string
+    print(f"\nKEY all {key}")
     # key = ('10001$f0c792cb', 'e4f319c1$f0c792cb')
     # key = ('43123$48443', '187$48443')
     # key = ('4117$20567', '133$20567')
-    message = "HI RSA ECB EE460"
+    # message = "HI RSA ECB EE460"
     # message = "E460"
-    # message = "HI RSA CBC EE460"
-    fpga = RSA_FPGA()
+    message = "HI RSA CBC EE46"
+    # fpga = RSA_FPGA()
     # message = "Hi"
     print("\n-------------(RSA - Enc - ECB)----------------")
-    # block = Block(blockSize=32, algo=algo, mode='CBC',
-    block = Block(blockSize=32, algo=algo, mode='ECB',
-                    isEnc=True, text=message, key=key[0], fpga=fpga)
-                    # isEnc=True, text=message, key=key[0])
+    # block = Block(blockSize=size, algo=algo, mode='CBC',
+    block = Block(blockSize=size, algo=algo, mode='ECB',
+    #                 # isEnc=True, text=message, key=key[0], fpga=fpga)
+                    isEnc=True, text=message, key=key[0])
     cipher = block.run()
     # cipher = '4f7d2fa2215816860fd4'
     print("plainHex is: " + message.encode().hex())
     print("key is: " + key[0])
     print("cipher is: " + cipher)
     print("\n-------------(Decryption)----------------")
-    # block2 = Block(blockSize=128, algo='RC4', mode='ECB', isEnc=False, text=cipher, key=key)
-    # block2 = Block(blockSize=32, algo=algo, mode='CBC',
-    block2 = Block(blockSize=32, algo=algo, mode='ECB',
-                    isEnc=False, text=cipher, key=key[1], fpga=fpga)
-                    # isEnc=False, text=cipher, key=key[1])
+    # block2 = Block(blockSize=size, algo=algo, mode='CBC',
+    block2 = Block(blockSize=size, algo=algo, mode='ECB',
+    #                 # isEnc=False, text=cipher, key=key[1], fpga=fpga)
+                    isEnc=False, text=cipher, key=key[1])
     orig = block2.run()
     print("key is: " + key[1])
     print("originalis: " + orig)
-    b = bytes.fromhex(orig)
-    s = b.decode("utf-8")
-    print(s)
+    bytesOrig = bytes.fromhex(orig)
+    plain = bytesOrig.decode("utf-8")
+    print(plain)
+    
     # key = getModules()["DES"].DES.generateKey(64)
     # print("\n-------------(AES - Enc - CBC)----------------")
     # block = Block(blockSize=64, algo='DES', mode='ECB',
-    #               isEnc=True, text=message, key=key)
+    #                 isEnc=True, text=message, key=key)
     # cipher = block.run()
     # print("key is: " + key)
     # print("cipher is: " + cipher)
 
     # print("-------------(Decryption)----------------")
     # block2 = Block(blockSize=64, algo='DES', mode='ECB',
-    #                isEnc=False, text=cipher, key=key)
+    #                 isEnc=False, text=cipher, key=key)
     # orig = block2.run()
     # print("key is: " + key)
     # print("originalis: " + orig)
+    # b = bytes.fromhex(orig)
+    # s = b.decode("utf-8")
+    # print(s)
 
     # key = getModules()['DES'].generateKey(64)  # ascii string
 
@@ -283,7 +288,7 @@ def main():
     # orig = block2.run()
     # # print("key is: " + key)
     # # print("originalis: " + orig)
-
+    ...
 
 if __name__ == '__main__':
     main()

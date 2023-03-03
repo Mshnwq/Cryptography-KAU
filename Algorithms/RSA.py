@@ -1,8 +1,7 @@
 import random, sys, os
-# from Algorithms.Algorithm import Algorithm
+from Algorithms.Algorithm import Algorithm
 
-# class RSA(Algorithm):
-class RSA:
+class RSA(Algorithm):
 
    def __init__(self):
       self.fpga = None
@@ -192,25 +191,26 @@ class RSA:
 #    return RSA()
 
 def main():
-   key = RSA.generateKey(16)
-   print(f"KEY is {key}")
-   # key = ('43123$48443', '187$48443')
-   message = "di"
-   message = message.encode().hex()
-   rsa = RSA()
+   # key = RSA.generateKey(16)
+   # print(f"KEY is {key}")
+   # # key = ('43123$48443', '187$48443')
+   # message = "di"
+   # message = message.encode().hex()
+   # rsa = RSA()
 
-   ciph = rsa.encrypt(message, key[0])
-   print(f"CIPH is {ciph}")
-   ciph = ciph.encode('utf-8').decode('utf-8')
-   print(f"CIPH is {ciph}")
-   plain = rsa.decrypt(ciph, key[1])
-   print(f"Plain is text {plain}")
-   print(f"Plain decode hex {int(plain,16)}")
-   b = bytes.fromhex(plain)
-   s = b.decode("utf-8")
-   print(s)
+   # ciph = rsa.encrypt(message, key[0])
+   # print(f"CIPH is {ciph}")
+   # ciph = ciph.encode('utf-8').decode('utf-8')
+   # print(f"CIPH is {ciph}")
+   # plain = rsa.decrypt(ciph, key[1])
+   # print(f"Plain is text {plain}")
+   # print(f"Plain decode hex {int(plain,16)}")
+   # b = bytes.fromhex(plain)
+   # s = b.decode("utf-8")
+   # print(s)
 
    # makeKeyFiles('RSA_demo', 64)
+   ...
 
 if __name__ == '__main__':
    main()

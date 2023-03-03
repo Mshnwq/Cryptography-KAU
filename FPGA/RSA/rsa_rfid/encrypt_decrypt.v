@@ -65,18 +65,14 @@ module encrypt_decrypt
 		else case (state)
 			DIVIDING: 
 				begin
-				
 					//stall until dividers are done, since division takes DIVIDE_LATENCY cycles
 					if (divide_latency_counter == 5'd0) state <= UPDATE;
 					else divide_latency_counter <= divide_latency_counter - 5'd1;
-					
 				end
 			UPDATE: 
 				begin
-				
 					if (exponent_reg != 64'd0) 
 					begin
-					
 						if (exponent_reg[0]) result_reg <= result_next;
 						base_reg <= base_next;
 						exponent_reg <= exponent_next;
@@ -85,7 +81,6 @@ module encrypt_decrypt
 						
 					end
 					else state <= HOLD;
-					
 				end
 			HOLD: 
 				begin
@@ -96,7 +91,6 @@ module encrypt_decrypt
 				end
 			DONE: 
 				begin
-
 				end	
 		endcase
 	end
