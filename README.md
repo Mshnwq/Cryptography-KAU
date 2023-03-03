@@ -67,8 +67,8 @@ See [guide](https://github.com/Mshnwq/Encryption-Application/graphs/contributors
 
 ## 🚀 Contributing <a name = "contributing"></a>
 
-See [contributing](https://github.com/Mshnwq/Encryption-Application/blob/main/Guide) for steps.
-See [UML](https://github.com/Mshnwq/Encryption-Application/blob/main/UML) for UML.
+- See [contributing](https://github.com/Mshnwq/Encryption-Application/blob/main/Guide) for steps.
+- See [UML](https://github.com/Mshnwq/Encryption-Application/blob/main/UML) for UML.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
