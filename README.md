@@ -63,7 +63,7 @@
 
 ## 🏁 Guide <a name = "guide"></a>
 
-See [guide](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) for comprehensive guide.
+See [written guide](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) or [video guide](https://drive.google.com/drive/folders/10jrCU3F_7SaCHny6i0zd1NPGIG_tyQQt?usp=share_link).
 
 ## 🚀 Contributing <a name = "contributing"></a>
 
