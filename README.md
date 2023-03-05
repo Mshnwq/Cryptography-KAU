@@ -78,10 +78,10 @@ See [written guide](https://github.com/Mshnwq/Encryption-Application/blob/main/G
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [**@Mshnwq**](https://github.com/Mshnwq) - **Code Structure Design, GUI, RFID, FPGA**
+- [**@Mshnwq**](https://github.com/Mshnwq) - **Code Structure Design, Cryptographer, GUI, RFID, FPGA**
 - [@FaisalJAbushanab](https://github.com/FaisalJAbushanab) - **Code Structure Design, Cryptographer, Backend, Testing**
 - [@AAlhethili](https://github.com/AAlhethili) - **Cryptographer, FPGA**
-- [@Abdulrahman](https://github.com/rhman1) - Cryptographer
+- [@Abdulrahman](https://github.com/rhman1) - 
 
 
 See also the list of [contributors](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) who participated in this project.
