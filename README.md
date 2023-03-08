@@ -63,24 +63,25 @@
 
 ## 🏁 Guide <a name = "guide"></a>
 
-See [guide](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) for comprehensive guide.
+See [written guide](https://github.com/Mshnwq/Encryption-Application/blob/main/Guide) or [video guide](https://drive.google.com/drive/folders/10jrCU3F_7SaCHny6i0zd1NPGIG_tyQQt?usp=share_link).
 
 ## 🚀 Contributing <a name = "contributing"></a>
 
-See [contributing](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) for steps.
+- See [contributing](https://drive.google.com/drive/folders/10jrCU3F_7SaCHny6i0zd1NPGIG_tyQQt?usp=share_link) for steps.
+- See [UML](https://github.com/Mshnwq/Encryption-Application/blob/main/UML) for UML.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
 - [PyQt5](https://www.qt.io/) - GUI
 - [FireBase](https://firebase.google.com/) - Backend
-- Verilog - FPGA
+- [Verilog](https://www.verilog.com/) - FPGA
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [**@Mshnwq**](https://github.com/Mshnwq) - **Code Structure Design, GUI, RFID, FPGA**
+- [**@Mshnwq**](https://github.com/Mshnwq) - **Code Structure Design, Cryptographer, GUI, RFID, FPGA**
 - [@FaisalJAbushanab](https://github.com/FaisalJAbushanab) - **Code Structure Design, Cryptographer, Backend, Testing**
 - [@AAlhethili](https://github.com/AAlhethili) - **Cryptographer, FPGA**
-- [@Abdulrahman](https://github.com/rhman1) - Cryptographer
+- [@Abdulrahman](https://github.com/rhman1) - 
 
 
 See also the list of [contributors](https://github.com/Mshnwq/Encryption-Application/graphs/contributors) who participated in this project.
