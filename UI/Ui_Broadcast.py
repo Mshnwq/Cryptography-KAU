@@ -338,8 +338,11 @@ class Ui_Broadcast(object):
 
     def _createMenuBar(self, MainWindow):
         self.menuBar = QMenuBar(MainWindow)
+        
         # Settings menu
         settingsMenu = self.menuBar.addMenu(QIcon(":settings"), "&Settings")
+
+        # Config Section
         configMenu = settingsMenu.addMenu("&Configurations")
         configMenu.setTearOffEnabled(True)
         keyGenMenu = configMenu.addMenu("&Key Generation Source")
@@ -352,7 +355,8 @@ class Ui_Broadcast(object):
         broadcastSrcMenu.addAction(self.broadcastSrcAction)
         configMenu.addSeparator()
         configMenu.addAction(self.saveConfigAction)
-
+        
+        # Logout Section
         settingsMenu.addSeparator()
         settingsMenu.addAction(self.logoutAction)
 
